@@ -60,7 +60,20 @@ export default function CalendarPage() {
   const lastPointerPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   // Fetch calendars
-  const { data: calendarsData } = trpc.calendar.list.useQuery();
+  const { data: calendarsData, refetch: refetchCalendars } = trpc.calendar.list.useQuery();
+
+  // Calendar mutations
+  const createCalendarMutation = trpc.calendar.create.useMutation({
+    onSuccess: () => refetchCalendars(),
+  });
+
+  const updateCalendarMutation = trpc.calendar.update.useMutation({
+    onSuccess: () => refetchCalendars(),
+  });
+
+  const deleteCalendarMutation = trpc.calendar.delete.useMutation({
+    onSuccess: () => refetchCalendars(),
+  });
 
   // Get date range for fetching events
   const viewRange = useMemo(() => getViewRange(), [currentDate, viewType, getViewRange]);
@@ -134,8 +147,22 @@ export default function CalendarPage() {
       color: cal.color,
       isVisible: visibleCalendarIds.length === 0 || visibleCalendarIds.includes(cal.id),
       provider: cal.provider,
+      isDefault: cal.isDefault,
     }));
   }, [calendarsData, visibleCalendarIds]);
+
+  // Calendar CRUD handlers
+  const handleCreateCalendar = useCallback((name: string, color: string) => {
+    createCalendarMutation.mutate({ name, color });
+  }, [createCalendarMutation]);
+
+  const handleUpdateCalendar = useCallback((id: string, name: string, color: string) => {
+    updateCalendarMutation.mutate({ id, name, color });
+  }, [updateCalendarMutation]);
+
+  const handleDeleteCalendar = useCallback((id: string) => {
+    deleteCalendarMutation.mutate({ id });
+  }, [deleteCalendarMutation]);
 
   // Calendar selector for event form
   const calendarOptions = useMemo(() => {
@@ -390,7 +417,10 @@ export default function CalendarPage() {
           calendars={calendars}
           onToggleCalendar={handleToggleCalendar}
           onCreateEvent={handleCreateEvent}
-          className="w-64 hidden lg:flex flex-col"
+          onCreateCalendar={handleCreateCalendar}
+          onUpdateCalendar={handleUpdateCalendar}
+          onDeleteCalendar={handleDeleteCalendar}
+          className="w-72 hidden lg:flex flex-col border-r"
         />
 
         {/* Main calendar area */}
