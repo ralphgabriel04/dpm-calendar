@@ -1,9 +1,20 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { ChevronLeft, ChevronRight, Plus, List } from "lucide-react";
-import { format, addHours, setHours, setMinutes } from "date-fns";
+import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
+import {
+  DndContext,
+  DragEndEvent,
+  DragOverlay,
+  DragStartEvent,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  pointerWithin,
+} from "@dnd-kit/core";
 import { useCalendarStore } from "@/stores/calendar.store";
 import { useUIStore } from "@/stores/ui.store";
 import { cn } from "@/lib/utils";
@@ -15,6 +26,12 @@ import type { CalendarEvent } from "@/lib/calendar/utils";
 
 // tRPC hooks
 import { trpc } from "@/lib/trpc";
+
+interface Task {
+  id: string;
+  title: string;
+  plannedDuration?: number | null;
+}
 
 export default function CalendarPage() {
   const {
@@ -35,11 +52,14 @@ export default function CalendarPage() {
   // State for new event
   const [newEventData, setNewEventData] = useState<Partial<EventFormData>>({});
 
+  // State for drag overlay
+  const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+
   // Fetch calendars
-  const { data: calendarsData, refetch: refetchCalendars } = trpc.calendar.list.useQuery();
+  const { data: calendarsData } = trpc.calendar.list.useQuery();
 
   // Get date range for fetching events
-  const viewRange = useMemo(() => getViewRange(), [currentDate, viewType]);
+  const viewRange = useMemo(() => getViewRange(), [currentDate, viewType, getViewRange]);
 
   // Fetch events
   const { data: eventsData, refetch: refetchEvents } = trpc.event.list.useQuery({
@@ -47,6 +67,9 @@ export default function CalendarPage() {
     endDate: viewRange.end,
     calendarIds: visibleCalendarIds.length > 0 ? visibleCalendarIds : undefined,
   });
+
+  // Fetch unscheduled tasks
+  const { refetch: refetchTasks } = trpc.task.getUnscheduled.useQuery();
 
   // Create event mutation
   const createEventMutation = trpc.event.create.useMutation({
@@ -64,19 +87,22 @@ export default function CalendarPage() {
     },
   });
 
-  // Delete event mutation
-  const deleteEventMutation = trpc.event.delete.useMutation({
-    onSuccess: () => {
-      refetchEvents();
-    },
-  });
-
   // Schedule task mutation (time blocking)
   const scheduleTaskMutation = trpc.task.scheduleTask.useMutation({
     onSuccess: () => {
       refetchEvents();
+      refetchTasks();
     },
   });
+
+  // DnD Sensors
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: { distance: 5 },
+  });
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: { delay: 250, tolerance: 5 },
+  });
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   // Transform events to CalendarEvent format
   const events: CalendarEvent[] = useMemo(() => {
@@ -149,7 +175,6 @@ export default function CalendarPage() {
 
   // Handle event click
   const handleEventClick = (event: CalendarEvent) => {
-    // For now, just log the event. In future, open edit modal
     console.log("Event clicked:", event);
   };
 
@@ -178,7 +203,7 @@ export default function CalendarPage() {
   };
 
   // Handle task drop on calendar (time blocking)
-  const handleTaskDrop = (task: { id: string; title: string }, startAt: Date, endAt: Date) => {
+  const handleTaskDrop = useCallback((task: Task, startAt: Date, endAt: Date) => {
     scheduleTaskMutation.mutate({
       taskId: task.id,
       startAt,
@@ -186,7 +211,7 @@ export default function CalendarPage() {
       calendarId: calendarOptions[0]?.id,
       createEvent: true,
     });
-  };
+  }, [scheduleTaskMutation, calendarOptions]);
 
   // Handle create event
   const handleCreateEvent = () => {
@@ -216,8 +241,6 @@ export default function CalendarPage() {
         reminderMinutes: data.reminderMinutes,
         rrule: data.rrule,
       });
-    } else {
-      // Handle edit - would need event ID
     }
   };
 
@@ -226,33 +249,63 @@ export default function CalendarPage() {
     toggleCalendarVisibility(calendarId);
   };
 
+  // Global drag start handler
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const { active } = event;
+    if (active.data.current?.type === "task") {
+      setDraggedTask(active.data.current.task as Task);
+    }
+  }, []);
+
+  // Global drag end handler
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    setDraggedTask(null);
+
+    if (!over) return;
+
+    const dragData = active.data.current;
+    const dropData = over.data.current as {
+      type: string;
+      date: Date;
+      hour?: number;
+    } | undefined;
+
+    if (!dropData) return;
+
+    // Handle task drop on calendar
+    if (dragData?.type === "task" && dropData.type === "dayColumn") {
+      const task = dragData.task as Task;
+      const duration = task.plannedDuration || 60;
+
+      const newStart = new Date(dropData.date);
+      if (dropData.hour !== undefined) {
+        newStart.setHours(dropData.hour, 0, 0, 0);
+      } else {
+        newStart.setHours(9, 0, 0, 0); // Default to 9 AM
+      }
+      const newEnd = addMinutes(newStart, duration);
+
+      handleTaskDrop(task, newStart, newEnd);
+    }
+  }, [handleTaskDrop]);
+
   // Render the appropriate view
   const renderView = () => {
+    const commonProps = {
+      events,
+      onEventClick: handleEventClick,
+      onSlotClick: handleSlotClick,
+      onEventMove: handleEventMove,
+      onEventResize: handleEventResize,
+      onTaskDrop: handleTaskDrop,
+    };
+
     switch (viewType) {
       case "day":
-        return (
-          <DayView
-            date={currentDate}
-            events={events}
-            onEventClick={handleEventClick}
-            onSlotClick={handleSlotClick}
-            onEventMove={handleEventMove}
-            onEventResize={handleEventResize}
-            onTaskDrop={handleTaskDrop}
-          />
-        );
+        return <DayView date={currentDate} {...commonProps} />;
       case "week":
-        return (
-          <WeekView
-            date={currentDate}
-            events={events}
-            onEventClick={handleEventClick}
-            onSlotClick={handleSlotClick}
-            onEventMove={handleEventMove}
-            onEventResize={handleEventResize}
-            onTaskDrop={handleTaskDrop}
-          />
-        );
+        return <WeekView date={currentDate} {...commonProps} />;
       case "month":
         return (
           <MonthView
@@ -276,103 +329,125 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="flex h-full">
-      {/* Sidebar */}
-      <CalendarSidebar
-        currentDate={currentDate}
-        onDateChange={setCurrentDate}
-        calendars={calendars}
-        onToggleCalendar={handleToggleCalendar}
-        onCreateEvent={handleCreateEvent}
-        className="w-64 hidden lg:flex flex-col"
-      />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={pointerWithin}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+    >
+      <div className="flex h-full">
+        {/* Sidebar */}
+        <CalendarSidebar
+          currentDate={currentDate}
+          onDateChange={setCurrentDate}
+          calendars={calendars}
+          onToggleCalendar={handleToggleCalendar}
+          onCreateEvent={handleCreateEvent}
+          className="w-64 hidden lg:flex flex-col"
+        />
 
-      {/* Main calendar area */}
-      <div className="flex-1 flex flex-col min-w-0">
-        {/* Calendar Header */}
-        <header className="flex items-center justify-between border-b bg-card px-4 py-3">
-          <div className="flex items-center gap-4">
-            {/* Navigation */}
-            <div className="flex items-center gap-1">
-              <button
-                onClick={navigatePrev}
-                className="p-2 rounded-md hover:bg-accent"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-              <button
-                onClick={navigateToday}
-                className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-accent"
-              >
-                Aujourd&apos;hui
-              </button>
-              <button
-                onClick={navigateNext}
-                className="p-2 rounded-md hover:bg-accent"
-              >
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Current date */}
-            <h2 className="text-lg font-semibold capitalize">{formatTitle()}</h2>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* View toggle */}
-            <div className="flex rounded-lg border bg-muted p-1">
-              {(["day", "week", "month", "agenda"] as const).map((view) => (
+        {/* Main calendar area */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Calendar Header */}
+          <header className="flex items-center justify-between border-b bg-card px-4 py-3">
+            <div className="flex items-center gap-4">
+              {/* Navigation */}
+              <div className="flex items-center gap-1">
                 <button
-                  key={view}
-                  onClick={() => setViewType(view)}
-                  className={cn(
-                    "px-3 py-1 text-sm font-medium rounded-md transition-colors",
-                    viewType === view
-                      ? "bg-background text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
+                  onClick={navigatePrev}
+                  className="p-2 rounded-md hover:bg-accent"
                 >
-                  {view === "agenda" ? (
-                    <List className="h-4 w-4" />
-                  ) : (
-                    viewLabels[view]
-                  )}
+                  <ChevronLeft className="h-5 w-5" />
                 </button>
-              ))}
+                <button
+                  onClick={navigateToday}
+                  className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-accent"
+                >
+                  Aujourd&apos;hui
+                </button>
+                <button
+                  onClick={navigateNext}
+                  className="p-2 rounded-md hover:bg-accent"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+
+              {/* Current date */}
+              <h2 className="text-lg font-semibold capitalize">{formatTitle()}</h2>
             </div>
 
-            {/* Add event button (mobile) */}
-            <button
-              onClick={handleCreateEvent}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 lg:hidden"
-            >
-              <Plus className="h-4 w-4" />
-              Nouvel événement
-            </button>
-          </div>
-        </header>
+            <div className="flex items-center gap-4">
+              {/* View toggle */}
+              <div className="flex rounded-lg border bg-muted p-1">
+                {(["day", "week", "month", "agenda"] as const).map((view) => (
+                  <button
+                    key={view}
+                    onClick={() => setViewType(view)}
+                    className={cn(
+                      "px-3 py-1 text-sm font-medium rounded-md transition-colors",
+                      viewType === view
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    )}
+                  >
+                    {view === "agenda" ? (
+                      <List className="h-4 w-4" />
+                    ) : (
+                      viewLabels[view]
+                    )}
+                  </button>
+                ))}
+              </div>
 
-        {/* Calendar Grid */}
-        <div className="flex-1 overflow-hidden">
-          {renderView()}
+              {/* Add event button (mobile) */}
+              <button
+                onClick={handleCreateEvent}
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 lg:hidden"
+              >
+                <Plus className="h-4 w-4" />
+                Nouvel événement
+              </button>
+            </div>
+          </header>
+
+          {/* Calendar Grid */}
+          <div className="flex-1 overflow-hidden">
+            {renderView()}
+          </div>
         </div>
+
+        {/* Unscheduled Tasks Sidebar */}
+        <UnscheduledTasksSidebar className="hidden xl:flex" />
+
+        {/* Event Modal */}
+        <EventModal
+          open={eventModalOpen}
+          onOpenChange={(open) => {
+            if (!open) closeEventModal();
+          }}
+          initialData={newEventData}
+          calendars={calendarOptions}
+          onSubmit={handleSubmitEvent}
+          isLoading={createEventMutation.isPending}
+          mode={eventModalMode}
+        />
       </div>
 
-      {/* Unscheduled Tasks Sidebar */}
-      <UnscheduledTasksSidebar className="hidden xl:flex" />
-
-      {/* Event Modal */}
-      <EventModal
-        open={eventModalOpen}
-        onOpenChange={(open) => {
-          if (!open) closeEventModal();
-        }}
-        initialData={newEventData}
-        calendars={calendarOptions}
-        onSubmit={handleSubmitEvent}
-        isLoading={createEventMutation.isPending}
-        mode={eventModalMode}
-      />
-    </div>
+      {/* Global Drag Overlay */}
+      <DragOverlay dropAnimation={null}>
+        {draggedTask && (
+          <div
+            className="rounded-md px-3 py-2 shadow-xl bg-primary text-primary-foreground"
+            style={{ width: 180 }}
+          >
+            <div className="font-medium text-sm truncate">{draggedTask.title}</div>
+            <div className="text-xs opacity-80">
+              {draggedTask.plannedDuration || 60} min
+            </div>
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
   );
 }
