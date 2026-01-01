@@ -10,6 +10,8 @@ interface Task {
   title: string;
   description: string | null;
   dueAt: Date | null;
+  plannedStartAt?: Date | null;
+  plannedDuration?: number | null;
   priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   status: "TODO" | "IN_PROGRESS" | "DONE" | "CANCELLED";
   tags: string[];
