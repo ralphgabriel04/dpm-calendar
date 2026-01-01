@@ -9,7 +9,7 @@ import { useUIStore } from "@/stores/ui.store";
 import { cn } from "@/lib/utils";
 
 // Calendar components
-import { WeekView, DayView, MonthView, AgendaView, CalendarSidebar } from "@/components/calendar";
+import { WeekView, DayView, MonthView, AgendaView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
 import { EventModal, type EventFormData } from "@/components/events";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
@@ -66,6 +66,13 @@ export default function CalendarPage() {
 
   // Delete event mutation
   const deleteEventMutation = trpc.event.delete.useMutation({
+    onSuccess: () => {
+      refetchEvents();
+    },
+  });
+
+  // Schedule task mutation (time blocking)
+  const scheduleTaskMutation = trpc.task.scheduleTask.useMutation({
     onSuccess: () => {
       refetchEvents();
     },
@@ -170,6 +177,17 @@ export default function CalendarPage() {
     });
   };
 
+  // Handle task drop on calendar (time blocking)
+  const handleTaskDrop = (task: { id: string; title: string }, startAt: Date, endAt: Date) => {
+    scheduleTaskMutation.mutate({
+      taskId: task.id,
+      startAt,
+      endAt,
+      calendarId: calendarOptions[0]?.id,
+      createEvent: true,
+    });
+  };
+
   // Handle create event
   const handleCreateEvent = () => {
     const now = new Date();
@@ -220,6 +238,7 @@ export default function CalendarPage() {
             onSlotClick={handleSlotClick}
             onEventMove={handleEventMove}
             onEventResize={handleEventResize}
+            onTaskDrop={handleTaskDrop}
           />
         );
       case "week":
@@ -231,6 +250,7 @@ export default function CalendarPage() {
             onSlotClick={handleSlotClick}
             onEventMove={handleEventMove}
             onEventResize={handleEventResize}
+            onTaskDrop={handleTaskDrop}
           />
         );
       case "month":
@@ -337,6 +357,9 @@ export default function CalendarPage() {
           {renderView()}
         </div>
       </div>
+
+      {/* Unscheduled Tasks Sidebar */}
+      <UnscheduledTasksSidebar className="hidden xl:flex" />
 
       {/* Event Modal */}
       <EventModal

@@ -14,6 +14,7 @@ interface Task {
   tags: string[];
   checklistItems: Array<{ id: string; title: string; isCompleted: boolean }>;
   subtasks: Array<{ id: string; status: string }>;
+  plannedDuration?: number | null;
 }
 
 interface DraggableTaskCardProps {
@@ -33,7 +34,11 @@ export function DraggableTaskCard({
 }: DraggableTaskCardProps) {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({
-      id: task.id,
+      id: `task-${task.id}`,
+      data: {
+        type: "task",
+        task,
+      },
     });
 
   const style = transform

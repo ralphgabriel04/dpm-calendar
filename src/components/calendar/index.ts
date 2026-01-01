@@ -17,3 +17,8 @@ export { CalendarSidebar } from "./CalendarSidebar";
 // Drag & Drop
 export { DraggableEventBlock } from "./DraggableEventBlock";
 export { DroppableTimeSlot } from "./DroppableTimeSlot";
+
+// Time Blocking
+export { TimeBlockCard } from "./TimeBlockCard";
+export { DraggableTaskMini } from "./DraggableTaskMini";
+export { UnscheduledTasksSidebar } from "./UnscheduledTasksSidebar";

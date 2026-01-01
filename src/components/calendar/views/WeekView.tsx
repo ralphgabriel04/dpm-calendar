@@ -22,6 +22,12 @@ import { AllDayRow } from "../AllDayRow";
 import { DraggableEventBlock } from "../DraggableEventBlock";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
+interface Task {
+  id: string;
+  title: string;
+  plannedDuration?: number | null;
+}
+
 interface WeekViewProps {
   date: Date;
   events: CalendarEvent[];
@@ -32,6 +38,7 @@ interface WeekViewProps {
   onSlotClick?: (date: Date, time: Date) => void;
   onEventMove?: (event: CalendarEvent, newStart: Date, newEnd: Date) => void;
   onEventResize?: (event: CalendarEvent, newStart: Date, newEnd: Date) => void;
+  onTaskDrop?: (task: Task, startAt: Date, endAt: Date) => void;
   className?: string;
 }
 
@@ -45,6 +52,7 @@ export function WeekView({
   onSlotClick,
   onEventMove,
   onEventResize,
+  onTaskDrop,
   className,
 }: WeekViewProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -86,9 +94,9 @@ export function WeekView({
       const { active, over } = event;
       setActiveEvent(null);
 
-      if (!over || !onEventMove) return;
+      if (!over) return;
 
-      const eventData = active.data.current?.event as CalendarEvent | undefined;
+      const dragData = active.data.current;
       const dropData = over.data.current as {
         type: string;
         date: Date;
@@ -96,7 +104,7 @@ export function WeekView({
         hourHeight: number;
       } | undefined;
 
-      if (!eventData || !dropData || dropData.type !== "dayColumn") return;
+      if (!dropData || dropData.type !== "dayColumn") return;
 
       // Get the pointer position from the drag event
       const pointerEvent = event.activatorEvent as MouseEvent | TouchEvent;
@@ -125,17 +133,32 @@ export function WeekView({
       const newHour = Math.min(Math.max(Math.floor(totalMinutes / 60), startHour), endHour - 1);
       const newMinute = totalMinutes % 60;
 
-      // Calculate duration
-      const duration = differenceInMinutes(eventData.endAt, eventData.startAt);
+      // Handle task drop
+      if (dragData?.type === "task" && onTaskDrop) {
+        const task = dragData.task as Task;
+        const duration = task.plannedDuration || 60; // Default to 1 hour
 
-      // Create new start and end times using the date from drop target
-      const newStart = new Date(dropData.date);
-      newStart.setHours(newHour, newMinute, 0, 0);
-      const newEnd = addMinutes(newStart, duration);
+        const newStart = new Date(dropData.date);
+        newStart.setHours(newHour, newMinute, 0, 0);
+        const newEnd = addMinutes(newStart, duration);
 
-      onEventMove(eventData, newStart, newEnd);
+        onTaskDrop(task, newStart, newEnd);
+        return;
+      }
+
+      // Handle event move
+      if (dragData?.event && onEventMove) {
+        const eventData = dragData.event as CalendarEvent;
+        const duration = differenceInMinutes(eventData.endAt, eventData.startAt);
+
+        const newStart = new Date(dropData.date);
+        newStart.setHours(newHour, newMinute, 0, 0);
+        const newEnd = addMinutes(newStart, duration);
+
+        onEventMove(eventData, newStart, newEnd);
+      }
     },
-    [onEventMove, hourHeight, startHour, endHour]
+    [onEventMove, onTaskDrop, hourHeight, startHour, endHour]
   );
 
   return (

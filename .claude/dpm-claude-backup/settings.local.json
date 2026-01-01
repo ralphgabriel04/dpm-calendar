@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dir \"c:\\\\Users\\\\ralph\\\\OneDrive\\\\Documents\\\\GitHub\\\\dpm-calendar\" /b /s)"
+    ]
+  }
+}

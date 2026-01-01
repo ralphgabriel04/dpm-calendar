@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app:*)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx prisma:*)",
+      "Bash(dir:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(git add:*)",
+      "Bash(git rm:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nImplement full DPM Calendar application with phases 1-7\n\nFeatures:\n- Calendar views \\(Day, Week, Month, Agenda\\) with drag & drop\n- Tasks with Kanban board and time blocking\n- Habits tracking with streaks\n- Goals management with progress tracking\n- Rules engine for automation\n- Analytics dashboard\n- Command palette \\(Ctrl+K\\)\n- Theme system \\(light/dark mode\\)\n- tRPC API with full CRUD operations\n- Prisma schema with 20+ models\n\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(npx vercel --yes)",
+      "Bash(git commit:*)",
+      "Bash(npx vercel:*)"
+    ]
+  }
+}

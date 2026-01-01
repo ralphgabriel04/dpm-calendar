@@ -267,6 +267,130 @@ export const taskRouter = createTRPCRouter({
       return event;
     }),
 
+  // Schedule task on calendar (time blocking)
+  scheduleTask: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        startAt: z.coerce.date(),
+        endAt: z.coerce.date(),
+        calendarId: z.string().optional(),
+        createEvent: z.boolean().default(true),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.taskId, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const duration = Math.round(
+        (input.endAt.getTime() - input.startAt.getTime()) / 60000
+      );
+
+      // Update task with planned time
+      await ctx.db.task.update({
+        where: { id: input.taskId },
+        data: {
+          plannedStartAt: input.startAt,
+          plannedDuration: duration,
+        },
+      });
+
+      // Create TimeBlock
+      const timeBlock = await ctx.db.timeBlock.create({
+        data: {
+          taskId: input.taskId,
+          startAt: input.startAt,
+          endAt: input.endAt,
+          duration,
+          status: "SCHEDULED",
+        },
+      });
+
+      // Optionally create linked Event
+      if (input.createEvent && input.calendarId) {
+        const calendar = await ctx.db.calendar.findFirst({
+          where: { id: input.calendarId, userId: ctx.session.user.id },
+        });
+
+        if (calendar) {
+          const event = await ctx.db.event.create({
+            data: {
+              userId: ctx.session.user.id,
+              calendarId: input.calendarId,
+              title: task.title,
+              description: task.description,
+              startAt: input.startAt,
+              endAt: input.endAt,
+              duration,
+              provider: "LOCAL",
+            },
+          });
+
+          // Update timeBlock with eventId
+          await ctx.db.timeBlock.update({
+            where: { id: timeBlock.id },
+            data: { eventId: event.id },
+          });
+
+          // Update task with linkedEventId
+          await ctx.db.task.update({
+            where: { id: input.taskId },
+            data: { linkedEventId: event.id },
+          });
+
+          return { task, timeBlock, event };
+        }
+      }
+
+      return { task, timeBlock };
+    }),
+
+  // Get time blocks for a date range
+  getTimeBlocks: protectedProcedure
+    .input(
+      z.object({
+        startDate: z.coerce.date(),
+        endDate: z.coerce.date(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.timeBlock.findMany({
+        where: {
+          task: {
+            userId: ctx.session.user.id,
+          },
+          startAt: { gte: input.startDate },
+          endAt: { lte: input.endDate },
+        },
+        include: {
+          task: true,
+        },
+        orderBy: { startAt: "asc" },
+      });
+    }),
+
+  // Get unscheduled tasks (tasks without plannedStartAt)
+  getUnscheduled: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.task.findMany({
+      where: {
+        userId: ctx.session.user.id,
+        plannedStartAt: null,
+        status: { notIn: ["DONE", "CANCELLED"] },
+      },
+      include: {
+        checklistItems: {
+          orderBy: { position: "asc" },
+        },
+      },
+      orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
+    });
+  }),
+
   // Reorder tasks
   reorder: protectedProcedure
     .input(
