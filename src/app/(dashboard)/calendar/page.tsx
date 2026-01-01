@@ -465,7 +465,7 @@ export default function CalendarPage() {
         </div>
 
         {/* Unscheduled Tasks Sidebar */}
-        <UnscheduledTasksSidebar className="hidden xl:flex" />
+        <UnscheduledTasksSidebar className="hidden lg:flex" />
 
         {/* Event Modal */}
         <EventModal

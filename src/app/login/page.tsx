@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -20,9 +21,28 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-lg">
         <div className="mb-6 text-center">
-          <h1 className="text-2xl font-bold">DPM Calendar</h1>
+          <div className="flex justify-center mb-2">
+            {/* Light mode logo */}
+            <Image
+              src="/light-mode-logo.png"
+              alt="DPM Calendar"
+              width={200}
+              height={50}
+              className="h-12 w-auto dark:hidden"
+              priority
+            />
+            {/* Dark mode logo */}
+            <Image
+              src="/logo-dark-mode.png"
+              alt="DPM Calendar"
+              width={200}
+              height={50}
+              className="h-12 w-auto hidden dark:block"
+              priority
+            />
+          </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to manage your calendar, tasks, and habits
+            Connectez-vous pour gérer votre calendrier, tâches et habitudes
           </p>
         </div>
 

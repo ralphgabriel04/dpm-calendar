@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Calendar,
@@ -50,9 +51,25 @@ export function Sidebar() {
       >
         {/* Header */}
         <div className="flex h-16 items-center justify-between px-4 border-b">
-          <Link href="/" className="flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">DPM Calendar</span>
+          <Link href="/" className="flex items-center">
+            {/* Light mode logo */}
+            <Image
+              src="/light-mode-logo.png"
+              alt="DPM Calendar"
+              width={160}
+              height={40}
+              className="h-10 w-auto dark:hidden"
+              priority
+            />
+            {/* Dark mode logo */}
+            <Image
+              src="/logo-dark-mode.png"
+              alt="DPM Calendar"
+              width={160}
+              height={40}
+              className="h-10 w-auto hidden dark:block"
+              priority
+            />
           </Link>
           <button
             onClick={toggleSidebar}
