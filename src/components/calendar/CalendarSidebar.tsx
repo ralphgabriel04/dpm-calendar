@@ -183,7 +183,8 @@ export function CalendarSidebar({
                       )}
                       style={{
                         backgroundColor: color,
-                        ringColor: color,
+                        // @ts-expect-error CSS custom property for ring color
+                        "--tw-ring-color": color,
                       }}
                     />
                   ))}
@@ -370,7 +371,8 @@ function CalendarItem({
               )}
               style={{
                 backgroundColor: color,
-                ringColor: color,
+                // @ts-expect-error CSS custom property for ring color
+                "--tw-ring-color": color,
               }}
             />
           ))}
