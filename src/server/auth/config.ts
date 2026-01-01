@@ -75,6 +75,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: hasGoogleOAuth ? "database" : "jwt",
   },
   providers,
+  events: {
+    // Create default calendar when a new user signs up via OAuth
+    async createUser({ user }) {
+      if (user.id) {
+        await db.calendar.create({
+          data: {
+            userId: user.id,
+            name: "Mon Calendrier",
+            color: "#3b82f6",
+            isDefault: true,
+            provider: "LOCAL",
+          },
+        });
+      }
+    },
+  },
   callbacks: {
     async session({ session, user, token }) {
       if (session.user) {

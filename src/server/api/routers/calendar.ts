@@ -3,12 +3,28 @@ import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const calendarRouter = createTRPCRouter({
-  // List all calendars for user
+  // List all calendars for user (creates default if none exist)
   list: protectedProcedure.query(async ({ ctx }) => {
-    return ctx.db.calendar.findMany({
+    let calendars = await ctx.db.calendar.findMany({
       where: { userId: ctx.session.user.id },
       orderBy: [{ isDefault: "desc" }, { name: "asc" }],
     });
+
+    // Create default calendar if user has none
+    if (calendars.length === 0) {
+      const defaultCalendar = await ctx.db.calendar.create({
+        data: {
+          userId: ctx.session.user.id,
+          name: "Mon Calendrier",
+          color: "#3b82f6",
+          isDefault: true,
+          provider: "LOCAL",
+        },
+      });
+      calendars = [defaultCalendar];
+    }
+
+    return calendars;
   }),
 
   // Get single calendar
