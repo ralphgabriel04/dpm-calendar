@@ -29,6 +29,15 @@ import type { CalendarEvent } from "@/lib/calendar/utils";
 // tRPC hooks
 import { trpc } from "@/lib/trpc";
 
+interface CalendarSection {
+  id: string;
+  name: string;
+  color?: string | null;
+  icon?: string | null;
+  position: number;
+  isExpanded: boolean;
+}
+
 interface Task {
   id: string;
   title: string;
@@ -63,6 +72,9 @@ export default function CalendarPage() {
   // Fetch calendars
   const { data: calendarsData, refetch: refetchCalendars } = trpc.calendar.list.useQuery();
 
+  // Fetch sections
+  const { data: sectionsData, refetch: refetchSections } = trpc.calendarSection.list.useQuery();
+
   // Calendar mutations
   const createCalendarMutation = trpc.calendar.create.useMutation({
     onSuccess: () => {
@@ -95,6 +107,56 @@ export default function CalendarPage() {
     },
     onError: (error) => {
       toast.error("Erreur lors de la suppression", {
+        description: error.message,
+      });
+    },
+  });
+
+  // Section mutations
+  const createSectionMutation = trpc.calendarSection.create.useMutation({
+    onSuccess: () => {
+      refetchSections();
+      toast.success("Section creee");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la creation de la section", {
+        description: error.message,
+      });
+    },
+  });
+
+  const updateSectionMutation = trpc.calendarSection.update.useMutation({
+    onSuccess: () => {
+      refetchSections();
+      toast.success("Section modifiee");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la modification", {
+        description: error.message,
+      });
+    },
+  });
+
+  const deleteSectionMutation = trpc.calendarSection.delete.useMutation({
+    onSuccess: () => {
+      refetchSections();
+      refetchCalendars();
+      toast.success("Section supprimee");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la suppression", {
+        description: error.message,
+      });
+    },
+  });
+
+  const moveCalendarMutation = trpc.calendarSection.moveCalendar.useMutation({
+    onSuccess: () => {
+      refetchCalendars();
+      toast.success("Calendrier deplace");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors du deplacement", {
         description: error.message,
       });
     },
@@ -190,12 +252,26 @@ export default function CalendarPage() {
       isVisible: visibleCalendarIds.length === 0 || visibleCalendarIds.includes(cal.id),
       provider: cal.provider,
       isDefault: cal.isDefault,
+      sectionId: cal.sectionId,
     }));
   }, [calendarsData, visibleCalendarIds]);
 
+  // Transform sections for sidebar
+  const sections: CalendarSection[] = useMemo(() => {
+    if (!sectionsData) return [];
+    return sectionsData.map((section) => ({
+      id: section.id,
+      name: section.name,
+      color: section.color,
+      icon: section.icon,
+      position: section.position,
+      isExpanded: section.isExpanded,
+    }));
+  }, [sectionsData]);
+
   // Calendar CRUD handlers
-  const handleCreateCalendar = useCallback((name: string, color: string) => {
-    createCalendarMutation.mutate({ name, color });
+  const handleCreateCalendar = useCallback((name: string, color: string, sectionId?: string) => {
+    createCalendarMutation.mutate({ name, color, sectionId });
   }, [createCalendarMutation]);
 
   const handleUpdateCalendar = useCallback((id: string, name: string, color: string) => {
@@ -205,6 +281,27 @@ export default function CalendarPage() {
   const handleDeleteCalendar = useCallback((id: string) => {
     deleteCalendarMutation.mutate({ id });
   }, [deleteCalendarMutation]);
+
+  // Section CRUD handlers
+  const handleCreateSection = useCallback((name: string, color?: string) => {
+    createSectionMutation.mutate({ name, color });
+  }, [createSectionMutation]);
+
+  const handleUpdateSection = useCallback((id: string, name: string, color?: string) => {
+    updateSectionMutation.mutate({ id, name, color });
+  }, [updateSectionMutation]);
+
+  const handleDeleteSection = useCallback((id: string) => {
+    deleteSectionMutation.mutate({ id });
+  }, [deleteSectionMutation]);
+
+  const handleMoveCalendarToSection = useCallback((calendarId: string, sectionId: string | null) => {
+    moveCalendarMutation.mutate({ calendarId, sectionId });
+  }, [moveCalendarMutation]);
+
+  const handleToggleSectionExpanded = useCallback((id: string, isExpanded: boolean) => {
+    updateSectionMutation.mutate({ id, isExpanded });
+  }, [updateSectionMutation]);
 
   // Calendar selector for event form
   const calendarOptions = useMemo(() => {
@@ -457,11 +554,17 @@ export default function CalendarPage() {
           currentDate={currentDate}
           onDateChange={setCurrentDate}
           calendars={calendars}
+          sections={sections}
           onToggleCalendar={handleToggleCalendar}
           onCreateEvent={handleCreateEvent}
           onCreateCalendar={handleCreateCalendar}
           onUpdateCalendar={handleUpdateCalendar}
           onDeleteCalendar={handleDeleteCalendar}
+          onMoveCalendarToSection={handleMoveCalendarToSection}
+          onCreateSection={handleCreateSection}
+          onUpdateSection={handleUpdateSection}
+          onDeleteSection={handleDeleteSection}
+          onToggleSectionExpanded={handleToggleSectionExpanded}
           className="w-72 hidden lg:flex flex-col border-r"
         />
 

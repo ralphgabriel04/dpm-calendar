@@ -50,6 +50,7 @@ export const calendarRouter = createTRPCRouter({
         description: z.string().optional(),
         color: z.string().default("#3B82F6"),
         isDefault: z.boolean().default(false),
+        sectionId: z.string().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -59,6 +60,16 @@ export const calendarRouter = createTRPCRouter({
           where: { userId: ctx.session.user.id, isDefault: true },
           data: { isDefault: false },
         });
+      }
+
+      // Verify section belongs to user if provided
+      if (input.sectionId) {
+        const section = await ctx.db.calendarSection.findFirst({
+          where: { id: input.sectionId, userId: ctx.session.user.id },
+        });
+        if (!section) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Section not found" });
+        }
       }
 
       return ctx.db.calendar.create({
