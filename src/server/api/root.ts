@@ -1,6 +1,7 @@
 import { createTRPCRouter } from "./trpc";
 import { eventRouter } from "./routers/event";
 import { calendarRouter } from "./routers/calendar";
+import { calendarSectionRouter } from "./routers/calendarSection";
 import { taskRouter } from "./routers/task";
 import { syncRouter } from "./routers/sync";
 import { habitRouter } from "./routers/habit";
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
   // Core
   event: eventRouter,
   calendar: calendarRouter,
+  calendarSection: calendarSectionRouter,
   task: taskRouter,
 
   // Phase 3: Sync

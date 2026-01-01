@@ -28,6 +28,7 @@ model User {
   accounts         Account[]
   sessions         Session[]
   calendars        Calendar[]
+  calendarSections CalendarSection[]
   events           Event[]
   tasks            Task[]
   rules            Rule[]
@@ -175,6 +176,7 @@ model Calendar {
   id                String   @id @default(cuid())
   userId            String
   calendarAccountId String?
+  sectionId         String?
   externalId        String?
   name              String
   description       String?
@@ -188,11 +190,30 @@ model Calendar {
 
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendarAccount CalendarAccount? @relation(fields: [calendarAccountId], references: [id], onDelete: SetNull)
+  section         CalendarSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
   events          Event[]
 
   @@unique([calendarAccountId, externalId])
   @@index([userId])
   @@index([calendarAccountId])
+  @@index([sectionId])
+}
+
+model CalendarSection {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String
+  color      String?
+  icon       String?
+  position   Int      @default(0)
+  isExpanded Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendars Calendar[]
+
+  @@index([userId])
 }
 
 // ============================================

@@ -16,7 +16,9 @@
       "Bash(git commit:*)",
       "Bash(npx vercel:*)",
       "Bash(git push:*)",
-      "Bash(printf:*)"
+      "Bash(printf:*)",
+      "Bash(xargs cat:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

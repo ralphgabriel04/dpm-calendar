@@ -18,7 +18,7 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 
 // Components
-import { TaskListView, KanbanBoard, TaskModal, type TaskFormData } from "@/components/tasks";
+import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, type TaskFormData } from "@/components/tasks";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import {
@@ -430,9 +430,10 @@ export default function TasksPage() {
             />
           </div>
         ) : (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            Vue calendrier - à implémenter
-          </div>
+          <TaskCalendarView
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
         )}
       </div>
 

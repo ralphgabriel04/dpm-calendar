@@ -4,6 +4,7 @@ import { useState, useMemo, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, Plus, List } from "lucide-react";
 import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
+import { toast } from "sonner";
 import {
   DndContext,
   DragEndEvent,
@@ -64,15 +65,39 @@ export default function CalendarPage() {
 
   // Calendar mutations
   const createCalendarMutation = trpc.calendar.create.useMutation({
-    onSuccess: () => refetchCalendars(),
+    onSuccess: () => {
+      refetchCalendars();
+      toast.success("Calendrier cree avec succes");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la creation du calendrier", {
+        description: error.message,
+      });
+    },
   });
 
   const updateCalendarMutation = trpc.calendar.update.useMutation({
-    onSuccess: () => refetchCalendars(),
+    onSuccess: () => {
+      refetchCalendars();
+      toast.success("Calendrier modifie");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la modification", {
+        description: error.message,
+      });
+    },
   });
 
   const deleteCalendarMutation = trpc.calendar.delete.useMutation({
-    onSuccess: () => refetchCalendars(),
+    onSuccess: () => {
+      refetchCalendars();
+      toast.success("Calendrier supprime");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la suppression", {
+        description: error.message,
+      });
+    },
   });
 
   // Get date range for fetching events
@@ -93,6 +118,12 @@ export default function CalendarPage() {
     onSuccess: () => {
       refetchEvents();
       closeEventModal();
+      toast.success("Evenement cree");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la creation de l'evenement", {
+        description: error.message,
+      });
     },
   });
 
@@ -102,6 +133,11 @@ export default function CalendarPage() {
       refetchEvents();
       closeEventModal();
     },
+    onError: (error) => {
+      toast.error("Erreur lors de la modification", {
+        description: error.message,
+      });
+    },
   });
 
   // Schedule task mutation (time blocking)
@@ -109,6 +145,12 @@ export default function CalendarPage() {
     onSuccess: () => {
       refetchEvents();
       refetchTasks();
+      toast.success("Tache planifiee");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la planification", {
+        description: error.message,
+      });
     },
   });
 

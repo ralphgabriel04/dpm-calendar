@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import superjson from "superjson";
+import { Toaster } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { ThemeProvider } from "@/components/theme";
 import { CommandPalette } from "@/components/command";
@@ -57,6 +58,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
         <ThemeProvider>
           {children}
           <CommandPaletteWrapper />
+          <Toaster
+            position="bottom-right"
+            richColors
+            closeButton
+            toastOptions={{
+              className: "rounded-lg",
+            }}
+          />
         </ThemeProvider>
       </QueryClientProvider>
     </trpc.Provider>
