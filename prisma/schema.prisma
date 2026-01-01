@@ -1,0 +1,971 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// AUTH MODELS (NextAuth.js)
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  timezone      String    @default("UTC")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts         Account[]
+  sessions         Session[]
+  calendars        Calendar[]
+  events           Event[]
+  tasks            Task[]
+  rules            Rule[]
+  calendarAccounts CalendarAccount[]
+  habits           Habit[]
+  goals            Goal[]
+  recaps           Recap[]
+  journalEntries   JournalEntry[]
+  energyLogs       EnergyLog[]
+  notifications    Notification[]
+  shareLinks       ShareLink[]
+  eventComments    EventComment[]
+  meetingPolls     MeetingPoll[]
+  suggestions      Suggestion[]
+  preferences      UserPreferences?
+  notificationPrefs NotificationPreference?
+  dailyStats       DailyStats[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// CALENDAR ACCOUNT (External Connections)
+// ============================================
+
+model CalendarAccount {
+  id            String    @id @default(cuid())
+  userId        String
+  provider      Provider
+  email         String
+  accessToken   String    @db.Text
+  refreshToken  String?   @db.Text
+  expiresAt     DateTime?
+  syncToken     String?
+  webhookId     String?
+  webhookExpiry DateTime?
+  isActive      Boolean   @default(true)
+  isPrimary     Boolean   @default(false)
+  syncDirection SyncDirection @default(FULL)
+  syncInterval  Int       @default(15) // minutes
+  lastSyncAt    DateTime?
+  lastError     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendars            Calendar[]
+  syncConflicts        SyncConflict[]
+  webhookSubscriptions WebhookSubscription[]
+
+  @@unique([userId, provider, email])
+  @@index([userId])
+}
+
+model SyncConflict {
+  id                String   @id @default(cuid())
+  calendarAccountId String
+  eventId           String?
+  localData         Json
+  remoteData        Json
+  conflictType      ConflictType
+  resolution        ConflictResolution?
+  resolvedAt        DateTime?
+  createdAt         DateTime @default(now())
+
+  calendarAccount CalendarAccount @relation(fields: [calendarAccountId], references: [id], onDelete: Cascade)
+
+  @@index([calendarAccountId])
+}
+
+model WebhookSubscription {
+  id                String    @id @default(cuid())
+  calendarAccountId String
+  provider          Provider
+  resourceId        String
+  channelId         String    @unique
+  expiration        DateTime
+  createdAt         DateTime  @default(now())
+
+  calendarAccount CalendarAccount @relation(fields: [calendarAccountId], references: [id], onDelete: Cascade)
+
+  @@index([calendarAccountId])
+}
+
+enum ConflictType {
+  UPDATE_CONFLICT
+  DELETE_CONFLICT
+  CREATE_CONFLICT
+}
+
+enum ConflictResolution {
+  USE_LOCAL
+  USE_REMOTE
+  MERGE
+  SKIP
+}
+
+enum Provider {
+  GOOGLE
+  MICROSOFT
+  LOCAL
+}
+
+// ============================================
+// CALENDAR
+// ============================================
+
+model Calendar {
+  id                String   @id @default(cuid())
+  userId            String
+  calendarAccountId String?
+  externalId        String?
+  name              String
+  description       String?
+  color             String   @default("#3B82F6")
+  isDefault         Boolean  @default(false)
+  isVisible         Boolean  @default(true)
+  canEdit           Boolean  @default(true)
+  provider          Provider @default(LOCAL)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarAccount CalendarAccount? @relation(fields: [calendarAccountId], references: [id], onDelete: SetNull)
+  events          Event[]
+
+  @@unique([calendarAccountId, externalId])
+  @@index([userId])
+  @@index([calendarAccountId])
+}
+
+// ============================================
+// EVENT (Time-Oriented Model)
+// ============================================
+
+model Event {
+  id          String   @id @default(cuid())
+  userId      String
+  calendarId  String
+  externalId  String?
+
+  // Core fields
+  title       String
+  description String?  @db.Text
+  location    String?
+
+  // Time-oriented model
+  startAt     DateTime
+  endAt       DateTime
+  duration    Int      // Duration in minutes
+  isAllDay    Boolean  @default(false)
+  timezone    String   @default("UTC")
+
+  // Actual time tracking (for analytics)
+  actualStartAt DateTime?
+  actualEndAt   DateTime?
+
+  // Recurrence
+  rrule         String?
+  recurrenceId  String?
+  parentEventId String?
+  excludeDates  DateTime[]
+
+  // Sync metadata
+  provider   Provider   @default(LOCAL)
+  syncStatus SyncStatus @default(SYNCED)
+  lastSyncAt DateTime?
+  etag       String?
+
+  // UI/UX
+  color           String?
+  reminderMinutes Int[]   @default([15])
+
+  // Status
+  status     EventStatus @default(CONFIRMED)
+  visibility Visibility  @default(DEFAULT)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendar    Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  parentEvent Event?   @relation("RecurringEvents", fields: [parentEventId], references: [id], onDelete: Cascade)
+  childEvents Event[]  @relation("RecurringEvents")
+  tasks       Task[]   @relation("EventTasks")
+  attendees   Attendee[]
+  comments    EventComment[]
+
+  @@unique([calendarId, externalId])
+  @@index([userId])
+  @@index([calendarId])
+  @@index([startAt, endAt])
+  @@index([parentEventId])
+}
+
+model Attendee {
+  id          String         @id @default(cuid())
+  eventId     String
+  email       String
+  name        String?
+  status      AttendeeStatus @default(PENDING)
+  isOrganizer Boolean        @default(false)
+  isOptional  Boolean        @default(false)
+  comment     String?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, email])
+  @@index([eventId])
+}
+
+enum AttendeeStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  TENTATIVE
+}
+
+enum EventStatus {
+  CONFIRMED
+  TENTATIVE
+  CANCELLED
+}
+
+enum Visibility {
+  DEFAULT
+  PUBLIC
+  PRIVATE
+  CONFIDENTIAL
+}
+
+enum SyncStatus {
+  SYNCED
+  PENDING_PUSH
+  PENDING_PULL
+  CONFLICT
+  ERROR
+}
+
+// ============================================
+// TASK
+// ============================================
+
+model Task {
+  id          String   @id @default(cuid())
+  userId      String
+
+  // Core fields
+  title       String
+  description String?  @db.Text
+  notes       String?  @db.Text
+  url         String?
+
+  // Time-oriented model
+  dueAt           DateTime?
+  plannedStartAt  DateTime?
+  plannedDuration Int?       // in minutes
+  actualDuration  Int?       // in minutes
+
+  // Task properties
+  priority Priority   @default(MEDIUM)
+  status   TaskStatus @default(TODO)
+  tags     String[]   @default([])
+
+  // Energy/Effort
+  estimatedEnergy EnergyLevel?
+  actualEnergy    EnergyLevel?
+
+  // Hierarchy
+  parentTaskId String?
+  position     Int     @default(0)
+
+  // Recurrence
+  isRecurring Boolean @default(false)
+  rrule       String?
+
+  // Relationships
+  linkedEventId String?
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  completedAt DateTime?
+
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentTask     Task?           @relation("Subtasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subtasks       Task[]          @relation("Subtasks")
+  linkedEvent    Event?          @relation("EventTasks", fields: [linkedEventId], references: [id], onDelete: SetNull)
+  checklistItems ChecklistItem[]
+  timeBlocks     TimeBlock[]
+
+  @@index([userId])
+  @@index([parentTaskId])
+  @@index([status])
+  @@index([dueAt])
+}
+
+// ============================================
+// CHECKLIST ITEM (Task sub-items)
+// ============================================
+
+model ChecklistItem {
+  id          String  @id @default(cuid())
+  taskId      String
+  title       String
+  isCompleted Boolean @default(false)
+  position    Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+}
+
+// ============================================
+// TIME BLOCK (Task scheduling)
+// ============================================
+
+model TimeBlock {
+  id       String   @id @default(cuid())
+  taskId   String
+  eventId  String?
+  startAt  DateTime
+  endAt    DateTime
+  duration Int      // in minutes
+
+  status TimeBlockStatus @default(SCHEDULED)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([startAt, endAt])
+}
+
+enum TimeBlockStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum EnergyLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+// ============================================
+// RULES ENGINE
+// ============================================
+
+model Rule {
+  id          String @id @default(cuid())
+  userId      String
+
+  name        String
+  description String?
+  isActive    Boolean @default(true)
+  priority    Int     @default(0)
+
+  // Rule type and schedule
+  ruleType    RuleType    @default(AUTO_SCHEDULE)
+  schedule    String?     // Cron expression for time-based rules
+  dayTypes    String[]    @default([]) // WEEKDAY, WEEKEND, etc.
+
+  // JSON-based rule definition
+  conditions Json
+  actions    Json
+
+  // Metadata
+  triggerType     TriggerType
+  lastTriggeredAt DateTime?
+  triggerCount    Int         @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  executions RuleExecution[]
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+enum RuleType {
+  PROTECTION      // Protect time blocks
+  AUTO_SCHEDULE   // Auto-schedule tasks/habits
+  BREAK           // Insert breaks
+  CONDITIONAL     // If-then rules
+}
+
+enum TriggerType {
+  EVENT_CREATED
+  EVENT_UPDATED
+  TIME_BASED
+  MANUAL
+}
+
+// ============================================
+// SYNC LOG
+// ============================================
+
+model SyncLog {
+  id                String        @id @default(cuid())
+  calendarAccountId String
+  direction         SyncDirection
+  status            SyncLogStatus
+  itemsProcessed    Int           @default(0)
+  itemsFailed       Int           @default(0)
+  errorMessage      String?
+  details           Json?
+  startedAt         DateTime      @default(now())
+  completedAt       DateTime?
+
+  @@index([calendarAccountId])
+  @@index([startedAt])
+}
+
+enum SyncDirection {
+  PULL
+  PUSH
+  FULL
+}
+
+enum SyncLogStatus {
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  PARTIAL
+}
+
+// ============================================
+// PHASE 4: RULES ENGINE & AI
+// ============================================
+
+model RuleExecution {
+  id          String   @id @default(cuid())
+  ruleId      String
+  triggeredBy String?
+  result      Json?
+  success     Boolean
+  message     String?
+  executedAt  DateTime @default(now())
+
+  rule Rule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@index([ruleId])
+  @@index([executedAt])
+}
+
+model Suggestion {
+  id          String           @id @default(cuid())
+  userId      String
+  type        SuggestionType
+  title       String
+  description String?
+  actionData  Json?
+  confidence  Float            @default(0.5)
+  status      SuggestionStatus @default(PENDING)
+  dismissedAt DateTime?
+  acceptedAt  DateTime?
+  createdAt   DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+enum SuggestionType {
+  RESCHEDULE
+  AUTO_SCHEDULE
+  BREAK_REMINDER
+  HABIT_REMINDER
+  CONFLICT_RESOLUTION
+  OPTIMIZATION
+}
+
+enum SuggestionStatus {
+  PENDING
+  ACCEPTED
+  DISMISSED
+  EXPIRED
+}
+
+// ============================================
+// PHASE 5: HABITS & GOALS
+// ============================================
+
+model Habit {
+  id            String      @id @default(cuid())
+  userId        String
+  name          String
+  description   String?
+  color         String      @default("#3B82F6")
+  icon          String?
+  habitType     HabitType   @default(FLEXIBLE)
+  frequency     HabitFrequency @default(DAILY)
+  targetCount   Int         @default(1)
+  duration      Int?        // in minutes
+  preferredTime String?     // HH:mm format
+  preferredDays Int[]       @default([]) // 0-6 for Sun-Sat
+  isProtected   Boolean     @default(false)
+  isActive      Boolean     @default(true)
+  currentStreak Int         @default(0)
+  longestStreak Int         @default(0)
+  goalId        String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  goal       Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  logs       HabitLog[]
+  timeBlocks HabitBlock[]
+
+  @@index([userId])
+  @@index([goalId])
+}
+
+model HabitLog {
+  id        String    @id @default(cuid())
+  habitId   String
+  date      DateTime  @db.Date
+  completed Boolean   @default(false)
+  count     Int       @default(0)
+  duration  Int?      // actual duration in minutes
+  notes     String?
+  mood      Int?      // 1-5 scale
+  createdAt DateTime  @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+  @@index([habitId])
+  @@index([date])
+}
+
+model HabitBlock {
+  id       String   @id @default(cuid())
+  habitId  String
+  eventId  String?
+  startAt  DateTime
+  endAt    DateTime
+  createdAt DateTime @default(now())
+
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@index([habitId])
+  @@index([startAt, endAt])
+}
+
+model Goal {
+  id           String     @id @default(cuid())
+  userId       String
+  title        String
+  description  String?
+  category     String?
+  targetType   GoalTargetType @default(CUMULATIVE)
+  targetValue  Float
+  currentValue Float      @default(0)
+  unit         String?
+  startDate    DateTime   @default(now())
+  endDate      DateTime?
+  status       GoalStatus @default(ACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  habits        Habit[]
+  progressLogs  GoalProgress[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model GoalProgress {
+  id        String   @id @default(cuid())
+  goalId    String
+  date      DateTime @db.Date
+  value     Float
+  notes     String?
+  createdAt DateTime @default(now())
+
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade)
+
+  @@index([goalId])
+  @@index([date])
+}
+
+model DailyStats {
+  id                String   @id @default(cuid())
+  userId            String
+  date              DateTime @db.Date
+  totalScheduledMins Int     @default(0)
+  totalActualMins   Int      @default(0)
+  focusTimeMins     Int      @default(0)
+  meetingTimeMins   Int      @default(0)
+  breakTimeMins     Int      @default(0)
+  tasksPlanned      Int      @default(0)
+  tasksCompleted    Int      @default(0)
+  habitsCompleted   Int      @default(0)
+  overloadScore     Float?
+  balanceScore      Float?
+  createdAt         DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@index([date])
+}
+
+enum HabitType {
+  FIXED      // Same time every day
+  FLEXIBLE   // Anytime during the day
+  CONDITIONAL // Based on triggers
+}
+
+enum HabitFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  CUSTOM
+}
+
+enum GoalTargetType {
+  CUMULATIVE  // Sum over time
+  STREAK      // Consecutive days
+  COMPLETION  // One-time achievement
+}
+
+enum GoalStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+  ABANDONED
+}
+
+// ============================================
+// PHASE 6: ANALYTICS & WELL-BEING
+// ============================================
+
+model Recap {
+  id           String    @id @default(cuid())
+  userId       String
+  recapType    RecapType
+  periodStart  DateTime
+  periodEnd    DateTime
+  summary      Json
+  highlights   String[]  @default([])
+  improvements String[]  @default([])
+  insights     String[]  @default([])
+  userNotes    String?
+  rating       Int?      // 1-5 scale
+  createdAt    DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recapType, periodStart])
+  @@index([userId])
+  @@index([periodStart])
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  prompt    String?
+  content   String   @db.Text
+  mood      Int?     // 1-5 scale
+  tags      String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([date])
+}
+
+model EnergyLog {
+  id          String   @id @default(cuid())
+  userId      String
+  timestamp   DateTime @default(now())
+  energyLevel Int      // 1-5 scale
+  mood        Int?     // 1-5 scale
+  stress      Int?     // 1-5 scale
+  focus       Int?     // 1-5 scale
+  notes       String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([timestamp])
+}
+
+model NotificationPreference {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  enablePush      Boolean  @default(true)
+  enableEmail     Boolean  @default(false)
+  quietHoursStart String?  // HH:mm format
+  quietHoursEnd   String?  // HH:mm format
+  typeSettings    Json?    // Per-notification-type settings
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id           String             @id @default(cuid())
+  userId       String
+  type         NotificationType
+  title        String
+  body         String?
+  data         Json?
+  priority     NotificationPriority @default(NORMAL)
+  status       NotificationStatus @default(PENDING)
+  scheduledFor DateTime?
+  sentAt       DateTime?
+  readAt       DateTime?
+  createdAt    DateTime           @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+enum RecapType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum NotificationType {
+  EVENT_REMINDER
+  TASK_DUE
+  HABIT_REMINDER
+  BREAK_REMINDER
+  DAILY_RECAP
+  SUGGESTION
+  SYNC_ERROR
+  SYSTEM
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  READ
+  DISMISSED
+  FAILED
+}
+
+// ============================================
+// PHASE 7: UX & COLLABORATION
+// ============================================
+
+model UserPreferences {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  theme            String   @default("system")
+  accentColor      String   @default("#3B82F6")
+  language         String   @default("fr")
+  dateFormat       String   @default("dd/MM/yyyy")
+  timeFormat       String   @default("24h")
+  firstDayOfWeek   Int      @default(1) // 0=Sunday, 1=Monday
+  compactMode      Boolean  @default(false)
+  showWeekNumbers  Boolean  @default(false)
+  defaultCalendarId String?
+  workingHoursStart String  @default("09:00")
+  workingHoursEnd   String  @default("18:00")
+  customShortcuts  Json?
+  dashboardWidgets Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ShareLink {
+  id           String         @id @default(cuid())
+  userId       String
+  token        String         @unique @default(cuid())
+  type         ShareType
+  permission   SharePermission @default(VIEW)
+  resourceType String
+  resourceId   String?
+  expiresAt    DateTime?
+  accessCount  Int            @default(0)
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+}
+
+model EventComment {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId])
+  @@index([userId])
+}
+
+model MeetingPoll {
+  id             String    @id @default(cuid())
+  userId         String
+  title          String
+  description    String?
+  proposedSlots  Json      // Array of { startAt, endAt }
+  duration       Int       // in minutes
+  deadline       DateTime?
+  finalSlot      Json?     // Selected slot
+  token          String    @unique @default(cuid())
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  responses MeetingPollResponse[]
+
+  @@index([userId])
+  @@index([token])
+}
+
+model MeetingPollResponse {
+  id        String   @id @default(cuid())
+  pollId    String
+  email     String
+  name      String?
+  votes     Json     // Map of slotIndex -> availability
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  poll MeetingPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, email])
+  @@index([pollId])
+}
+
+model PublicHoliday {
+  id       String   @id @default(cuid())
+  country  String
+  region   String?
+  name     String
+  date     DateTime @db.Date
+  type     String?  // national, regional, observance
+
+  @@unique([country, date, name])
+  @@index([country])
+  @@index([date])
+}
+
+enum ShareType {
+  CALENDAR
+  AVAILABILITY
+  EVENT
+  TASK_LIST
+}
+
+enum SharePermission {
+  VIEW
+  EDIT
+  ADMIN
+}

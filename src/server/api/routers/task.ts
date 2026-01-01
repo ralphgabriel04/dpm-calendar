@@ -1,0 +1,309 @@
+import { z } from "zod";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { TRPCError } from "@trpc/server";
+
+const taskCreateSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+  notes: z.string().optional(),
+  url: z.string().url().optional(),
+  dueAt: z.coerce.date().optional(),
+  plannedStartAt: z.coerce.date().optional(),
+  plannedDuration: z.number().optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
+  parentTaskId: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  estimatedEnergy: z.enum(["LOW", "MEDIUM", "HIGH"]).optional(),
+});
+
+export const taskRouter = createTRPCRouter({
+  // List tasks with filters
+  list: protectedProcedure
+    .input(
+      z.object({
+        status: z
+          .array(z.enum(["TODO", "IN_PROGRESS", "DONE", "CANCELLED"]))
+          .optional(),
+        priority: z
+          .array(z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]))
+          .optional(),
+        parentTaskId: z.string().nullable().optional(),
+        dueBefore: z.coerce.date().optional(),
+        dueAfter: z.coerce.date().optional(),
+        search: z.string().optional(),
+        includeCompleted: z.boolean().optional(),
+        tags: z.array(z.string()).optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      // Build where clause
+      const whereClause: Record<string, unknown> = {
+        userId: ctx.session.user.id,
+      };
+
+      // Status filter
+      if (input.status && input.status.length > 0) {
+        whereClause.status = { in: input.status };
+      } else if (!input.includeCompleted) {
+        whereClause.status = { not: "DONE" };
+      }
+
+      // Priority filter
+      if (input.priority && input.priority.length > 0) {
+        whereClause.priority = { in: input.priority };
+      }
+
+      // Parent task filter
+      if (input.parentTaskId !== undefined) {
+        whereClause.parentTaskId = input.parentTaskId;
+      }
+
+      // Date filters
+      if (input.dueBefore) {
+        whereClause.dueAt = { ...((whereClause.dueAt as object) || {}), lte: input.dueBefore };
+      }
+      if (input.dueAfter) {
+        whereClause.dueAt = { ...((whereClause.dueAt as object) || {}), gte: input.dueAfter };
+      }
+
+      // Search filter
+      if (input.search) {
+        whereClause.OR = [
+          { title: { contains: input.search, mode: "insensitive" } },
+          { description: { contains: input.search, mode: "insensitive" } },
+        ];
+      }
+
+      // Tags filter
+      if (input.tags && input.tags.length > 0) {
+        whereClause.tags = { hasSome: input.tags };
+      }
+
+      return ctx.db.task.findMany({
+        where: whereClause,
+        include: {
+          subtasks: {
+            orderBy: { position: "asc" },
+          },
+          linkedEvent: true,
+          checklistItems: {
+            orderBy: { position: "asc" },
+          },
+        },
+        orderBy: [{ priority: "desc" }, { dueAt: "asc" }, { position: "asc" }],
+      });
+    }),
+
+  // Get single task
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+        include: {
+          subtasks: {
+            orderBy: { position: "asc" },
+          },
+          linkedEvent: true,
+          parentTask: true,
+        },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return task;
+    }),
+
+  // Create task
+  create: protectedProcedure
+    .input(taskCreateSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Get max position for ordering
+      const maxPosition = await ctx.db.task.aggregate({
+        where: {
+          userId: ctx.session.user.id,
+          parentTaskId: input.parentTaskId || null,
+        },
+        _max: { position: true },
+      });
+
+      return ctx.db.task.create({
+        data: {
+          ...input,
+          userId: ctx.session.user.id,
+          position: (maxPosition._max.position || 0) + 1,
+        },
+      });
+    }),
+
+  // Update task
+  update: protectedProcedure
+    .input(
+      taskCreateSchema.partial().extend({
+        id: z.string(),
+        status: z.enum(["TODO", "IN_PROGRESS", "DONE", "CANCELLED"]).optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, ...data } = input;
+
+      const task = await ctx.db.task.findFirst({
+        where: { id, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Handle status change to DONE
+      const updateData: Record<string, unknown> = { ...data };
+      if (data.status) {
+        updateData.completedAt = data.status === "DONE" ? new Date() : null;
+      }
+
+      return ctx.db.task.update({
+        where: { id },
+        data: updateData,
+      });
+    }),
+
+  // Delete task
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return ctx.db.task.delete({
+        where: { id: input.id },
+      });
+    }),
+
+  // Toggle task status (quick complete/uncomplete)
+  toggle: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const newStatus = task.status === "DONE" ? "TODO" : "DONE";
+
+      return ctx.db.task.update({
+        where: { id: input.id },
+        data: {
+          status: newStatus,
+          completedAt: newStatus === "DONE" ? new Date() : null,
+        },
+      });
+    }),
+
+  // Convert task to event (time blocking)
+  convertToEvent: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        calendarId: z.string(),
+        startAt: z.coerce.date(),
+        endAt: z.coerce.date(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.taskId, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const calendar = await ctx.db.calendar.findFirst({
+        where: { id: input.calendarId, userId: ctx.session.user.id },
+      });
+
+      if (!calendar) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Calendar not found" });
+      }
+
+      const duration = Math.round(
+        (input.endAt.getTime() - input.startAt.getTime()) / 60000
+      );
+
+      // Create event
+      const event = await ctx.db.event.create({
+        data: {
+          userId: ctx.session.user.id,
+          calendarId: input.calendarId,
+          title: task.title,
+          description: task.description,
+          startAt: input.startAt,
+          endAt: input.endAt,
+          duration,
+          provider: "LOCAL",
+        },
+      });
+
+      // Link task to event
+      await ctx.db.task.update({
+        where: { id: input.taskId },
+        data: {
+          linkedEventId: event.id,
+          plannedStartAt: input.startAt,
+          plannedDuration: duration,
+        },
+      });
+
+      return event;
+    }),
+
+  // Reorder tasks
+  reorder: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        newPosition: z.number(),
+        newParentId: z.string().nullable().optional(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.$transaction(async (tx) => {
+        const task = await tx.task.findFirst({
+          where: { id: input.taskId, userId: ctx.session.user.id },
+        });
+
+        if (!task) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+
+        // Shift other tasks
+        await tx.task.updateMany({
+          where: {
+            userId: ctx.session.user.id,
+            parentTaskId: input.newParentId ?? null,
+            position: { gte: input.newPosition },
+          },
+          data: { position: { increment: 1 } },
+        });
+
+        // Update task position
+        return tx.task.update({
+          where: { id: input.taskId },
+          data: {
+            position: input.newPosition,
+            parentTaskId: input.newParentId,
+          },
+        });
+      });
+    }),
+});
