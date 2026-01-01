@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight, Plus, List } from "lucide-react";
 import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   DndContext,
   DragEndEvent,
+  DragMoveEvent,
   DragOverlay,
   DragStartEvent,
   MouseSensor,
@@ -54,6 +55,9 @@ export default function CalendarPage() {
 
   // State for drag overlay
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
+
+  // Track pointer position during drag for precise hour calculation
+  const lastPointerPositionRef = useRef<{ x: number; y: number } | null>(null);
 
   // Fetch calendars
   const { data: calendarsData } = trpc.calendar.list.useQuery();
@@ -257,21 +261,47 @@ export default function CalendarPage() {
     }
   }, []);
 
+  // Track pointer position during drag
+  const handleDragMove = useCallback((event: DragMoveEvent) => {
+    // Store the current pointer position from the activator event
+    const activatorEvent = event.activatorEvent as PointerEvent | MouseEvent | TouchEvent;
+    if (activatorEvent) {
+      if ('clientX' in activatorEvent) {
+        lastPointerPositionRef.current = {
+          x: activatorEvent.clientX + (event.delta?.x || 0),
+          y: activatorEvent.clientY + (event.delta?.y || 0),
+        };
+      } else if ('touches' in activatorEvent && activatorEvent.touches[0]) {
+        lastPointerPositionRef.current = {
+          x: activatorEvent.touches[0].clientX + (event.delta?.x || 0),
+          y: activatorEvent.touches[0].clientY + (event.delta?.y || 0),
+        };
+      }
+    }
+  }, []);
+
   // Global drag end handler
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     setDraggedTask(null);
 
-    if (!over) return;
+    if (!over) {
+      lastPointerPositionRef.current = null;
+      return;
+    }
 
     const dragData = active.data.current;
     const dropData = over.data.current as {
       type: string;
       date: Date;
-      hour?: number;
+      startHour?: number;
+      hourHeight?: number;
     } | undefined;
 
-    if (!dropData) return;
+    if (!dropData) {
+      lastPointerPositionRef.current = null;
+      return;
+    }
 
     // Handle task drop on calendar
     if (dragData?.type === "task" && dropData.type === "dayColumn") {
@@ -279,15 +309,31 @@ export default function CalendarPage() {
       const duration = task.plannedDuration || 60;
 
       const newStart = new Date(dropData.date);
-      if (dropData.hour !== undefined) {
-        newStart.setHours(dropData.hour, 0, 0, 0);
+
+      // Calculate the hour from pointer position if available
+      if (lastPointerPositionRef.current && over.rect && dropData.hourHeight) {
+        const startHour = dropData.startHour || 0;
+        const relativeY = lastPointerPositionRef.current.y - over.rect.top;
+        const totalMinutes = (relativeY / dropData.hourHeight) * 60 + startHour * 60;
+        const roundedMinutes = Math.round(totalMinutes / 15) * 15; // Round to 15-min intervals
+
+        const hours = Math.floor(roundedMinutes / 60);
+        const minutes = roundedMinutes % 60;
+
+        // Clamp hours to valid range
+        const clampedHours = Math.max(0, Math.min(23, hours));
+        const clampedMinutes = clampedHours === 23 ? Math.min(45, minutes) : minutes;
+
+        newStart.setHours(clampedHours, clampedMinutes, 0, 0);
       } else {
         newStart.setHours(9, 0, 0, 0); // Default to 9 AM
       }
-      const newEnd = addMinutes(newStart, duration);
 
+      const newEnd = addMinutes(newStart, duration);
       handleTaskDrop(task, newStart, newEnd);
     }
+
+    lastPointerPositionRef.current = null;
   }, [handleTaskDrop]);
 
   // Render the appropriate view
@@ -333,6 +379,7 @@ export default function CalendarPage() {
       sensors={sensors}
       collisionDetection={pointerWithin}
       onDragStart={handleDragStart}
+      onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full">

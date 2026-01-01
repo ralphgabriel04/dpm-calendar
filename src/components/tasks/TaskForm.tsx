@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, addDays } from "date-fns";
+import { format, addDays, setHours, setMinutes } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { DatePicker } from "@/components/ui/DatePicker";
+import { TimePicker } from "@/components/ui/TimePicker";
 import {
   Select,
   SelectContent,
@@ -16,6 +17,7 @@ import {
 import { Switch } from "@/components/ui/Switch";
 import {
   Calendar,
+  CalendarClock,
   Clock,
   Flag,
   AlignLeft,
@@ -225,6 +227,61 @@ export function TaskForm({
           placeholder="Date d'échéance"
           className="flex-1"
         />
+      </div>
+
+      {/* Planned date/time */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-3">
+          <CalendarClock className="h-4 w-4 text-muted-foreground" />
+          <span className="text-sm font-medium">Planifier</span>
+        </div>
+        <div className="ml-7 flex flex-wrap gap-2">
+          <DatePicker
+            value={formData.plannedStartAt}
+            onChange={(date) => {
+              // Preserve time if already set
+              if (formData.plannedStartAt) {
+                const newDate = new Date(date);
+                newDate.setHours(
+                  formData.plannedStartAt.getHours(),
+                  formData.plannedStartAt.getMinutes()
+                );
+                updateField("plannedStartAt", newDate);
+              } else {
+                // Default to 9:00 AM
+                const withTime = setMinutes(setHours(date, 9), 0);
+                updateField("plannedStartAt", withTime);
+              }
+            }}
+            placeholder="Date"
+            className="flex-1 min-w-[140px]"
+          />
+          <TimePicker
+            value={formData.plannedStartAt}
+            onChange={(time) => {
+              if (formData.plannedStartAt) {
+                const newDate = new Date(formData.plannedStartAt);
+                newDate.setHours(time.getHours(), time.getMinutes());
+                updateField("plannedStartAt", newDate);
+              } else {
+                updateField("plannedStartAt", time);
+              }
+            }}
+            placeholder="Heure"
+            className="w-[120px]"
+          />
+          {formData.plannedStartAt && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => updateField("plannedStartAt", undefined)}
+              className="h-10 px-2"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Duration */}
