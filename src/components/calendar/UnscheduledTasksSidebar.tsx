@@ -1,53 +1,38 @@
 "use client";
 
-import { ListTodo, ChevronRight, ChevronLeft } from "lucide-react";
-import { useState } from "react";
+import { ListTodo } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DraggableTaskMini } from "./DraggableTaskMini";
 import { trpc } from "@/lib/trpc";
 
 interface UnscheduledTasksSidebarProps {
   className?: string;
+  isCollapsed?: boolean;
 }
 
 export function UnscheduledTasksSidebar({
   className,
+  isCollapsed = false,
 }: UnscheduledTasksSidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   const { data: tasks, isLoading } = trpc.task.getUnscheduled.useQuery();
 
   if (isCollapsed) {
     return (
       <div
         className={cn(
-          "w-10 border-l bg-card flex flex-col items-center py-4 cursor-pointer hover:bg-accent/50 transition-colors",
+          "border-l bg-card flex flex-col items-center py-4",
           className
         )}
-        onClick={() => setIsCollapsed(false)}
-      >
-        <ChevronLeft className="h-4 w-4 mb-2" />
-        <div className="writing-mode-vertical text-sm font-medium text-muted-foreground">
-          Taches ({tasks?.length || 0})
-        </div>
-      </div>
+      />
     );
   }
 
   return (
-    <div className={cn("w-64 border-l bg-card flex flex-col", className)}>
+    <div className={cn("border-l bg-card flex flex-col", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between p-3 border-b">
-        <div className="flex items-center gap-2">
-          <ListTodo className="h-4 w-4 text-muted-foreground" />
-          <h3 className="font-semibold text-sm">Taches a planifier</h3>
-        </div>
-        <button
-          onClick={() => setIsCollapsed(true)}
-          className="p-1 hover:bg-accent rounded"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+      <div className="flex items-center gap-2 p-3 border-b">
+        <ListTodo className="h-4 w-4 text-muted-foreground" />
+        <h3 className="font-semibold text-sm">Taches a planifier</h3>
       </div>
 
       {/* Task count */}

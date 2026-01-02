@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { addDays, addWeeks } from "date-fns";
 import {
   Plus,
   Filter,
@@ -18,7 +19,7 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 
 // Components
-import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, type TaskFormData } from "@/components/tasks";
+import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, type TaskFormData } from "@/components/tasks";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import {
@@ -53,6 +54,18 @@ export default function TasksPage() {
   const [editingTask, setEditingTask] = useState<{
     id: string;
     data: Partial<TaskFormData>;
+  } | null>(null);
+
+  // Task detail modal state (for Focus/Pomodoro mode)
+  const [detailTask, setDetailTask] = useState<{
+    id: string;
+    title: string;
+    description?: string;
+    channel?: string;
+    plannedDuration?: number;
+    actualDuration?: number;
+    dueAt?: Date;
+    startAt?: Date;
   } | null>(null);
 
   // Fetch tasks
@@ -120,6 +133,19 @@ export default function TasksPage() {
   };
 
   const handleTaskClick = (task: (typeof tasks)[0]) => {
+    // Open detail modal for focus/pomodoro mode
+    setDetailTask({
+      id: task.id,
+      title: task.title,
+      description: task.description || undefined,
+      channel: task.tags?.[0] || "work",
+      plannedDuration: task.plannedDuration || undefined,
+      dueAt: task.dueAt || undefined,
+      startAt: task.plannedStartAt || undefined,
+    });
+  };
+
+  const handleTaskEdit = (task: (typeof tasks)[0]) => {
     setEditingTask({
       id: task.id,
       data: {
@@ -134,6 +160,36 @@ export default function TasksPage() {
       },
     });
     openTaskModal();
+  };
+
+  const handleTaskSnooze = (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      updateTaskMutation.mutate({
+        id: taskId,
+        dueAt: addDays(task.dueAt || new Date(), 1),
+      });
+    }
+    setDetailTask(null);
+  };
+
+  const handleTaskMoveToNextWeek = (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (task) {
+      updateTaskMutation.mutate({
+        id: taskId,
+        dueAt: addWeeks(task.dueAt || new Date(), 1),
+      });
+    }
+    setDetailTask(null);
+  };
+
+  const handleTaskMoveToBacklog = (taskId: string) => {
+    updateTaskMutation.mutate({
+      id: taskId,
+      dueAt: null,
+    });
+    setDetailTask(null);
   };
 
   const handleTaskStatusChange = (taskId: string, newStatus: string) => {
@@ -452,6 +508,24 @@ export default function TasksPage() {
         isLoading={createTaskMutation.isPending || updateTaskMutation.isPending}
         mode={editingTask ? "edit" : "create"}
       />
+
+      {/* Task Detail Modal (Focus/Pomodoro mode) */}
+      {detailTask && (
+        <TaskDetailModal
+          isOpen={!!detailTask}
+          onClose={() => setDetailTask(null)}
+          task={detailTask}
+          onSnooze={handleTaskSnooze}
+          onMoveToNextWeek={handleTaskMoveToNextWeek}
+          onMoveToBacklog={handleTaskMoveToBacklog}
+          onUpdate={(taskId, data) => {
+            updateTaskMutation.mutate({
+              id: taskId,
+              ...data,
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

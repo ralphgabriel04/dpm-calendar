@@ -189,43 +189,15 @@ export function CalendarSidebar({
   // Sort sections by position
   const sortedSections = [...sections].sort((a, b) => a.position - b.position);
 
-  // If collapsed, show only the expand button
+  // If collapsed, show nothing (controlled by parent width)
   if (isCollapsed) {
     return (
-      <div className={cn("flex flex-col h-full bg-card/50 backdrop-blur-sm items-center py-4", className)}>
-        {onToggleCollapse && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleCollapse}
-            className="rounded-full h-8 w-8"
-            title="Ouvrir le panneau"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
+      <div className={cn("flex flex-col h-full bg-card/50 backdrop-blur-sm items-center py-4", className)} />
     );
   }
 
   return (
     <div className={cn("flex flex-col h-full bg-card/50 backdrop-blur-sm", className)}>
-      {/* Header with collapse button */}
-      <div className="flex items-center justify-between p-2 border-b border-border/50">
-        <div className="flex-1" />
-        {onToggleCollapse && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleCollapse}
-            className="rounded-full h-8 w-8"
-            title="Fermer le panneau"
-          >
-            <PanelLeftClose className="h-4 w-4" />
-          </Button>
-        )}
-      </div>
-
       {/* Create event button */}
       {onCreateEvent && (
         <div className="p-4">

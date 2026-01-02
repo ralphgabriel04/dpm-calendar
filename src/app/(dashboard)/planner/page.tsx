@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import {
   ChevronLeft,
   ChevronRight,
@@ -16,6 +17,7 @@ import {
   Clock,
   Check,
   Play,
+  Sparkles,
 } from "lucide-react";
 import { format, addDays, subDays, startOfWeek, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -611,6 +613,18 @@ export default function PlannerPage() {
                   Semaine
                 </button>
               </div>
+
+              {/* Plan Tomorrow button */}
+              <Link href="/daily-planning" className="hidden md:flex">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1"
+                >
+                  <Sparkles className="h-4 w-4 text-amber-500" />
+                  Plan Tomorrow
+                </Button>
+              </Link>
 
               {/* Focus mode toggle */}
               <Button

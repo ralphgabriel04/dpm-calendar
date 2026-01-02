@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef } from "react";
-import { ChevronLeft, ChevronRight, Plus, List } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, List, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight } from "lucide-react";
 import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -20,6 +20,7 @@ import {
 import { useCalendarStore } from "@/stores/calendar.store";
 import { useUIStore } from "@/stores/ui.store";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 // Calendar components
 import { WeekView, DayView, MonthView, AgendaView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
@@ -65,6 +66,7 @@ export default function CalendarPage() {
 
   // State for sidebar collapse
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isTasksSidebarCollapsed, setIsTasksSidebarCollapsed] = useState(false);
 
   // State for drag overlay
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
@@ -579,43 +581,57 @@ export default function CalendarPage() {
         {/* Main calendar area */}
         <div className="flex-1 flex flex-col min-w-0">
           {/* Calendar Header */}
-          <header className="flex items-center justify-between border-b bg-card px-4 py-3">
-            <div className="flex items-center gap-4">
+          <header className="flex items-center justify-between border-b bg-card px-3 py-2 md:px-4 md:py-3">
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* Left panel toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                className="h-8 w-8 p-0 hidden lg:flex"
+              >
+                {isSidebarCollapsed ? (
+                  <PanelLeft className="h-4 w-4" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4" />
+                )}
+              </Button>
+
               {/* Navigation */}
               <div className="flex items-center gap-1">
                 <button
                   onClick={navigatePrev}
-                  className="p-2 rounded-md hover:bg-accent"
+                  className="p-1.5 md:p-2 rounded-md hover:bg-accent"
                 >
-                  <ChevronLeft className="h-5 w-5" />
+                  <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
                 </button>
                 <button
                   onClick={navigateToday}
-                  className="px-3 py-1.5 text-sm font-medium rounded-md hover:bg-accent"
+                  className="px-2 py-1 md:px-3 md:py-1.5 text-xs md:text-sm font-medium rounded-md hover:bg-accent"
                 >
                   Aujourd&apos;hui
                 </button>
                 <button
                   onClick={navigateNext}
-                  className="p-2 rounded-md hover:bg-accent"
+                  className="p-1.5 md:p-2 rounded-md hover:bg-accent"
                 >
-                  <ChevronRight className="h-5 w-5" />
+                  <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
                 </button>
               </div>
 
               {/* Current date */}
-              <h2 className="text-lg font-semibold capitalize">{formatTitle()}</h2>
+              <h2 className="text-sm md:text-lg font-semibold capitalize hidden sm:block">{formatTitle()}</h2>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {/* View toggle */}
-              <div className="flex rounded-lg border bg-muted p-1">
+              <div className="flex rounded-lg border bg-muted p-0.5">
                 {(["day", "week", "month", "agenda"] as const).map((view) => (
                   <button
                     key={view}
                     onClick={() => setViewType(view)}
                     className={cn(
-                      "px-3 py-1 text-sm font-medium rounded-md transition-colors",
+                      "px-2 py-1 md:px-3 md:py-1 text-xs md:text-sm font-medium rounded-md transition-colors",
                       viewType === view
                         ? "bg-background text-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
@@ -629,6 +645,20 @@ export default function CalendarPage() {
                   </button>
                 ))}
               </div>
+
+              {/* Right panel toggle */}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsTasksSidebarCollapsed(!isTasksSidebarCollapsed)}
+                className="h-8 w-8 p-0 hidden lg:flex"
+              >
+                {isTasksSidebarCollapsed ? (
+                  <PanelRight className="h-4 w-4" />
+                ) : (
+                  <PanelRightClose className="h-4 w-4" />
+                )}
+              </Button>
 
               {/* Add event button (mobile) */}
               <button
@@ -648,7 +678,13 @@ export default function CalendarPage() {
         </div>
 
         {/* Unscheduled Tasks Sidebar */}
-        <UnscheduledTasksSidebar className="hidden lg:flex" />
+        <UnscheduledTasksSidebar
+          isCollapsed={isTasksSidebarCollapsed}
+          className={cn(
+            "hidden lg:flex flex-col transition-all duration-300",
+            isTasksSidebarCollapsed ? "w-12" : "w-64"
+          )}
+        />
 
         {/* Event Modal */}
         <EventModal
