@@ -25,7 +25,9 @@ import { Button } from "@/components/ui/Button";
 // Calendar components
 import { WeekView, DayView, MonthView, AgendaView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
 import { EventModal, type EventFormData } from "@/components/events";
+import { TaskDetailModal } from "@/components/tasks";
 import type { CalendarEvent } from "@/lib/calendar/utils";
+import { addDays, addWeeks } from "date-fns";
 
 // tRPC hooks
 import { trpc } from "@/lib/trpc";
@@ -67,6 +69,18 @@ export default function CalendarPage() {
   // State for sidebar collapse
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isTasksSidebarCollapsed, setIsTasksSidebarCollapsed] = useState(false);
+
+  // State for task detail modal (Focus/Pomodoro mode)
+  const [detailTask, setDetailTask] = useState<{
+    id: string;
+    title: string;
+    description?: string;
+    channel?: string;
+    plannedDuration?: number;
+    actualDuration?: number;
+    dueAt?: Date;
+    startAt?: Date;
+  } | null>(null);
 
   // State for drag overlay
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
@@ -221,6 +235,20 @@ export default function CalendarPage() {
     },
   });
 
+  // Update task mutation (for detail modal actions)
+  const updateTaskMutation = trpc.task.update.useMutation({
+    onSuccess: () => {
+      refetchEvents();
+      refetchTasks();
+      setDetailTask(null);
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la mise a jour", {
+        description: error.message,
+      });
+    },
+  });
+
   // DnD Sensors
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: { distance: 5 },
@@ -348,9 +376,48 @@ export default function CalendarPage() {
     openEventModal("create");
   };
 
-  // Handle event click
+  // Handle event click - open TaskDetailModal for task events
   const handleEventClick = (event: CalendarEvent) => {
-    console.log("Event clicked:", event);
+    // Open the task detail modal for focus/pomodoro mode
+    setDetailTask({
+      id: event.id,
+      title: event.title,
+      description: undefined,
+      channel: event.calendar?.name || "work",
+      plannedDuration: event.endAt && event.startAt
+        ? Math.round((event.endAt.getTime() - event.startAt.getTime()) / 60000)
+        : undefined,
+      dueAt: event.endAt,
+      startAt: event.startAt,
+    });
+  };
+
+  // Task detail modal handlers
+  const handleTaskSnooze = (taskId: string) => {
+    const task = detailTask;
+    if (task) {
+      updateTaskMutation.mutate({
+        id: taskId,
+        dueAt: addDays(task.dueAt || new Date(), 1),
+      });
+    }
+  };
+
+  const handleTaskMoveToNextWeek = (taskId: string) => {
+    const task = detailTask;
+    if (task) {
+      updateTaskMutation.mutate({
+        id: taskId,
+        dueAt: addWeeks(task.dueAt || new Date(), 1),
+      });
+    }
+  };
+
+  const handleTaskMoveToBacklog = (taskId: string) => {
+    updateTaskMutation.mutate({
+      id: taskId,
+      dueAt: null,
+    });
   };
 
   // Handle day click in month view
@@ -698,6 +765,25 @@ export default function CalendarPage() {
           isLoading={createEventMutation.isPending}
           mode={eventModalMode}
         />
+
+        {/* Task Detail Modal (Focus/Pomodoro mode) */}
+        {detailTask && (
+          <TaskDetailModal
+            isOpen={!!detailTask}
+            onClose={() => setDetailTask(null)}
+            task={detailTask}
+            events={events}
+            onSnooze={handleTaskSnooze}
+            onMoveToNextWeek={handleTaskMoveToNextWeek}
+            onMoveToBacklog={handleTaskMoveToBacklog}
+            onUpdate={(taskId, data) => {
+              updateTaskMutation.mutate({
+                id: taskId,
+                ...data,
+              });
+            }}
+          />
+        )}
       </div>
 
       {/* Global Drag Overlay */}
