@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import {
+  listEvents,
+  refreshAccessToken,
+  listCalendars,
+  type GoogleEvent,
+} from "@/lib/google/calendar";
 
 export const syncRouter = createTRPCRouter({
   // List calendar accounts
@@ -151,6 +157,7 @@ export const syncRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const account = await ctx.db.calendarAccount.findFirst({
         where: { id: input.accountId, userId: ctx.session.user.id },
+        include: { calendars: true },
       });
 
       if (!account) {
@@ -166,21 +173,289 @@ export const syncRouter = createTRPCRouter({
         },
       });
 
-      // In a real implementation, this would trigger an async sync job
-      // For now, we'll just mark it as completed
-      await ctx.db.syncLog.update({
-        where: { id: syncLog.id },
-        data: {
-          status: "COMPLETED",
-          completedAt: new Date(),
+      let itemsProcessed = 0;
+      let itemsFailed = 0;
+      let errorMessage: string | null = null;
+
+      try {
+        // Check if token needs refresh
+        let accessToken = account.accessToken;
+        if (account.expiresAt && account.expiresAt < new Date()) {
+          if (!account.refreshToken) {
+            throw new Error("No refresh token available");
+          }
+          const newTokens = await refreshAccessToken(account.refreshToken);
+          accessToken = newTokens.accessToken;
+
+          await ctx.db.calendarAccount.update({
+            where: { id: account.id },
+            data: {
+              accessToken: newTokens.accessToken,
+              expiresAt: newTokens.expiryDate
+                ? new Date(newTokens.expiryDate)
+                : null,
+            },
+          });
+        }
+
+        // Sync each calendar
+        for (const calendar of account.calendars) {
+          if (!calendar.externalId) continue;
+
+          try {
+            // Fetch events from Google
+            const now = new Date();
+            const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            const ninetyDaysAhead = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
+
+            const { events: googleEvents, nextSyncToken } = await listEvents(
+              accessToken,
+              calendar.externalId,
+              {
+                timeMin: thirtyDaysAgo,
+                timeMax: ninetyDaysAhead,
+                syncToken: account.syncToken || undefined,
+              }
+            );
+
+            // Process each event
+            for (const googleEvent of googleEvents) {
+              try {
+                await syncGoogleEvent(ctx.db, calendar.id, ctx.session.user.id, googleEvent);
+                itemsProcessed++;
+              } catch (eventError) {
+                console.error("Error syncing event:", eventError);
+                itemsFailed++;
+              }
+            }
+
+            // Save sync token
+            if (nextSyncToken) {
+              await ctx.db.calendarAccount.update({
+                where: { id: account.id },
+                data: { syncToken: nextSyncToken },
+              });
+            }
+          } catch (calError) {
+            console.error("Error syncing calendar:", calError);
+            itemsFailed++;
+          }
+        }
+
+        // Mark sync as completed
+        await ctx.db.syncLog.update({
+          where: { id: syncLog.id },
+          data: {
+            status: itemsFailed > 0 ? "PARTIAL" : "COMPLETED",
+            itemsProcessed,
+            itemsFailed,
+            completedAt: new Date(),
+          },
+        });
+
+        await ctx.db.calendarAccount.update({
+          where: { id: input.accountId },
+          data: { lastSyncAt: new Date(), lastError: null },
+        });
+      } catch (error) {
+        errorMessage = error instanceof Error ? error.message : "Unknown error";
+
+        await ctx.db.syncLog.update({
+          where: { id: syncLog.id },
+          data: {
+            status: "FAILED",
+            itemsProcessed,
+            itemsFailed,
+            errorMessage,
+            completedAt: new Date(),
+          },
+        });
+
+        await ctx.db.calendarAccount.update({
+          where: { id: input.accountId },
+          data: { lastError: errorMessage },
+        });
+
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: `Sync failed: ${errorMessage}`,
+        });
+      }
+
+      return { success: true, syncLogId: syncLog.id, itemsProcessed, itemsFailed };
+    }),
+
+  // Disconnect Google Calendar
+  disconnectGoogle: protectedProcedure
+    .input(z.object({ accountId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const account = await ctx.db.calendarAccount.findFirst({
+        where: {
+          id: input.accountId,
+          userId: ctx.session.user.id,
+          provider: "GOOGLE",
         },
       });
 
-      await ctx.db.calendarAccount.update({
-        where: { id: input.accountId },
-        data: { lastSyncAt: new Date() },
+      if (!account) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Delete calendars associated with this account
+      await ctx.db.calendar.deleteMany({
+        where: { calendarAccountId: input.accountId },
       });
 
-      return { success: true, syncLogId: syncLog.id };
+      // Delete the account
+      await ctx.db.calendarAccount.delete({
+        where: { id: input.accountId },
+      });
+
+      return { success: true };
+    }),
+
+  // Refresh calendars from Google
+  refreshGoogleCalendars: protectedProcedure
+    .input(z.object({ accountId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const account = await ctx.db.calendarAccount.findFirst({
+        where: {
+          id: input.accountId,
+          userId: ctx.session.user.id,
+          provider: "GOOGLE",
+        },
+      });
+
+      if (!account) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Refresh token if needed
+      let accessToken = account.accessToken;
+      if (account.expiresAt && account.expiresAt < new Date()) {
+        if (!account.refreshToken) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Token expired and no refresh token available",
+          });
+        }
+        const newTokens = await refreshAccessToken(account.refreshToken);
+        accessToken = newTokens.accessToken;
+
+        await ctx.db.calendarAccount.update({
+          where: { id: account.id },
+          data: {
+            accessToken: newTokens.accessToken,
+            expiresAt: newTokens.expiryDate
+              ? new Date(newTokens.expiryDate)
+              : null,
+          },
+        });
+      }
+
+      // Get calendars from Google
+      const googleCalendars = await listCalendars(accessToken);
+
+      // Get existing calendars
+      const existingCalendars = await ctx.db.calendar.findMany({
+        where: { calendarAccountId: input.accountId },
+      });
+
+      const existingExternalIds = new Set(existingCalendars.map((c) => c.externalId));
+
+      // Add new calendars
+      for (const googleCal of googleCalendars) {
+        if (existingExternalIds.has(googleCal.id)) continue;
+        if (googleCal.accessRole === "reader" || googleCal.id.includes("holiday")) {
+          continue;
+        }
+
+        await ctx.db.calendar.create({
+          data: {
+            userId: ctx.session.user.id,
+            calendarAccountId: input.accountId,
+            externalId: googleCal.id,
+            name: googleCal.summary,
+            description: googleCal.description,
+            color: googleCal.backgroundColor || "#3b82f6",
+            provider: "GOOGLE",
+            isDefault: googleCal.primary || false,
+            canEdit: googleCal.accessRole === "owner" || googleCal.accessRole === "writer",
+          },
+        });
+      }
+
+      return { success: true };
     }),
 });
+
+// Helper function to sync a single Google event to local database
+async function syncGoogleEvent(
+  db: typeof import("@/server/db/client").db,
+  calendarId: string,
+  userId: string,
+  googleEvent: GoogleEvent
+) {
+  const startAt = googleEvent.start.dateTime
+    ? new Date(googleEvent.start.dateTime)
+    : googleEvent.start.date
+    ? new Date(googleEvent.start.date)
+    : new Date();
+
+  const endAt = googleEvent.end.dateTime
+    ? new Date(googleEvent.end.dateTime)
+    : googleEvent.end.date
+    ? new Date(googleEvent.end.date)
+    : new Date(startAt.getTime() + 60 * 60 * 1000);
+
+  const isAllDay = !googleEvent.start.dateTime && !!googleEvent.start.date;
+  const duration = Math.round((endAt.getTime() - startAt.getTime()) / (1000 * 60));
+
+  // Check if event already exists
+  const existingEvent = await db.event.findFirst({
+    where: {
+      calendarId,
+      externalId: googleEvent.id,
+    },
+  });
+
+  if (googleEvent.status === "cancelled") {
+    // Delete cancelled events
+    if (existingEvent) {
+      await db.event.delete({ where: { id: existingEvent.id } });
+    }
+    return;
+  }
+
+  const eventData = {
+    title: googleEvent.summary || "Sans titre",
+    description: googleEvent.description,
+    location: googleEvent.location,
+    startAt,
+    endAt,
+    duration,
+    isAllDay,
+    etag: googleEvent.etag,
+    provider: "GOOGLE" as const,
+    syncStatus: "SYNCED" as const,
+    lastSyncAt: new Date(),
+  };
+
+  if (existingEvent) {
+    // Update existing event
+    await db.event.update({
+      where: { id: existingEvent.id },
+      data: eventData,
+    });
+  } else {
+    // Create new event
+    await db.event.create({
+      data: {
+        ...eventData,
+        userId,
+        calendarId,
+        externalId: googleEvent.id,
+      },
+    });
+  }
+}
