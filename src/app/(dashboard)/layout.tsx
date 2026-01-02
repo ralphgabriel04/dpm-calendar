@@ -3,6 +3,7 @@ import { auth } from "@/server/auth/config";
 import { db } from "@/server/db/client";
 import { Sidebar, SidebarTrigger } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
+import { RightSidebarMenu } from "@/components/layout/RightSidebarMenu";
 
 export default async function DashboardLayout({
   children,
@@ -38,6 +39,9 @@ export default async function DashboardLayout({
         {/* Main content - add bottom padding for mobile nav */}
         <main className="flex-1 overflow-auto pb-16 lg:pb-0">{children}</main>
       </div>
+
+      {/* Right sidebar menu - desktop only */}
+      <RightSidebarMenu className="hidden lg:flex" />
 
       {/* Mobile bottom navigation */}
       <MobileNav />
