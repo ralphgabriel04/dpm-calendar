@@ -22,6 +22,7 @@ model User {
   emailVerified DateTime?
   image         String?
   timezone      String    @default("UTC")
+  onboardingCompleted Boolean @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -888,6 +889,13 @@ model UserPreferences {
   workingHoursEnd   String  @default("18:00")
   customShortcuts  Json?
   dashboardWidgets Json?
+
+  // Onboarding preferences
+  connectedTaskManagers String[] @default([]) // asana, linear, clickup, etc.
+  connectedCalendars    String[] @default([]) // google, outlook, icloud
+  planningTime          String   @default("morning") // morning or evening
+  dailyWorkHours        Int      @default(8) // hours per day
+
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/server/auth/config";
+import { db } from "@/server/db/client";
 import { Sidebar, SidebarTrigger } from "@/components/layout/Sidebar";
 import { MobileNav } from "@/components/layout/MobileNav";
 
@@ -12,6 +13,16 @@ export default async function DashboardLayout({
 
   if (!session?.user) {
     redirect("/login");
+  }
+
+  // Check if onboarding is completed
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { onboardingCompleted: true },
+  });
+
+  if (!user?.onboardingCompleted) {
+    redirect("/onboarding");
   }
 
   return (

@@ -11,6 +11,7 @@ import { notificationRouter } from "./routers/notification";
 import { recapRouter } from "./routers/recap";
 import { journalRouter } from "./routers/journal";
 import { sharingRouter } from "./routers/sharing";
+import { userRouter } from "./routers/user";
 
 /**
  * This is the primary router for your server.
@@ -41,6 +42,9 @@ export const appRouter = createTRPCRouter({
 
   // Phase 7: Sharing & Preferences
   sharing: sharingRouter,
+
+  // User & Onboarding
+  user: userRouter,
 });
 
 // export type definition of API
