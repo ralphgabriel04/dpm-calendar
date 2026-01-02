@@ -13,6 +13,12 @@ import { journalRouter } from "./routers/journal";
 import { sharingRouter } from "./routers/sharing";
 import { userRouter } from "./routers/user";
 import { dashboardRouter } from "./routers/dashboard";
+import { commentRouter } from "./routers/comment";
+import { suggestionRouter } from "./routers/suggestion";
+import { energyRouter } from "./routers/energy";
+import { emotionalMemoryRouter } from "./routers/emotionalMemory";
+import { antiProcrastinationRouter } from "./routers/antiProcrastination";
+import { workloadRouter } from "./routers/workload";
 
 /**
  * This is the primary router for your server.
@@ -47,6 +53,16 @@ export const appRouter = createTRPCRouter({
 
   // User & Onboarding
   user: userRouter,
+
+  // Comments & Suggestions
+  comment: commentRouter,
+  suggestion: suggestionRouter,
+
+  // Advanced Features
+  energy: energyRouter,
+  emotionalMemory: emotionalMemoryRouter,
+  antiProcrastination: antiProcrastinationRouter,
+  workload: workloadRouter,
 });
 
 // export type definition of API

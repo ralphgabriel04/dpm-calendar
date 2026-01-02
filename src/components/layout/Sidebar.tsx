@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
-  Calendar,
   CheckSquare,
   Settings,
   Menu,
@@ -25,6 +24,8 @@ import {
   CalendarDays,
   ListChecks,
   Sparkles,
+  Grid3X3,
+  Calendar,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
@@ -78,6 +79,7 @@ const navSections: NavSection[] = [
     defaultExpanded: true,
     items: [
       { name: "Taches", href: "/tasks", icon: CheckSquare },
+      { name: "Matrice", href: "/matrix", icon: Grid3X3 },
       { name: "Habitudes", href: "/habits", icon: Flame },
       { name: "Objectifs", href: "/goals", icon: Target },
     ],
@@ -93,8 +95,9 @@ const navSections: NavSection[] = [
   {
     id: "insights",
     title: "ANALYSES",
-    defaultExpanded: false,
+    defaultExpanded: true,
     items: [
+      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
       { name: "Analytics", href: "/analytics", icon: BarChart3 },
     ],
   },
@@ -248,31 +251,26 @@ export function Sidebar() {
               sidebarCollapsed && "lg:hidden"
             )}
           >
-            {/* Light mode logo */}
             <Image
-              src="/light-mode-logo.png"
+              src="/logo.png"
               alt="DPM Calendar"
-              width={200}
-              height={50}
-              className="h-12 w-auto dark:hidden"
-              priority
-            />
-            {/* Dark mode logo */}
-            <Image
-              src="/logo-dark-mode.png"
-              alt="DPM Calendar"
-              width={200}
-              height={50}
-              className="h-12 w-auto hidden dark:block"
+              width={48}
+              height={48}
+              className="h-12 w-12"
               priority
             />
           </Link>
-          {/* Collapsed logo - icon only */}
+          {/* Collapsed logo */}
           {sidebarCollapsed && (
             <Link href="/" className="hidden lg:flex items-center justify-center">
-              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-                <Calendar className="h-4 w-4 text-primary-foreground" />
-              </div>
+              <Image
+                src="/logo.png"
+                alt="DPM Calendar"
+                width={32}
+                height={32}
+                className="h-8 w-8"
+                priority
+              />
             </Link>
           )}
           {/* Mobile close button */}

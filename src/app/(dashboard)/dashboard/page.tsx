@@ -13,6 +13,7 @@ import {
   GoalProgressWidget,
   UpcomingDeadlinesWidget,
   WorkloadBalanceWidget,
+  ProductivityScoreWidget,
 } from "@/components/dashboard-v2";
 
 // Loading skeleton
@@ -82,6 +83,11 @@ export default function DashboardPage() {
       limit: 5,
     });
 
+  const { data: productivityScore, isLoading: isLoadingProductivity } =
+    trpc.dashboard.getProductivityScore.useQuery({
+      range,
+    });
+
   const isLoading =
     isLoadingOverview ||
     isLoadingHeatmap ||
@@ -89,7 +95,8 @@ export default function DashboardPage() {
     isLoadingWorkload ||
     isLoadingDeadlines ||
     isLoadingHabits ||
-    isLoadingGoals;
+    isLoadingGoals ||
+    isLoadingProductivity;
 
   if (isLoading) {
     return (
@@ -131,8 +138,15 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* Middle row - Time Distribution, Habits, Goals */}
+        {/* Middle row - Productivity Score, Time Distribution, Habits */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {productivityScore && (
+            <ProductivityScoreWidget
+              score={productivityScore.score}
+              previousScore={productivityScore.previousScore}
+              breakdown={productivityScore.breakdown}
+            />
+          )}
           {timeDistribution && (
             <TimeDistributionChart
               focusMins={timeDistribution.focusMins}
@@ -141,16 +155,18 @@ export default function DashboardPage() {
             />
           )}
           {habitStreaks && <HabitStreaksWidget habits={habitStreaks} />}
-          {goalProgress && <GoalProgressWidget goals={goalProgress} />}
         </div>
 
-        {/* Bottom row - Deadlines and Workload */}
+        {/* Goals row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {goalProgress && <GoalProgressWidget goals={goalProgress} />}
           {upcomingDeadlines && (
             <UpcomingDeadlinesWidget tasks={upcomingDeadlines} />
           )}
-          {workloadBalance && <WorkloadBalanceWidget data={workloadBalance} />}
         </div>
+
+        {/* Bottom row - Workload Balance */}
+        {workloadBalance && <WorkloadBalanceWidget data={workloadBalance} />}
       </div>
     </div>
   );

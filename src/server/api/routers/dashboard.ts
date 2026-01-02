@@ -412,6 +412,117 @@ export const dashboardRouter = createTRPCRouter({
     }));
   }),
 
+  // Get detailed productivity score with breakdown
+  getProductivityScore: protectedProcedure
+    .input(
+      z.object({
+        range: timeRangeSchema,
+        customStart: z.coerce.date().optional(),
+        customEnd: z.coerce.date().optional(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { start, end } = getDateRange(input.range, input.customStart, input.customEnd);
+      const prev = getPreviousPeriod(input.range, start, end);
+
+      // Get current period stats
+      const currentStats = await ctx.db.dailyStats.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          date: { gte: start, lte: end },
+        },
+      });
+
+      // Get previous period stats
+      const previousStats = await ctx.db.dailyStats.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          date: { gte: prev.start, lte: prev.end },
+        },
+      });
+
+      // Get habit completion rate
+      const habits = await ctx.db.habit.findMany({
+        where: {
+          userId: ctx.session.user.id,
+          isActive: true,
+        },
+        select: {
+          currentStreak: true,
+          longestStreak: true,
+        },
+      });
+
+      // Calculate task completion score (0-100)
+      const tasksCompleted = currentStats.reduce((sum, s) => sum + s.tasksCompleted, 0);
+      const tasksPlanned = currentStats.reduce((sum, s) => sum + s.tasksPlanned, 0);
+      const taskCompletionScore = tasksPlanned > 0
+        ? Math.min(100, Math.round((tasksCompleted / tasksPlanned) * 100))
+        : 50; // Default score if no tasks planned
+
+      // Calculate focus time score (0-100)
+      // Ideal: 4+ hours of focus per day on average
+      const totalFocusMins = currentStats.reduce((sum, s) => sum + s.focusTimeMins, 0);
+      const avgDailyFocusMins = currentStats.length > 0 ? totalFocusMins / currentStats.length : 0;
+      const focusTimeScore = Math.min(100, Math.round((avgDailyFocusMins / 240) * 100));
+
+      // Calculate habit streak score (0-100)
+      const avgStreak = habits.length > 0
+        ? habits.reduce((sum, h) => sum + h.currentStreak, 0) / habits.length
+        : 0;
+      const maxExpectedStreak = 30; // 30-day streak is excellent
+      const habitStreakScore = Math.min(100, Math.round((avgStreak / maxExpectedStreak) * 100));
+
+      // Calculate time balance score (0-100)
+      // Based on ratio of meetings vs focus time (ideal is more focus than meetings)
+      const totalMeetingMins = currentStats.reduce((sum, s) => sum + s.meetingTimeMins, 0);
+      const focusToMeetingRatio = totalMeetingMins > 0
+        ? totalFocusMins / totalMeetingMins
+        : 2; // Default to good if no meetings
+      const timeBalanceScore = Math.min(100, Math.round(Math.min(focusToMeetingRatio / 2, 1) * 100));
+
+      // Calculate overall score (weighted average)
+      const overallScore = Math.round(
+        taskCompletionScore * 0.30 +
+        focusTimeScore * 0.30 +
+        habitStreakScore * 0.20 +
+        timeBalanceScore * 0.20
+      );
+
+      // Calculate previous period score
+      const prevTasksCompleted = previousStats.reduce((sum, s) => sum + s.tasksCompleted, 0);
+      const prevTasksPlanned = previousStats.reduce((sum, s) => sum + s.tasksPlanned, 0);
+      const prevTaskScore = prevTasksPlanned > 0
+        ? Math.min(100, Math.round((prevTasksCompleted / prevTasksPlanned) * 100))
+        : 50;
+
+      const prevFocusMins = previousStats.reduce((sum, s) => sum + s.focusTimeMins, 0);
+      const prevAvgFocusMins = previousStats.length > 0 ? prevFocusMins / previousStats.length : 0;
+      const prevFocusScore = Math.min(100, Math.round((prevAvgFocusMins / 240) * 100));
+
+      const previousScore = previousStats.length > 0
+        ? Math.round(prevTaskScore * 0.30 + prevFocusScore * 0.30 + habitStreakScore * 0.20 + timeBalanceScore * 0.20)
+        : undefined;
+
+      return {
+        score: overallScore,
+        previousScore,
+        breakdown: {
+          taskCompletion: taskCompletionScore,
+          focusTime: focusTimeScore,
+          habitStreak: habitStreakScore,
+          timeBalance: timeBalanceScore,
+        },
+        details: {
+          tasksCompleted,
+          tasksPlanned,
+          avgDailyFocusHours: Math.round((avgDailyFocusMins / 60) * 10) / 10,
+          avgHabitStreak: Math.round(avgStreak * 10) / 10,
+          focusToMeetingRatio: Math.round(focusToMeetingRatio * 10) / 10,
+        },
+      };
+    }),
+
   // Get goal progress summary
   getGoalProgress: protectedProcedure
     .input(

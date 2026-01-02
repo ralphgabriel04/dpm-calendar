@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
 import { Button } from "@/components/ui/Button";
-import { Clock, MapPin, Calendar, Trash2, Pencil, X } from "lucide-react";
+import { Clock, MapPin, Calendar, Trash2, Pencil, X, MessageSquare, ChevronDown, ChevronUp, Repeat } from "lucide-react";
+import { EventComments } from "./EventComments";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 interface EventPopoverProps {
@@ -24,12 +26,13 @@ export function EventPopover({
   onEdit,
   onDelete,
 }: EventPopoverProps) {
+  const [showComments, setShowComments] = useState(false);
   const eventColor = event.color || event.calendar?.color || "#3B82F6";
 
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start">
+      <PopoverContent className="w-96 p-0 max-h-[80vh] overflow-auto" align="start">
         {/* Header with color */}
         <div
           className="h-2 rounded-t-md"
@@ -54,7 +57,7 @@ export function EventPopover({
             {event.isAllDay ? (
               <span>
                 {format(event.startAt, "EEEE d MMMM yyyy", { locale: fr })}
-                {" — Toute la journée"}
+                {" — Toute la journee"}
               </span>
             ) : (
               <span>
@@ -64,6 +67,22 @@ export function EventPopover({
               </span>
             )}
           </div>
+
+          {/* Recurrence indicator */}
+          {event.rrule && (
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <Repeat className="h-4 w-4" />
+              <span>Evenement recurrent</span>
+            </div>
+          )}
+
+          {/* Location */}
+          {event.location && (
+            <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+              <MapPin className="h-4 w-4" />
+              <span>{event.location}</span>
+            </div>
+          )}
 
           {/* Calendar */}
           {event.calendar && (
@@ -76,6 +95,34 @@ export function EventPopover({
                 />
                 <span>{event.calendar.name}</span>
               </div>
+            </div>
+          )}
+
+          {/* Description */}
+          {event.description && (
+            <div className="mt-3 p-3 bg-muted/50 rounded-lg text-sm">
+              {event.description}
+            </div>
+          )}
+
+          {/* Comments toggle */}
+          <button
+            onClick={() => setShowComments(!showComments)}
+            className="flex items-center gap-2 mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors w-full"
+          >
+            <MessageSquare className="h-4 w-4" />
+            <span>Commentaires</span>
+            {showComments ? (
+              <ChevronUp className="h-4 w-4 ml-auto" />
+            ) : (
+              <ChevronDown className="h-4 w-4 ml-auto" />
+            )}
+          </button>
+
+          {/* Comments section */}
+          {showComments && (
+            <div className="mt-3 pt-3 border-t">
+              <EventComments eventId={event.id} />
             </div>
           )}
 

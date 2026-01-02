@@ -3,6 +3,8 @@ export { WeekView } from "./views/WeekView";
 export { DayView } from "./views/DayView";
 export { MonthView } from "./views/MonthView";
 export { AgendaView } from "./views/AgendaView";
+export { TimelineView } from "./views/TimelineView";
+export { WorkloadView } from "./views/WorkloadView";
 
 // Components
 export { TimeColumn } from "./TimeColumn";
@@ -22,3 +24,7 @@ export { DroppableTimeSlot } from "./DroppableTimeSlot";
 export { TimeBlockCard } from "./TimeBlockCard";
 export { DraggableTaskMini } from "./DraggableTaskMini";
 export { UnscheduledTasksSidebar } from "./UnscheduledTasksSidebar";
+
+// Widgets
+export { UpcomingEventsWidget } from "./UpcomingEventsWidget";
+export { TimeBreakdownWidget } from "./TimeBreakdownWidget";

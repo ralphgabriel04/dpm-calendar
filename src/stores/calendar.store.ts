@@ -8,7 +8,7 @@ import {
   addMonths,
 } from "date-fns";
 
-type ViewType = "day" | "week" | "month" | "agenda";
+type ViewType = "day" | "week" | "month" | "agenda" | "timeline" | "workload";
 
 interface CalendarState {
   // View state
@@ -50,10 +50,14 @@ export const useCalendarStore = create<CalendarState>()(
             newDate = addDays(currentDate, -1);
             break;
           case "week":
+          case "timeline":
             newDate = addWeeks(currentDate, -1);
             break;
           case "agenda":
             newDate = addWeeks(currentDate, -1);
+            break;
+          case "workload":
+            newDate = addMonths(currentDate, -1);
             break;
           default:
             newDate = addMonths(currentDate, -1);
@@ -69,10 +73,14 @@ export const useCalendarStore = create<CalendarState>()(
             newDate = addDays(currentDate, 1);
             break;
           case "week":
+          case "timeline":
             newDate = addWeeks(currentDate, 1);
             break;
           case "agenda":
             newDate = addWeeks(currentDate, 1);
+            break;
+          case "workload":
+            newDate = addMonths(currentDate, 1);
             break;
           default:
             newDate = addMonths(currentDate, 1);
@@ -102,6 +110,7 @@ export const useCalendarStore = create<CalendarState>()(
               end: addDays(currentDate, 1),
             };
           case "week":
+          case "timeline":
             const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
             return {
               start: weekStart,
@@ -111,6 +120,12 @@ export const useCalendarStore = create<CalendarState>()(
             return {
               start: currentDate,
               end: addDays(currentDate, 14), // 2 weeks ahead
+            };
+          case "workload":
+            const monthS2 = startOfMonth(currentDate);
+            return {
+              start: monthS2,
+              end: addDays(monthS2, 42), // 6 weeks
             };
           default:
             const monthS = startOfMonth(currentDate);

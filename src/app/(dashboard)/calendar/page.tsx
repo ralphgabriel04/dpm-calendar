@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef } from "react";
-import { ChevronLeft, ChevronRight, Plus, List, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, List, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Clock, BarChart3 } from "lucide-react";
 import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 
 // Calendar components
-import { WeekView, DayView, MonthView, AgendaView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
+import { WeekView, DayView, MonthView, AgendaView, TimelineView, WorkloadView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
 import { EventModal, type EventFormData } from "@/components/events";
 import { TaskDetailModal } from "@/components/tasks";
 import type { CalendarEvent } from "@/lib/calendar/utils";
@@ -346,11 +346,13 @@ export default function CalendarPage() {
     }));
   }, [calendarsData]);
 
-  const viewLabels = {
+  const viewLabels: Record<string, string> = {
     day: "Jour",
     week: "Semaine",
     month: "Mois",
     agenda: "Agenda",
+    timeline: "Timeline",
+    workload: "Charge",
   };
 
   const formatTitle = () => {
@@ -607,6 +609,24 @@ export default function CalendarPage() {
             onEventClick={handleEventClick}
           />
         );
+      case "timeline":
+        return (
+          <TimelineView
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            events={events}
+            onEventClick={handleEventClick}
+          />
+        );
+      case "workload":
+        return (
+          <WorkloadView
+            currentDate={currentDate}
+            onDateChange={setCurrentDate}
+            events={events}
+            onDayClick={handleDayClick}
+          />
+        );
       default:
         return null;
     }
@@ -627,8 +647,10 @@ export default function CalendarPage() {
           onDateChange={setCurrentDate}
           calendars={calendars}
           sections={sections}
+          events={events}
           onToggleCalendar={handleToggleCalendar}
           onCreateEvent={handleCreateEvent}
+          onEventClick={handleEventClick}
           onCreateCalendar={handleCreateCalendar}
           onUpdateCalendar={handleUpdateCalendar}
           onDeleteCalendar={handleDeleteCalendar}
@@ -693,7 +715,7 @@ export default function CalendarPage() {
             <div className="flex items-center gap-2 md:gap-4">
               {/* View toggle */}
               <div className="flex rounded-lg border bg-muted p-0.5">
-                {(["day", "week", "month", "agenda"] as const).map((view) => (
+                {(["day", "week", "month", "agenda", "timeline", "workload"] as const).map((view) => (
                   <button
                     key={view}
                     onClick={() => setViewType(view)}
@@ -703,9 +725,14 @@ export default function CalendarPage() {
                         ? "bg-background text-foreground shadow-sm"
                         : "text-muted-foreground hover:text-foreground"
                     )}
+                    title={viewLabels[view]}
                   >
                     {view === "agenda" ? (
                       <List className="h-4 w-4" />
+                    ) : view === "timeline" ? (
+                      <Clock className="h-4 w-4" />
+                    ) : view === "workload" ? (
+                      <BarChart3 className="h-4 w-4" />
                     ) : (
                       viewLabels[view]
                     )}

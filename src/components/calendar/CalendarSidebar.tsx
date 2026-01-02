@@ -23,7 +23,12 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { MiniCalendar } from "./MiniCalendar";
+import { UpcomingEventsWidget } from "./UpcomingEventsWidget";
+import { TimeBreakdownWidget } from "./TimeBreakdownWidget";
+import { RecapWidget } from "@/components/recap";
+import { SlotSuggestions } from "@/components/suggestions";
 import { cn } from "@/lib/utils";
+import type { CalendarEvent } from "@/lib/calendar/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,8 +61,10 @@ interface CalendarSidebarProps {
   onDateChange: (date: Date) => void;
   calendars: Calendar[];
   sections?: CalendarSection[];
+  events?: CalendarEvent[];
   onToggleCalendar: (id: string) => void;
   onCreateEvent?: () => void;
+  onEventClick?: (event: CalendarEvent) => void;
   onCreateCalendar?: (name: string, color: string, sectionId?: string) => void;
   onUpdateCalendar?: (id: string, name: string, color: string) => void;
   onDeleteCalendar?: (id: string) => void;
@@ -67,6 +74,8 @@ interface CalendarSidebarProps {
   onUpdateSection?: (id: string, name: string, color?: string) => void;
   onDeleteSection?: (id: string) => void;
   onToggleSectionExpanded?: (id: string, isExpanded: boolean) => void;
+  // Slot suggestion handler
+  onSelectSlot?: (slot: { startAt: Date; endAt: Date }) => void;
   // Collapse state
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
@@ -91,8 +100,10 @@ export function CalendarSidebar({
   onDateChange,
   calendars,
   sections = [],
+  events = [],
   onToggleCalendar,
   onCreateEvent,
+  onEventClick,
   onCreateCalendar,
   onUpdateCalendar,
   onDeleteCalendar,
@@ -101,6 +112,7 @@ export function CalendarSidebar({
   onUpdateSection,
   onDeleteSection,
   onToggleSectionExpanded,
+  onSelectSlot,
   isCollapsed = false,
   onToggleCollapse,
   className,
@@ -224,6 +236,48 @@ export function CalendarSidebar({
             <MiniCalendar value={currentDate} onChange={onDateChange} />
           </div>
         </CollapsibleSection>
+
+        {/* Upcoming events widget */}
+        {events.length > 0 && (
+          <div className="px-3 py-2 border-b border-border/50">
+            <UpcomingEventsWidget
+              events={events}
+              date={currentDate}
+              onEventClick={onEventClick}
+              maxEvents={4}
+              className="border-0 p-0 bg-transparent"
+            />
+          </div>
+        )}
+
+        {/* Time breakdown widget */}
+        {events.length > 0 && (
+          <div className="px-3 py-2 border-b border-border/50">
+            <TimeBreakdownWidget
+              events={events}
+              date={currentDate}
+              className="border-0 p-0 bg-transparent"
+            />
+          </div>
+        )}
+
+        {/* Daily recap widget */}
+        <div className="px-3 py-2 border-b border-border/50">
+          <RecapWidget
+            type="DAILY"
+            date={currentDate}
+            compact
+            className="border-0"
+          />
+        </div>
+
+        {/* AI slot suggestions */}
+        <div className="px-3 py-2 border-b border-border/50">
+          <SlotSuggestions
+            onSelectSlot={onSelectSlot}
+            className="border-0"
+          />
+        </div>
 
         {/* Sections and calendars */}
         <div className="border-b border-border/50">

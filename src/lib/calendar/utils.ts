@@ -164,11 +164,15 @@ export interface EventGroup {
 export interface CalendarEvent {
   id: string;
   title: string;
+  description?: string;
+  location?: string;
   startAt: Date;
   endAt: Date;
   isAllDay: boolean;
   color?: string;
   calendarId: string;
+  rrule?: string;
+  parentEventId?: string;
   calendar?: {
     color: string;
     name: string;

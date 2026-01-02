@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { DayView } from "@/components/calendar";
+import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 interface SubTask {
@@ -536,7 +537,15 @@ export function TaskDetailModal({
               </div>
             </div>
 
-            {/* Description / Help Text */}
+            {/* Task Description */}
+            {task.description && (
+              <div className="mb-6 p-4 rounded-lg bg-muted/30 border">
+                <h3 className="text-sm font-semibold mb-2 text-muted-foreground">Description</h3>
+                <MarkdownRenderer content={task.description} />
+              </div>
+            )}
+
+            {/* Help Text */}
             <div className="space-y-6 text-sm">
               <div>
                 <h3 className="font-semibold mb-2">Add a task:</h3>

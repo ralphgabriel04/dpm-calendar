@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { format, addDays, setHours, setMinutes } from "date-fns";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
+import { RichTextEditor } from "@/components/ui/RichTextEditor";
+import { VoiceInput } from "@/components/ui/VoiceInput";
 import { DatePicker } from "@/components/ui/DatePicker";
 import { TimePicker } from "@/components/ui/TimePicker";
 import {
@@ -163,14 +164,19 @@ export function TaskForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Title */}
-      <div>
+      <div className="flex items-center gap-2">
         <Input
           placeholder="Titre de la tâche"
           value={formData.title}
           onChange={(e) => updateField("title", e.target.value)}
-          className="text-lg font-medium border-0 border-b rounded-none px-0 focus-visible:ring-0"
+          className="flex-1 text-lg font-medium border-0 border-b rounded-none px-0 focus-visible:ring-0"
           required
           autoFocus
+        />
+        <VoiceInput
+          onTranscript={(text) => updateField("title", formData.title + text)}
+          buttonVariant="ghost"
+          size="sm"
         />
       </div>
 
@@ -309,12 +315,14 @@ export function TaskForm({
       {/* Description */}
       <div className="flex items-start gap-3">
         <AlignLeft className="h-4 w-4 text-muted-foreground mt-3" />
-        <Textarea
-          placeholder="Description"
-          value={formData.description || ""}
-          onChange={(e) => updateField("description", e.target.value)}
-          className="min-h-[60px]"
-        />
+        <div className="flex-1">
+          <RichTextEditor
+            value={formData.description || ""}
+            onChange={(value) => updateField("description", value)}
+            placeholder="Description (Markdown supporte)"
+            minHeight="80px"
+          />
+        </div>
       </div>
 
       {/* Checklist */}
@@ -466,12 +474,14 @@ export function TaskForm({
           {/* Notes */}
           <div className="flex items-start gap-3">
             <AlignLeft className="h-4 w-4 text-muted-foreground mt-3" />
-            <Textarea
-              placeholder="Notes personnelles"
-              value={formData.notes || ""}
-              onChange={(e) => updateField("notes", e.target.value)}
-              className="min-h-[60px]"
-            />
+            <div className="flex-1">
+              <RichTextEditor
+                value={formData.notes || ""}
+                onChange={(value) => updateField("notes", value)}
+                placeholder="Notes personnelles (Markdown supporte)"
+                minHeight="80px"
+              />
+            </div>
           </div>
         </div>
       )}

@@ -25,23 +25,16 @@ export default function LoginPage() {
       <div className="flex w-full flex-col items-center justify-center px-4 py-12 lg:w-1/2">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="mb-8 flex items-center gap-2">
+          <div className="mb-8 flex items-center gap-3">
             <Image
-              src="/light-mode-logo.png"
+              src="/logo.png"
               alt="DPM Calendar"
-              width={180}
-              height={45}
-              className="h-10 w-auto dark:hidden"
+              width={48}
+              height={48}
+              className="h-12 w-12"
               priority
             />
-            <Image
-              src="/logo-dark-mode.png"
-              alt="DPM Calendar"
-              width={180}
-              height={45}
-              className="hidden h-10 w-auto dark:block"
-              priority
-            />
+            <span className="text-xl font-bold">DPM Calendar</span>
           </div>
 
           {/* Welcome Text */}

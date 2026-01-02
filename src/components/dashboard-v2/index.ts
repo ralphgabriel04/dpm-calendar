@@ -7,3 +7,4 @@ export { HabitStreaksWidget } from "./HabitStreaksWidget";
 export { GoalProgressWidget } from "./GoalProgressWidget";
 export { UpcomingDeadlinesWidget } from "./UpcomingDeadlinesWidget";
 export { WorkloadBalanceWidget } from "./WorkloadBalanceWidget";
+export { ProductivityScoreWidget } from "./ProductivityScoreWidget";

@@ -17,8 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/Select";
-import { Calendar, Clock, MapPin, AlignLeft, Bell, Repeat, Palette } from "lucide-react";
+import { Calendar, Clock, MapPin, AlignLeft, Bell, Palette } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { RecurrenceSelector } from "./RecurrenceSelector";
 
 export interface EventFormData {
   title: string;
@@ -274,27 +275,12 @@ export function EventForm({
             />
           </div>
 
-          {/* Recurrence - placeholder for now */}
-          <div className="flex items-center gap-3">
-            <Repeat className="h-4 w-4 text-muted-foreground" />
-            <Select
-              value={formData.rrule || "none"}
-              onValueChange={(value) =>
-                updateField("rrule", value === "none" ? undefined : value)
-              }
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Ne se répète pas" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">Ne se répète pas</SelectItem>
-                <SelectItem value="FREQ=DAILY">Tous les jours</SelectItem>
-                <SelectItem value="FREQ=WEEKLY">Toutes les semaines</SelectItem>
-                <SelectItem value="FREQ=MONTHLY">Tous les mois</SelectItem>
-                <SelectItem value="FREQ=YEARLY">Tous les ans</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          {/* Recurrence */}
+          <RecurrenceSelector
+            value={formData.rrule}
+            onChange={(rrule) => updateField("rrule", rrule)}
+            startDate={formData.startAt}
+          />
         </div>
       )}
 

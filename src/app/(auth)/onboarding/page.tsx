@@ -446,19 +446,13 @@ export default function OnboardingPage() {
       <header className="flex items-center justify-between p-4 md:p-6">
         <div className="flex items-center gap-2">
           <Image
-            src="/light-mode-logo.png"
+            src="/logo.png"
             alt="DPM Calendar"
-            width={140}
-            height={35}
-            className="h-8 w-auto dark:hidden"
+            width={40}
+            height={40}
+            className="h-10 w-10"
           />
-          <Image
-            src="/logo-dark-mode.png"
-            alt="DPM Calendar"
-            width={140}
-            height={35}
-            className="h-8 w-auto hidden dark:block"
-          />
+          <span className="font-bold text-lg">DPM Calendar</span>
         </div>
         {step !== "welcome" && (
           <button

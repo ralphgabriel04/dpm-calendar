@@ -25,12 +25,13 @@ export default function Home() {
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center gap-2">
               <Image
-                src="/logo-dark-mode.png"
+                src="/logo.png"
                 alt="DPM Calendar"
-                width={150}
+                width={40}
                 height={40}
-                className="h-8 w-auto"
+                className="h-10 w-10"
               />
+              <span className="text-lg font-bold text-white">DPM Calendar</span>
             </div>
             <div className="flex items-center gap-4">
               <Link
@@ -545,12 +546,13 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-2">
               <Image
-                src="/logo-dark-mode.png"
+                src="/logo.png"
                 alt="DPM Calendar"
-                width={120}
-                height={30}
-                className="h-6 w-auto"
+                width={32}
+                height={32}
+                className="h-8 w-8"
               />
+              <span className="font-semibold text-white">DPM Calendar</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">
               <Link href="/login" className="hover:text-white transition-colors">
