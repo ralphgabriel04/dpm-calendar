@@ -63,6 +63,9 @@ export default function CalendarPage() {
   // State for new event
   const [newEventData, setNewEventData] = useState<Partial<EventFormData>>({});
 
+  // State for sidebar collapse
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   // State for drag overlay
   const [draggedTask, setDraggedTask] = useState<Task | null>(null);
 
@@ -565,7 +568,12 @@ export default function CalendarPage() {
           onUpdateSection={handleUpdateSection}
           onDeleteSection={handleDeleteSection}
           onToggleSectionExpanded={handleToggleSectionExpanded}
-          className="w-72 hidden lg:flex flex-col border-r"
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+          className={cn(
+            "hidden lg:flex flex-col border-r transition-all duration-300",
+            isSidebarCollapsed ? "w-12" : "w-72"
+          )}
         />
 
         {/* Main calendar area */}
