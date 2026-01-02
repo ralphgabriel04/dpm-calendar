@@ -20,7 +20,11 @@ import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
 import { ThemeToggle } from "@/components/theme";
 
+import { Home, LayoutDashboard } from "lucide-react";
+
 const navigation = [
+  { name: "Accueil", href: "/home", icon: Home },
+  { name: "Planner", href: "/planner", icon: LayoutDashboard },
   { name: "Calendrier", href: "/calendar", icon: Calendar },
   { name: "Tâches", href: "/tasks", icon: CheckSquare },
   { name: "Habitudes", href: "/habits", icon: Flame },

@@ -1,11 +1,15 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
+import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
+import Apple from "next-auth/providers/apple";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "@/server/db/client";
 
-// Check if Google OAuth is configured
+// Check if OAuth providers are configured
 const hasGoogleOAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
+const hasMicrosoftOAuth = process.env.MICROSOFT_AUTH_CLIENT_ID && process.env.MICROSOFT_AUTH_CLIENT_SECRET;
+const hasAppleOAuth = process.env.APPLE_ID && process.env.APPLE_SECRET;
 
 // Build providers list dynamically
 const providers = [];
@@ -27,8 +31,30 @@ if (hasGoogleOAuth) {
   );
 }
 
+if (hasMicrosoftOAuth) {
+  providers.push(
+    MicrosoftEntraId({
+      clientId: process.env.MICROSOFT_AUTH_CLIENT_ID!,
+      clientSecret: process.env.MICROSOFT_AUTH_CLIENT_SECRET!,
+      issuer: "https://login.microsoftonline.com/common/v2.0",
+    })
+  );
+}
+
+if (hasAppleOAuth) {
+  providers.push(
+    Apple({
+      clientId: process.env.APPLE_ID!,
+      clientSecret: process.env.APPLE_SECRET!,
+    })
+  );
+}
+
+// Check if any OAuth provider is configured
+const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth;
+
 // Demo credentials provider for testing (when no OAuth is configured)
-if (!hasGoogleOAuth) {
+if (!hasAnyOAuth) {
   providers.push(
     Credentials({
       name: "Demo Account",
@@ -70,9 +96,9 @@ if (!hasGoogleOAuth) {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: hasGoogleOAuth ? PrismaAdapter(db) : undefined,
+  adapter: hasAnyOAuth ? PrismaAdapter(db) : undefined,
   session: {
-    strategy: hasGoogleOAuth ? "database" : "jwt",
+    strategy: hasAnyOAuth ? "database" : "jwt",
   },
   providers,
   events: {

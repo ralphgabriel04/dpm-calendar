@@ -18,7 +18,8 @@
       "Bash(git push:*)",
       "Bash(printf:*)",
       "Bash(xargs cat:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npx next build:*)"
     ]
   }
 }

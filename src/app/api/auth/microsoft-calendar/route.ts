@@ -1,0 +1,25 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/server/auth/config";
+import { getAuthUrl } from "@/lib/microsoft/calendar";
+
+export async function GET() {
+  try {
+    // Check if user is authenticated
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Generate the Microsoft OAuth URL
+    const authUrl = getAuthUrl();
+
+    // Redirect to Microsoft OAuth
+    return NextResponse.redirect(authUrl);
+  } catch (error) {
+    console.error("Microsoft Calendar auth error:", error);
+    return NextResponse.json(
+      { error: "Failed to initiate Microsoft Calendar authentication" },
+      { status: 500 }
+    );
+  }
+}

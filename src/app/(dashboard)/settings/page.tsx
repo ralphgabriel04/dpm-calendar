@@ -30,10 +30,22 @@ export default function SettingsPage() {
     },
   });
 
-  const disconnectMutation = trpc.sync.disconnectGoogle.useMutation({
+  const disconnectGoogleMutation = trpc.sync.disconnectGoogle.useMutation({
     onSuccess: () => {
       refetchAccounts();
       toast.success("Google Calendar deconnecte");
+    },
+    onError: (error) => {
+      toast.error("Erreur lors de la deconnexion", {
+        description: error.message,
+      });
+    },
+  });
+
+  const disconnectMicrosoftMutation = trpc.sync.disconnectMicrosoft.useMutation({
+    onSuccess: () => {
+      refetchAccounts();
+      toast.success("Microsoft Outlook deconnecte");
     },
     onError: (error) => {
       toast.error("Erreur lors de la deconnexion", {
@@ -49,16 +61,22 @@ export default function SettingsPage() {
 
     if (success === "google_connected") {
       toast.success("Google Calendar connecte avec succes");
-      // Clean URL
+      window.history.replaceState({}, "", "/settings");
+    }
+
+    if (success === "microsoft_connected") {
+      toast.success("Microsoft Outlook connecte avec succes");
       window.history.replaceState({}, "", "/settings");
     }
 
     if (error) {
       const errorMessages: Record<string, string> = {
         google_auth_failed: "Echec de l'authentification Google",
+        microsoft_auth_failed: "Echec de l'authentification Microsoft",
         no_code: "Code d'autorisation manquant",
         no_access_token: "Token d'acces non recu",
-        google_callback_failed: "Erreur lors de la connexion",
+        google_callback_failed: "Erreur lors de la connexion Google",
+        microsoft_callback_failed: "Erreur lors de la connexion Microsoft",
       };
       toast.error(errorMessages[error] || "Erreur inconnue");
       window.history.replaceState({}, "", "/settings");
@@ -74,13 +92,29 @@ export default function SettingsPage() {
 
   const handleDisconnectGoogle = () => {
     if (googleAccount) {
-      disconnectMutation.mutate({ accountId: googleAccount.id });
+      disconnectGoogleMutation.mutate({ accountId: googleAccount.id });
     }
   };
 
   const handleSyncGoogle = () => {
     if (googleAccount) {
       triggerSyncMutation.mutate({ accountId: googleAccount.id });
+    }
+  };
+
+  const handleConnectMicrosoft = () => {
+    window.location.href = "/api/auth/microsoft-calendar";
+  };
+
+  const handleDisconnectMicrosoft = () => {
+    if (microsoftAccount) {
+      disconnectMicrosoftMutation.mutate({ accountId: microsoftAccount.id });
+    }
+  };
+
+  const handleSyncMicrosoft = () => {
+    if (microsoftAccount) {
+      triggerSyncMutation.mutate({ accountId: microsoftAccount.id });
     }
   };
 
@@ -152,7 +186,7 @@ export default function SettingsPage() {
                         variant="ghost"
                         size="sm"
                         onClick={handleDisconnectGoogle}
-                        disabled={disconnectMutation.isPending}
+                        disabled={disconnectGoogleMutation.isPending}
                         className="text-destructive hover:text-destructive"
                       >
                         <Unlink className="h-4 w-4 mr-1.5" />
@@ -191,16 +225,47 @@ export default function SettingsPage() {
                         <span>Non connecte</span>
                       </div>
                     )}
+                    {microsoftAccount?.lastSyncAt && (
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Derniere sync: {format(new Date(microsoftAccount.lastSyncAt), "dd MMM yyyy HH:mm", { locale: fr })}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <Button variant="outline" size="sm" disabled>
-                  Bientot disponible
-                </Button>
+                <div className="flex items-center gap-2">
+                  {microsoftAccount ? (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleSyncMicrosoft}
+                        disabled={triggerSyncMutation.isPending}
+                      >
+                        <RefreshCw className={`h-4 w-4 mr-1.5 ${triggerSyncMutation.isPending ? "animate-spin" : ""}`} />
+                        Synchroniser
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleDisconnectMicrosoft}
+                        disabled={disconnectMicrosoftMutation.isPending}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Unlink className="h-4 w-4 mr-1.5" />
+                        Deconnecter
+                      </Button>
+                    </>
+                  ) : (
+                    <Button variant="outline" size="sm" onClick={handleConnectMicrosoft}>
+                      Connecter
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Connected Calendars */}
+          {/* Connected Google Calendars */}
           {googleAccount && googleAccount.calendars.length > 0 && (
             <div className="rounded-lg border bg-card">
               <div className="flex items-center gap-3 border-b px-4 py-3">
@@ -209,6 +274,35 @@ export default function SettingsPage() {
               </div>
               <div className="p-4 space-y-2">
                 {googleAccount.calendars.map((calendar) => (
+                  <div
+                    key={calendar.id}
+                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50"
+                  >
+                    <div
+                      className="h-3 w-3 rounded-full"
+                      style={{ backgroundColor: calendar.color }}
+                    />
+                    <span className="text-sm">{calendar.name}</span>
+                    {calendar.isDefault && (
+                      <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+                        Principal
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Connected Microsoft Calendars */}
+          {microsoftAccount && microsoftAccount.calendars.length > 0 && (
+            <div className="rounded-lg border bg-card">
+              <div className="flex items-center gap-3 border-b px-4 py-3">
+                <Calendar className="h-5 w-5 text-muted-foreground" />
+                <h2 className="font-medium">Calendriers Microsoft synchronises</h2>
+              </div>
+              <div className="p-4 space-y-2">
+                {microsoftAccount.calendars.map((calendar) => (
                   <div
                     key={calendar.id}
                     className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50"
@@ -253,26 +347,54 @@ export default function SettingsPage() {
               <Cog className="h-5 w-5 text-muted-foreground" />
               <h2 className="font-medium">Configuration</h2>
             </div>
-            <div className="p-4 space-y-2 text-sm">
-              <p className="text-muted-foreground">
-                Pour connecter Google Calendar, vous devez configurer les variables d'environnement:
-              </p>
-              <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
-                <li>GOOGLE_CLIENT_ID</li>
-                <li>GOOGLE_CLIENT_SECRET</li>
-              </ul>
-              <p className="text-muted-foreground mt-3">
-                Creez un projet dans{" "}
-                <a
-                  href="https://console.cloud.google.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Google Cloud Console
-                </a>{" "}
-                et activez l'API Calendar.
-              </p>
+            <div className="p-4 space-y-4 text-sm">
+              {/* Google Configuration */}
+              <div>
+                <p className="font-medium mb-2">Google Calendar</p>
+                <p className="text-muted-foreground">
+                  Variables d'environnement requises:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
+                  <li>GOOGLE_CLIENT_ID</li>
+                  <li>GOOGLE_CLIENT_SECRET</li>
+                </ul>
+                <p className="text-muted-foreground mt-2">
+                  Creez un projet dans{" "}
+                  <a
+                    href="https://console.cloud.google.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Google Cloud Console
+                  </a>{" "}
+                  et activez l'API Calendar.
+                </p>
+              </div>
+
+              {/* Microsoft Configuration */}
+              <div className="pt-3 border-t">
+                <p className="font-medium mb-2">Microsoft Outlook</p>
+                <p className="text-muted-foreground">
+                  Variables d'environnement requises:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground space-y-1 ml-2">
+                  <li>MICROSOFT_CLIENT_ID</li>
+                  <li>MICROSOFT_CLIENT_SECRET</li>
+                </ul>
+                <p className="text-muted-foreground mt-2">
+                  Enregistrez une application dans{" "}
+                  <a
+                    href="https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Azure Portal
+                  </a>{" "}
+                  et ajoutez les permissions Calendars.ReadWrite.
+                </p>
+              </div>
             </div>
           </div>
         </div>

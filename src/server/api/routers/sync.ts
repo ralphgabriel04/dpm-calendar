@@ -2,11 +2,17 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import {
-  listEvents,
-  refreshAccessToken,
-  listCalendars,
+  listEvents as listGoogleEvents,
+  refreshAccessToken as refreshGoogleToken,
+  listCalendars as listGoogleCalendars,
   type GoogleEvent,
 } from "@/lib/google/calendar";
+import {
+  listEvents as listMicrosoftEvents,
+  refreshAccessToken as refreshMicrosoftToken,
+  listCalendars as listMicrosoftCalendars,
+  type MicrosoftEvent,
+} from "@/lib/microsoft/calendar";
 
 export const syncRouter = createTRPCRouter({
   // List calendar accounts
@@ -184,7 +190,10 @@ export const syncRouter = createTRPCRouter({
           if (!account.refreshToken) {
             throw new Error("No refresh token available");
           }
-          const newTokens = await refreshAccessToken(account.refreshToken);
+
+          const newTokens = account.provider === "GOOGLE"
+            ? await refreshGoogleToken(account.refreshToken)
+            : await refreshMicrosoftToken(account.refreshToken);
           accessToken = newTokens.accessToken;
 
           await ctx.db.calendarAccount.update({
@@ -203,38 +212,70 @@ export const syncRouter = createTRPCRouter({
           if (!calendar.externalId) continue;
 
           try {
-            // Fetch events from Google
             const now = new Date();
             const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
             const ninetyDaysAhead = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000);
 
-            const { events: googleEvents, nextSyncToken } = await listEvents(
-              accessToken,
-              calendar.externalId,
-              {
-                timeMin: thirtyDaysAgo,
-                timeMax: ninetyDaysAhead,
-                syncToken: account.syncToken || undefined,
-              }
-            );
+            if (account.provider === "GOOGLE") {
+              // Fetch events from Google
+              const { events: googleEvents, nextSyncToken } = await listGoogleEvents(
+                accessToken,
+                calendar.externalId,
+                {
+                  timeMin: thirtyDaysAgo,
+                  timeMax: ninetyDaysAhead,
+                  syncToken: account.syncToken || undefined,
+                }
+              );
 
-            // Process each event
-            for (const googleEvent of googleEvents) {
-              try {
-                await syncGoogleEvent(ctx.db, calendar.id, ctx.session.user.id, googleEvent);
-                itemsProcessed++;
-              } catch (eventError) {
-                console.error("Error syncing event:", eventError);
-                itemsFailed++;
+              // Process each event
+              for (const googleEvent of googleEvents) {
+                try {
+                  await syncGoogleEvent(ctx.db, calendar.id, ctx.session.user.id, googleEvent);
+                  itemsProcessed++;
+                } catch (eventError) {
+                  console.error("Error syncing event:", eventError);
+                  itemsFailed++;
+                }
               }
-            }
 
-            // Save sync token
-            if (nextSyncToken) {
-              await ctx.db.calendarAccount.update({
-                where: { id: account.id },
-                data: { syncToken: nextSyncToken },
-              });
+              // Save sync token
+              if (nextSyncToken) {
+                await ctx.db.calendarAccount.update({
+                  where: { id: account.id },
+                  data: { syncToken: nextSyncToken },
+                });
+              }
+            } else if (account.provider === "MICROSOFT") {
+              // Fetch events from Microsoft
+              const { events: msEvents, deltaLink } = await listMicrosoftEvents(
+                accessToken,
+                calendar.externalId,
+                {
+                  startDateTime: thirtyDaysAgo,
+                  endDateTime: ninetyDaysAhead,
+                  deltaToken: account.syncToken || undefined,
+                }
+              );
+
+              // Process each event
+              for (const msEvent of msEvents) {
+                try {
+                  await syncMicrosoftEvent(ctx.db, calendar.id, ctx.session.user.id, msEvent);
+                  itemsProcessed++;
+                } catch (eventError) {
+                  console.error("Error syncing event:", eventError);
+                  itemsFailed++;
+                }
+              }
+
+              // Save delta token
+              if (deltaLink) {
+                await ctx.db.calendarAccount.update({
+                  where: { id: account.id },
+                  data: { syncToken: deltaLink },
+                });
+              }
             }
           } catch (calError) {
             console.error("Error syncing calendar:", calError);
@@ -339,7 +380,7 @@ export const syncRouter = createTRPCRouter({
             message: "Token expired and no refresh token available",
           });
         }
-        const newTokens = await refreshAccessToken(account.refreshToken);
+        const newTokens = await refreshGoogleToken(account.refreshToken);
         accessToken = newTokens.accessToken;
 
         await ctx.db.calendarAccount.update({
@@ -354,7 +395,7 @@ export const syncRouter = createTRPCRouter({
       }
 
       // Get calendars from Google
-      const googleCalendars = await listCalendars(accessToken);
+      const googleCalendars = await listGoogleCalendars(accessToken);
 
       // Get existing calendars
       const existingCalendars = await ctx.db.calendar.findMany({
@@ -381,6 +422,105 @@ export const syncRouter = createTRPCRouter({
             provider: "GOOGLE",
             isDefault: googleCal.primary || false,
             canEdit: googleCal.accessRole === "owner" || googleCal.accessRole === "writer",
+          },
+        });
+      }
+
+      return { success: true };
+    }),
+
+  // Disconnect Microsoft Calendar
+  disconnectMicrosoft: protectedProcedure
+    .input(z.object({ accountId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const account = await ctx.db.calendarAccount.findFirst({
+        where: {
+          id: input.accountId,
+          userId: ctx.session.user.id,
+          provider: "MICROSOFT",
+        },
+      });
+
+      if (!account) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Delete calendars associated with this account
+      await ctx.db.calendar.deleteMany({
+        where: { calendarAccountId: input.accountId },
+      });
+
+      // Delete the account
+      await ctx.db.calendarAccount.delete({
+        where: { id: input.accountId },
+      });
+
+      return { success: true };
+    }),
+
+  // Refresh calendars from Microsoft
+  refreshMicrosoftCalendars: protectedProcedure
+    .input(z.object({ accountId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const account = await ctx.db.calendarAccount.findFirst({
+        where: {
+          id: input.accountId,
+          userId: ctx.session.user.id,
+          provider: "MICROSOFT",
+        },
+      });
+
+      if (!account) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Refresh token if needed
+      let accessToken = account.accessToken;
+      if (account.expiresAt && account.expiresAt < new Date()) {
+        if (!account.refreshToken) {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Token expired and no refresh token available",
+          });
+        }
+        const newTokens = await refreshMicrosoftToken(account.refreshToken);
+        accessToken = newTokens.accessToken;
+
+        await ctx.db.calendarAccount.update({
+          where: { id: account.id },
+          data: {
+            accessToken: newTokens.accessToken,
+            expiresAt: newTokens.expiryDate
+              ? new Date(newTokens.expiryDate)
+              : null,
+          },
+        });
+      }
+
+      // Get calendars from Microsoft
+      const microsoftCalendars = await listMicrosoftCalendars(accessToken);
+
+      // Get existing calendars
+      const existingCalendars = await ctx.db.calendar.findMany({
+        where: { calendarAccountId: input.accountId },
+      });
+
+      const existingExternalIds = new Set(existingCalendars.map((c) => c.externalId));
+
+      // Add new calendars
+      for (const msCal of microsoftCalendars) {
+        if (existingExternalIds.has(msCal.id)) continue;
+
+        await ctx.db.calendar.create({
+          data: {
+            userId: ctx.session.user.id,
+            calendarAccountId: input.accountId,
+            externalId: msCal.id,
+            name: msCal.name,
+            color: msCal.color || "#0078D4",
+            provider: "MICROSOFT",
+            isDefault: msCal.isDefaultCalendar || false,
+            canEdit: msCal.canEdit || false,
           },
         });
       }
@@ -455,6 +595,73 @@ async function syncGoogleEvent(
         userId,
         calendarId,
         externalId: googleEvent.id,
+      },
+    });
+  }
+}
+
+// Helper function to sync a single Microsoft event to local database
+async function syncMicrosoftEvent(
+  db: typeof import("@/server/db/client").db,
+  calendarId: string,
+  userId: string,
+  msEvent: MicrosoftEvent
+) {
+  const startAt = msEvent.start.dateTime
+    ? new Date(msEvent.start.dateTime + (msEvent.start.timeZone === "UTC" ? "Z" : ""))
+    : new Date();
+
+  const endAt = msEvent.end.dateTime
+    ? new Date(msEvent.end.dateTime + (msEvent.end.timeZone === "UTC" ? "Z" : ""))
+    : new Date(startAt.getTime() + 60 * 60 * 1000);
+
+  const isAllDay = msEvent.isAllDay || false;
+  const duration = Math.round((endAt.getTime() - startAt.getTime()) / (1000 * 60));
+
+  // Check if event already exists
+  const existingEvent = await db.event.findFirst({
+    where: {
+      calendarId,
+      externalId: msEvent.id,
+    },
+  });
+
+  if (msEvent.isCancelled) {
+    // Delete cancelled events
+    if (existingEvent) {
+      await db.event.delete({ where: { id: existingEvent.id } });
+    }
+    return;
+  }
+
+  const eventData = {
+    title: msEvent.subject || "Sans titre",
+    description: msEvent.bodyPreview,
+    location: msEvent.location?.displayName,
+    startAt,
+    endAt,
+    duration,
+    isAllDay,
+    etag: msEvent.changeKey,
+    provider: "MICROSOFT" as const,
+    syncStatus: "SYNCED" as const,
+    lastSyncAt: new Date(),
+  };
+
+  if (existingEvent) {
+    // Update existing event
+    await db.event.update({
+      where: { id: existingEvent.id },
+      data: eventData,
+    });
+  } else {
+    // Create new event
+    await db.event.create({
+      data: {
+        ...eventData,
+        userId,
+        calendarId,
+        externalId: msEvent.id,
       },
     });
   }
