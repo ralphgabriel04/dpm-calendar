@@ -252,18 +252,18 @@ export function Sidebar() {
             <Image
               src="/light-mode-logo.png"
               alt="DPM Calendar"
-              width={160}
-              height={40}
-              className="h-10 w-auto dark:hidden"
+              width={200}
+              height={50}
+              className="h-12 w-auto dark:hidden"
               priority
             />
             {/* Dark mode logo */}
             <Image
               src="/logo-dark-mode.png"
               alt="DPM Calendar"
-              width={160}
-              height={40}
-              className="h-10 w-auto hidden dark:block"
+              width={200}
+              height={50}
+              className="h-12 w-auto hidden dark:block"
               priority
             />
           </Link>
