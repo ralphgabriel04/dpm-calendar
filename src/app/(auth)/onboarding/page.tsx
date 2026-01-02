@@ -448,11 +448,11 @@ export default function OnboardingPage() {
           <Image
             src="/logo.png"
             alt="DPM Calendar"
-            width={40}
-            height={40}
-            className="h-10 w-10"
+            width={48}
+            height={48}
+            className="h-10 w-10 sm:h-12 sm:w-12"
           />
-          <span className="font-bold text-lg">DPM Calendar</span>
+          <span className="font-bold text-lg sm:text-xl">DPM Calendar</span>
         </div>
         {step !== "welcome" && (
           <button

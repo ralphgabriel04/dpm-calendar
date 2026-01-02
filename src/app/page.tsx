@@ -22,20 +22,20 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-slate-800/50 bg-slate-950/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-20 items-center justify-between">
             <div className="flex items-center">
               <Image
                 src="/logo-full.png"
                 alt="DPM Calendar"
-                width={200}
-                height={50}
-                className="h-10 w-auto"
+                width={280}
+                height={70}
+                className="h-12 sm:h-14 w-auto"
               />
             </div>
             <div className="flex items-center gap-4">
               <Link
                 href="/login"
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="hidden sm:block text-sm font-medium text-slate-300 hover:text-white transition-colors"
               >
                 Se connecter
               </Link>
@@ -51,7 +51,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 overflow-hidden">
+      <section className="relative pt-28 sm:pt-36 pb-20 overflow-hidden">
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full blur-3xl" />
@@ -95,7 +95,7 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <div className="mt-20 grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+            <div className="mt-16 sm:mt-20 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto">
               <div className="text-center">
                 <div className="text-3xl sm:text-4xl font-bold text-white">100%</div>
                 <div className="mt-1 text-sm text-slate-400">Gratuit</div>
@@ -547,9 +547,9 @@ export default function Home() {
               <Image
                 src="/logo-full.png"
                 alt="DPM Calendar"
-                width={160}
-                height={40}
-                className="h-8 w-auto"
+                width={200}
+                height={50}
+                className="h-10 w-auto"
               />
             </div>
             <div className="flex items-center gap-6 text-sm text-slate-400">

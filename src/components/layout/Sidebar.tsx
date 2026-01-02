@@ -247,7 +247,7 @@ export function Sidebar() {
           <Link
             href="/"
             className={cn(
-              "flex items-center transition-opacity duration-300",
+              "flex items-center gap-2 transition-opacity duration-300",
               sidebarCollapsed && "lg:hidden"
             )}
           >
@@ -256,9 +256,10 @@ export function Sidebar() {
               alt="DPM Calendar"
               width={48}
               height={48}
-              className="h-12 w-12"
+              className="h-10 w-10 sm:h-12 sm:w-12"
               priority
             />
+            <span className="font-bold text-lg text-foreground">DPM Calendar</span>
           </Link>
           {/* Collapsed logo */}
           {sidebarCollapsed && (

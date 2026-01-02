@@ -29,12 +29,12 @@ export default function LoginPage() {
             <Image
               src="/logo.png"
               alt="DPM Calendar"
-              width={48}
-              height={48}
-              className="h-12 w-12"
+              width={56}
+              height={56}
+              className="h-12 w-12 sm:h-14 sm:w-14"
               priority
             />
-            <span className="text-xl font-bold">DPM Calendar</span>
+            <span className="text-xl sm:text-2xl font-bold">DPM Calendar</span>
           </div>
 
           {/* Welcome Text */}
