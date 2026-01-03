@@ -155,10 +155,10 @@ export default function LoginPage() {
       <div className="hidden bg-gradient-to-br from-violet-500/20 via-purple-500/20 to-pink-500/20 lg:flex lg:w-1/2 lg:flex-col lg:items-center lg:justify-center lg:p-12">
         <div className="max-w-lg text-center">
           <h2 className="text-3xl font-bold tracking-tight">
-            Gerez votre temps intelligemment
+            Gérez votre temps intelligemment
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Calendrier, taches, habitudes et objectifs reunis dans une seule application.
+            Calendrier, tâches, habitudes et objectifs réunis dans une seule application.
           </p>
 
           {/* Feature Cards */}
@@ -177,9 +177,9 @@ export default function LoginPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10">
                 <CheckSquare className="h-5 w-5 text-green-500" />
               </div>
-              <h3 className="mt-3 font-semibold">Taches</h3>
+              <h3 className="mt-3 font-semibold">Tâches</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Kanban, time blocking et priorites
+                Kanban, time blocking et priorités
               </p>
             </div>
 
@@ -189,7 +189,7 @@ export default function LoginPage() {
               </div>
               <h3 className="mt-3 font-semibold">Objectifs</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Suivez vos progres et atteignez vos buts
+                Suivez vos progrès et atteignez vos buts
               </p>
             </div>
 
@@ -199,7 +199,7 @@ export default function LoginPage() {
               </div>
               <h3 className="mt-3 font-semibold">Analytics</h3>
               <p className="mt-1 text-sm text-muted-foreground">
-                Visualisez votre productivite
+                Visualisez votre productivité
               </p>
             </div>
           </div>

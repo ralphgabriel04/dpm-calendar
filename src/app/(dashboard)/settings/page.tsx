@@ -19,8 +19,8 @@ export default function SettingsPage() {
   const triggerSyncMutation = trpc.sync.triggerSync.useMutation({
     onSuccess: (data) => {
       refetchAccounts();
-      toast.success(`Synchronisation terminee`, {
-        description: `${data.itemsProcessed} evenements synchronises`,
+      toast.success(`Synchronisation terminée`, {
+        description: `${data.itemsProcessed} événements synchronisés`,
       });
     },
     onError: (error) => {
@@ -33,10 +33,10 @@ export default function SettingsPage() {
   const disconnectGoogleMutation = trpc.sync.disconnectGoogle.useMutation({
     onSuccess: () => {
       refetchAccounts();
-      toast.success("Google Calendar deconnecte");
+      toast.success("Google Calendar déconnecté");
     },
     onError: (error) => {
-      toast.error("Erreur lors de la deconnexion", {
+      toast.error("Erreur lors de la déconnexion", {
         description: error.message,
       });
     },
@@ -45,10 +45,10 @@ export default function SettingsPage() {
   const disconnectMicrosoftMutation = trpc.sync.disconnectMicrosoft.useMutation({
     onSuccess: () => {
       refetchAccounts();
-      toast.success("Microsoft Outlook deconnecte");
+      toast.success("Microsoft Outlook déconnecté");
     },
     onError: (error) => {
-      toast.error("Erreur lors de la deconnexion", {
+      toast.error("Erreur lors de la déconnexion", {
         description: error.message,
       });
     },
@@ -60,21 +60,21 @@ export default function SettingsPage() {
     const error = searchParams.get("error");
 
     if (success === "google_connected") {
-      toast.success("Google Calendar connecte avec succes");
+      toast.success("Google Calendar connecté avec succès");
       window.history.replaceState({}, "", "/settings");
     }
 
     if (success === "microsoft_connected") {
-      toast.success("Microsoft Outlook connecte avec succes");
+      toast.success("Microsoft Outlook connecté avec succès");
       window.history.replaceState({}, "", "/settings");
     }
 
     if (error) {
       const errorMessages: Record<string, string> = {
-        google_auth_failed: "Echec de l'authentification Google",
-        microsoft_auth_failed: "Echec de l'authentification Microsoft",
+        google_auth_failed: "Échec de l'authentification Google",
+        microsoft_auth_failed: "Échec de l'authentification Microsoft",
         no_code: "Code d'autorisation manquant",
-        no_access_token: "Token d'acces non recu",
+        no_access_token: "Token d'accès non reçu",
         google_callback_failed: "Erreur lors de la connexion Google",
         microsoft_callback_failed: "Erreur lors de la connexion Microsoft",
       };
@@ -155,17 +155,17 @@ export default function SettingsPage() {
                     {googleAccount ? (
                       <div className="flex items-center gap-1.5 text-sm text-green-600">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Connecte - {googleAccount.email}</span>
+                        <span>Connecté - {googleAccount.email}</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                         <XCircle className="h-3.5 w-3.5" />
-                        <span>Non connecte</span>
+                        <span>Non connecté</span>
                       </div>
                     )}
                     {googleAccount?.lastSyncAt && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Derniere sync: {format(new Date(googleAccount.lastSyncAt), "dd MMM yyyy HH:mm", { locale: fr })}
+                        Dernière sync: {format(new Date(googleAccount.lastSyncAt), "dd MMM yyyy HH:mm", { locale: fr })}
                       </p>
                     )}
                   </div>
@@ -190,7 +190,7 @@ export default function SettingsPage() {
                         className="text-destructive hover:text-destructive"
                       >
                         <Unlink className="h-4 w-4 mr-1.5" />
-                        Deconnecter
+                        Déconnecter
                       </Button>
                     </>
                   ) : (
@@ -217,17 +217,17 @@ export default function SettingsPage() {
                     {microsoftAccount ? (
                       <div className="flex items-center gap-1.5 text-sm text-green-600">
                         <CheckCircle2 className="h-3.5 w-3.5" />
-                        <span>Connecte - {microsoftAccount.email}</span>
+                        <span>Connecté - {microsoftAccount.email}</span>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                         <XCircle className="h-3.5 w-3.5" />
-                        <span>Non connecte</span>
+                        <span>Non connecté</span>
                       </div>
                     )}
                     {microsoftAccount?.lastSyncAt && (
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        Derniere sync: {format(new Date(microsoftAccount.lastSyncAt), "dd MMM yyyy HH:mm", { locale: fr })}
+                        Dernière sync: {format(new Date(microsoftAccount.lastSyncAt), "dd MMM yyyy HH:mm", { locale: fr })}
                       </p>
                     )}
                   </div>
@@ -252,7 +252,7 @@ export default function SettingsPage() {
                         className="text-destructive hover:text-destructive"
                       >
                         <Unlink className="h-4 w-4 mr-1.5" />
-                        Deconnecter
+                        Déconnecter
                       </Button>
                     </>
                   ) : (
@@ -270,7 +270,7 @@ export default function SettingsPage() {
             <div className="rounded-lg border bg-card">
               <div className="flex items-center gap-3 border-b px-4 py-3">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                <h2 className="font-medium">Calendriers Google synchronises</h2>
+                <h2 className="font-medium">Calendriers Google synchronisés</h2>
               </div>
               <div className="p-4 space-y-2">
                 {googleAccount.calendars.map((calendar) => (
@@ -299,7 +299,7 @@ export default function SettingsPage() {
             <div className="rounded-lg border bg-card">
               <div className="flex items-center gap-3 border-b px-4 py-3">
                 <Calendar className="h-5 w-5 text-muted-foreground" />
-                <h2 className="font-medium">Calendriers Microsoft synchronises</h2>
+                <h2 className="font-medium">Calendriers Microsoft synchronisés</h2>
               </div>
               <div className="p-4 space-y-2">
                 {microsoftAccount.calendars.map((calendar) => (
@@ -327,15 +327,15 @@ export default function SettingsPage() {
           <div className="rounded-lg border bg-card">
             <div className="flex items-center gap-3 border-b px-4 py-3">
               <Cog className="h-5 w-5 text-muted-foreground" />
-              <h2 className="font-medium">Regles Automatiques</h2>
+              <h2 className="font-medium">Règles Automatiques</h2>
             </div>
             <div className="p-4">
               <p className="text-sm text-muted-foreground">
-                Configurez des regles pour automatiser votre planning.
+                Configurez des règles pour automatiser votre planning.
               </p>
               <a href="/rules">
                 <Button variant="outline" size="sm" className="mt-4">
-                  Gerer les regles
+                  Gérer les règles
                 </Button>
               </a>
             </div>
@@ -359,7 +359,7 @@ export default function SettingsPage() {
                   <li>GOOGLE_CLIENT_SECRET</li>
                 </ul>
                 <p className="text-muted-foreground mt-2">
-                  Creez un projet dans{" "}
+                  Créez un projet dans{" "}
                   <a
                     href="https://console.cloud.google.com"
                     target="_blank"

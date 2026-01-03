@@ -1,0 +1,75 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "loading": "Loading...",
+    "search": "Search",
+    "settings": "Settings",
+    "logout": "Sign out",
+    "next": "Next",
+    "previous": "Back",
+    "skip": "Skip"
+  },
+  "sidebar": {
+    "home": "Home",
+    "calendar": "Calendar",
+    "tasks": "Tasks",
+    "habits": "Habits",
+    "goals": "Goals",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "rules": "Rules"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "french": "Français",
+    "english": "English"
+  },
+  "calendar": {
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "agenda": "Agenda",
+    "newEvent": "New event"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "newTask": "New task",
+    "completed": "Completed",
+    "pending": "Pending",
+    "inProgress": "In progress",
+    "priority": "Priority",
+    "dueDate": "Due date"
+  },
+  "habits": {
+    "title": "Habits",
+    "streak": "Streak",
+    "completed": "Completed"
+  },
+  "goals": {
+    "title": "Goals",
+    "progress": "Progress",
+    "target": "Target"
+  },
+  "landing": {
+    "hero": {
+      "title": "Plan. Organize. Succeed.",
+      "subtitle": "The all-in-one solution to manage your time, tasks, and goals.",
+      "cta": "Start for free"
+    },
+    "features": {
+      "title": "Innovative features",
+      "subtitle": "Discover the tools that will transform your productivity"
+    }
+  }
+}

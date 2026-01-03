@@ -30,6 +30,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
 import { ThemeToggle } from "@/components/theme";
+import { LanguageToggle } from "@/components/language";
 
 // Types
 interface NavItem {
@@ -75,10 +76,10 @@ const navSections: NavSection[] = [
   },
   {
     id: "productivity",
-    title: "PRODUCTIVITE",
+    title: "PRODUCTIVITÉ",
     defaultExpanded: true,
     items: [
-      { name: "Taches", href: "/tasks", icon: CheckSquare },
+      { name: "Tâches", href: "/tasks", icon: CheckSquare },
       { name: "Matrice", href: "/matrix", icon: Grid3X3 },
       { name: "Habitudes", href: "/habits", icon: Flame },
       { name: "Objectifs", href: "/goals", icon: Target },
@@ -89,7 +90,7 @@ const navSections: NavSection[] = [
     title: "AUTOMATISATION",
     defaultExpanded: false,
     items: [
-      { name: "Regles", href: "/rules", icon: Shield },
+      { name: "Règles", href: "/rules", icon: Shield },
     ],
   },
   {
@@ -355,7 +356,7 @@ export function Sidebar() {
         >
           <Link
             href="/settings"
-            title={sidebarCollapsed ? "Parametres" : undefined}
+            title={sidebarCollapsed ? "Paramètres" : undefined}
             className={cn(
               "flex items-center rounded-md text-sm font-medium transition-all duration-200",
               sidebarCollapsed
@@ -378,7 +379,7 @@ export function Sidebar() {
                 sidebarCollapsed && "lg:hidden"
               )}
             >
-              Parametres
+              Paramètres
             </span>
           </Link>
         </div>
@@ -419,7 +420,10 @@ export function Sidebar() {
             >
               DPM Calendar v0.1.0
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-1">
+              <LanguageToggle collapsed={sidebarCollapsed} />
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       </aside>

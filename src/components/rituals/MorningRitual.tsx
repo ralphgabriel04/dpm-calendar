@@ -135,8 +135,8 @@ export function MorningRitual({
               </h2>
               <p className="text-muted-foreground text-sm">
                 {yesterdayTasks.length > 0
-                  ? `${yesterdayTasks.length} tache${yesterdayTasks.length > 1 ? "s" : ""} non terminee${yesterdayTasks.length > 1 ? "s" : ""}`
-                  : "Toutes les taches d'hier sont terminees!"}
+                  ? `${yesterdayTasks.length} tâche${yesterdayTasks.length > 1 ? "s" : ""} non terminée${yesterdayTasks.length > 1 ? "s" : ""}`
+                  : "Toutes les tâches d'hier sont terminées!"}
               </p>
             </div>
 
@@ -199,7 +199,7 @@ export function MorningRitual({
                       {isProcessed && (
                         <div className="flex items-center gap-2 text-green-500 text-sm">
                           <Check className="h-4 w-4" />
-                          Traite
+                          Traité
                         </div>
                       )}
                     </div>
@@ -287,7 +287,7 @@ export function MorningRitual({
           <Button onClick={handleNext} disabled={!canProceed()}>
             {step === "focus" ? (
               <>
-                Commencer la journee
+                Commencer la journée
                 <Sparkles className="h-4 w-4 ml-2" />
               </>
             ) : (

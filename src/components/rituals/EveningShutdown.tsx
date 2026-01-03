@@ -135,8 +135,8 @@ export function EveningShutdown({
   };
 
   const getScoreMessage = () => {
-    if (productivityScore >= 90) return "Journee exceptionnelle!";
-    if (productivityScore >= 70) return "Tres bonne journee!";
+    if (productivityScore >= 90) return "Journée exceptionnelle!";
+    if (productivityScore >= 70) return "Très bonne journée!";
     if (productivityScore >= 50) return "Bonne progression!";
     return "Demain sera meilleur!";
   };
@@ -159,7 +159,7 @@ export function EveningShutdown({
                 Tes victoires du jour!
               </h2>
               <p className="text-muted-foreground">
-                {completedTasks.length} tache{completedTasks.length > 1 ? "s" : ""} terminee{completedTasks.length > 1 ? "s" : ""}
+                {completedTasks.length} tâche{completedTasks.length > 1 ? "s" : ""} terminée{completedTasks.length > 1 ? "s" : ""}
               </p>
             </div>
 
@@ -177,7 +177,7 @@ export function EveningShutdown({
               </div>
             ) : (
               <div className="py-8 text-muted-foreground">
-                <p>Pas de taches completees aujourd&apos;hui.</p>
+                <p>Pas de tâches complétées aujourd&apos;hui.</p>
                 <p className="text-sm mt-2">Ce n&apos;est pas grave, demain est un nouveau jour!</p>
               </div>
             )}
@@ -216,8 +216,8 @@ export function EveningShutdown({
               </h2>
               <p className="text-muted-foreground text-sm">
                 {incompleteTasks.length > 0
-                  ? `${incompleteTasks.length} tache${incompleteTasks.length > 1 ? "s" : ""} a reporter`
-                  : "Tout est termine!"}
+                  ? `${incompleteTasks.length} tâche${incompleteTasks.length > 1 ? "s" : ""} à reporter`
+                  : "Tout est terminé!"}
               </p>
             </div>
 
@@ -257,7 +257,7 @@ export function EveningShutdown({
                             onClick={() => handleTaskAction(task.id, "tomorrow")}
                             className="flex-1"
                           >
-                            Reporter a demain
+                            Reporter à demain
                           </Button>
                           <Button
                             size="sm"
@@ -272,7 +272,7 @@ export function EveningShutdown({
                       {isProcessed && (
                         <div className="flex items-center gap-2 text-green-500 text-sm">
                           <Check className="h-4 w-4" />
-                          Traite
+                          Traité
                         </div>
                       )}
                     </div>
@@ -292,7 +292,7 @@ export function EveningShutdown({
                 Planifier demain
               </h2>
               <p className="text-muted-foreground text-sm">
-                Ajoute des taches pour demain (optionnel)
+                Ajoute des tâches pour demain (optionnel)
               </p>
             </div>
 
@@ -300,7 +300,7 @@ export function EveningShutdown({
               <Input
                 value={tomorrowTask}
                 onChange={(e) => setTomorrowTask(e.target.value)}
-                placeholder="Nouvelle tache pour demain..."
+                placeholder="Nouvelle tâche pour demain..."
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleAddTomorrowTask();
                 }}
@@ -335,7 +335,7 @@ export function EveningShutdown({
                 {getScoreMessage()}
               </h2>
               <p className="text-muted-foreground">
-                Score de productivite: {productivityScore}%
+                Score de productivité: {productivityScore}%
               </p>
             </div>
 
@@ -384,7 +384,7 @@ export function EveningShutdown({
       <header className="flex items-center justify-between p-4 md:p-6">
         <div className="flex items-center gap-2">
           <Moon className="h-5 w-5 text-violet-500" />
-          <span className="font-semibold">Fin de journee</span>
+          <span className="font-semibold">Fin de journée</span>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose}>
           <X className="h-5 w-5" />

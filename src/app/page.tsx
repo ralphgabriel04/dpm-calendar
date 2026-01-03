@@ -23,6 +23,8 @@ import {
   Linkedin,
   Github,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme";
+import { LanguageToggle } from "@/components/language";
 
 // Feature tabs data
 const featureTabs = [
@@ -197,7 +199,11 @@ export default function Home() {
                 priority
               />
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <div className="hidden sm:flex items-center gap-2 mr-2">
+                <LanguageToggle />
+                <ThemeToggle />
+              </div>
               <Link
                 href="/login"
                 className="hidden sm:block text-sm font-medium text-slate-300 hover:text-white transition-colors"

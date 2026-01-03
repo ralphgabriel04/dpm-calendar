@@ -73,7 +73,7 @@ export default function OnboardingPage() {
 
   const completeOnboardingMutation = trpc.user.completeOnboarding.useMutation({
     onSuccess: () => {
-      toast.success("Configuration terminee!");
+      toast.success("Configuration terminée!");
       router.push("/home");
     },
     onError: () => {
@@ -156,7 +156,7 @@ export default function OnboardingPage() {
                 planificateur <span className="text-primary">pour vous</span>
               </h1>
               <p className="text-muted-foreground text-lg max-w-md mx-auto">
-                Configurons DPM Calendar selon vos outils de travail, vos calendriers et votre emploi du temps. Ensuite, vous planifierez votre premiere journee!
+                Configurons DPM Calendar selon vos outils de travail, vos calendriers et votre emploi du temps. Ensuite, vous planifierez votre première journée!
               </p>
             </div>
             <Button
@@ -175,12 +175,12 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold">
-                Quel gestionnaire de taches utilisez-vous?
+                Quel gestionnaire de tâches utilisez-vous?
               </h2>
               <p className="text-muted-foreground">
-                Selectionnez les outils que vous utilisez pour gerer vos taches.
+                Sélectionnez les outils que vous utilisez pour gérer vos tâches.
                 <br />
-                Nous vous aiderons a les connecter plus tard.
+                Nous vous aiderons à les connecter plus tard.
               </p>
             </div>
 
@@ -288,10 +288,10 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold">
-                A quelle heure commencez-vous a travailler?
+                À quelle heure commencez-vous à travailler?
               </h2>
               <p className="text-muted-foreground">
-                Nous ne planifierons aucune tache avant cette heure.
+                Nous ne planifierons aucune tâche avant cette heure.
                 <br />
                 Vous pouvez ajuster cela jour par jour.
               </p>
@@ -326,10 +326,10 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold">
-                A quelle heure arretez-vous de travailler?
+                À quelle heure arrêtez-vous de travailler?
               </h2>
               <p className="text-muted-foreground">
-                Nous essaierons de vous aider a terminer votre travail avant cette heure.
+                Nous essaierons de vous aider à terminer votre travail avant cette heure.
               </p>
             </div>
 
@@ -362,12 +362,12 @@ export default function OnboardingPage() {
           <div className="space-y-6">
             <div className="text-center space-y-2">
               <h2 className="text-2xl md:text-3xl font-bold">
-                Quand planifiez-vous votre journee?
+                Quand planifiez-vous votre journée?
               </h2>
               <p className="text-muted-foreground">
-                Nous vous aiderons a developper un rituel de planification
+                Nous vous aiderons à développer un rituel de planification
                 <br />
-                quotidien coherent et sans stress.
+                quotidien cohérent et sans stress.
               </p>
             </div>
 
@@ -512,7 +512,7 @@ export default function OnboardingPage() {
         <p className="text-sm text-muted-foreground">
           Mauvais compte?{" "}
           <a href="/api/auth/signout" className="text-emerald-500 hover:underline">
-            Se deconnecter
+            Se déconnecter
           </a>
           .
         </p>

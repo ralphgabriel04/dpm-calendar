@@ -1,0 +1,75 @@
+{
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "close": "Fermer",
+    "loading": "Chargement...",
+    "search": "Rechercher",
+    "settings": "Paramètres",
+    "logout": "Se déconnecter",
+    "next": "Suivant",
+    "previous": "Retour",
+    "skip": "Passer"
+  },
+  "sidebar": {
+    "home": "Accueil",
+    "calendar": "Calendrier",
+    "tasks": "Tâches",
+    "habits": "Habitudes",
+    "goals": "Objectifs",
+    "analytics": "Analytics",
+    "settings": "Paramètres",
+    "rules": "Règles"
+  },
+  "theme": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "language": {
+    "label": "Langue",
+    "french": "Français",
+    "english": "English"
+  },
+  "calendar": {
+    "today": "Aujourd'hui",
+    "day": "Jour",
+    "week": "Semaine",
+    "month": "Mois",
+    "agenda": "Agenda",
+    "newEvent": "Nouvel événement"
+  },
+  "tasks": {
+    "title": "Tâches",
+    "newTask": "Nouvelle tâche",
+    "completed": "Terminée",
+    "pending": "En attente",
+    "inProgress": "En cours",
+    "priority": "Priorité",
+    "dueDate": "Date d'échéance"
+  },
+  "habits": {
+    "title": "Habitudes",
+    "streak": "Série",
+    "completed": "Complétée"
+  },
+  "goals": {
+    "title": "Objectifs",
+    "progress": "Progression",
+    "target": "Objectif"
+  },
+  "landing": {
+    "hero": {
+      "title": "Planifiez. Organisez. Réussissez.",
+      "subtitle": "La solution tout-en-un pour gérer votre temps, vos tâches et vos objectifs.",
+      "cta": "Commencer gratuitement"
+    },
+    "features": {
+      "title": "Fonctionnalités innovantes",
+      "subtitle": "Découvrez les outils qui transformeront votre productivité"
+    }
+  }
+}
