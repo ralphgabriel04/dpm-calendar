@@ -103,6 +103,11 @@ export function TaskDetailModal({
   const [totalSessionTime, setTotalSessionTime] = useState(0); // Total time added in this session (seconds)
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Dropdown refs for click-away detection
+  const tagDropdownRef = useRef<HTMLDivElement>(null);
+  const plannedTimeRef = useRef<HTMLDivElement>(null);
+  const moveMenuRef = useRef<HTMLDivElement>(null);
+
   // Pomodoro state
   const [pomodoroSession, setPomodoroSession] = useState(25); // minutes
   const [pomodoroRemaining, setPomodoroRemaining] = useState(25 * 60); // seconds
@@ -146,6 +151,8 @@ export function TaskDetailModal({
     onSuccess: () => {
       utils.task.list.invalidate();
       utils.task.getTags.invalidate();
+      utils.task.get.invalidate({ id: task.id });
+      utils.task.getUnscheduled.invalidate();
     },
   });
 
@@ -158,6 +165,32 @@ export function TaskDetailModal({
     setTotalSessionTime(0);
     setElapsedTime(0);
   }, [task.id, task.tags, task.plannedDuration]);
+
+  // Click-away handler to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      // Close tag dropdown if click is outside
+      if (tagDropdownRef.current && !tagDropdownRef.current.contains(event.target as Node)) {
+        setShowTagSelector(false);
+      }
+      // Close planned time editor if click is outside
+      if (plannedTimeRef.current && !plannedTimeRef.current.contains(event.target as Node)) {
+        setShowPlannedTimeEditor(false);
+      }
+      // Close move menu if click is outside
+      if (moveMenuRef.current && !moveMenuRef.current.contains(event.target as Node)) {
+        setShowMoveMenu(false);
+      }
+    };
+
+    if (showTagSelector || showPlannedTimeEditor || showMoveMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showTagSelector, showPlannedTimeEditor, showMoveMenu]);
 
   // Calculate display times
   const baseActualSeconds = (task.actualDuration || 0) * 60;
@@ -345,7 +378,7 @@ export function TaskDetailModal({
         <div className={cn("flex-1 flex flex-col overflow-hidden", isExpanded && "max-w-[600px]")}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2 relative">
+            <div ref={tagDropdownRef} className="flex items-center gap-2 relative">
               <span className="text-xs text-muted-foreground uppercase">Tags</span>
               <button
                 onClick={() => setShowTagSelector(!showTagSelector)}
@@ -441,7 +474,7 @@ export function TaskDetailModal({
 
             {/* Move Menu Dropdown */}
             {showMoveMenu && (
-              <div className="absolute right-16 top-12 bg-card border rounded-lg shadow-lg py-2 min-w-[200px] z-10">
+              <div ref={moveMenuRef} className="absolute right-16 top-12 bg-card border rounded-lg shadow-lg py-2 min-w-[200px] z-10">
                 <div className="px-3 py-1 text-xs text-muted-foreground">Move:</div>
                 <button
                   onClick={() => {
@@ -575,7 +608,7 @@ export function TaskDetailModal({
                       : formatTime(pomodoroRemaining)}
                   </div>
                 </div>
-                <div className="text-right relative">
+                <div ref={plannedTimeRef} className="text-right relative">
                   <div className="text-xs text-muted-foreground uppercase">
                     {mode === "focus" ? "PLANNED" : "SESSION"}
                   </div>
@@ -712,6 +745,14 @@ export function TaskDetailModal({
 
             {/* Subtasks / Checklist Items */}
             <div className="space-y-2 mb-6">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-medium">Sous-tâches</h4>
+                {checklistItems.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {checklistItems.filter((i) => i.isCompleted).length}/{checklistItems.length}
+                  </span>
+                )}
+              </div>
               {loadingChecklist ? (
                 <div className="text-sm text-muted-foreground">Chargement...</div>
               ) : (
@@ -751,28 +792,29 @@ export function TaskDetailModal({
               )}
 
               {/* Add Subtask */}
-              <div className="flex items-center gap-3 py-2">
-                <button className="h-5 w-5 rounded-full border-2 border-dashed border-muted-foreground/30 flex-shrink-0 flex items-center justify-center">
-                  <Plus className="h-3 w-3 text-muted-foreground" />
-                </button>
+              <div className="flex items-center gap-2 py-2 mt-2 border-t border-dashed pt-3">
+                <Plus className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <Input
-                  placeholder="Ajouter une sous-tâche"
+                  placeholder="Ajouter une sous-tâche..."
                   value={newSubtaskTitle}
                   onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && addSubtask()}
-                  className="flex-1 border-0 p-0 h-auto focus-visible:ring-0 text-sm text-muted-foreground"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newSubtaskTitle.trim()) {
+                      e.preventDefault();
+                      addSubtask();
+                    }
+                  }}
+                  className="flex-1 h-8 text-sm"
                   disabled={addChecklistItemMutation.isPending}
                 />
-                {newSubtaskTitle && (
-                  <Button
-                    size="sm"
-                    onClick={addSubtask}
-                    disabled={addChecklistItemMutation.isPending}
-                    className="h-7"
-                  >
-                    {addChecklistItemMutation.isPending ? "..." : "Ajouter"}
-                  </Button>
-                )}
+                <Button
+                  size="sm"
+                  onClick={addSubtask}
+                  disabled={addChecklistItemMutation.isPending || !newSubtaskTitle.trim()}
+                  className="h-8"
+                >
+                  {addChecklistItemMutation.isPending ? "..." : "Ajouter"}
+                </Button>
               </div>
             </div>
 
