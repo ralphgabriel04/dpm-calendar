@@ -310,14 +310,6 @@ export default function OnboardingPage() {
                 ))}
               </select>
             </div>
-
-            <Button
-              size="lg"
-              onClick={handleNext}
-              className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white"
-            >
-              Suivant
-            </Button>
           </div>
         );
 
@@ -346,14 +338,6 @@ export default function OnboardingPage() {
                 ))}
               </select>
             </div>
-
-            <Button
-              size="lg"
-              onClick={handleNext}
-              className="w-full max-w-xs mx-auto bg-emerald-500 hover:bg-emerald-600 text-white"
-            >
-              Suivant
-            </Button>
           </div>
         );
 
