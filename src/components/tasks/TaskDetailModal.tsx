@@ -18,6 +18,7 @@ import {
   MoreHorizontal,
   Tag,
   Trash2,
+  Edit2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -82,7 +83,16 @@ export function TaskDetailModal({
   const [mode, setMode] = useState<"focus" | "pomodoro">("focus");
   const [showMoveMenu, setShowMoveMenu] = useState(false);
   const [showTagSelector, setShowTagSelector] = useState(false);
+  const [showPlannedTimeEditor, setShowPlannedTimeEditor] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(task.startAt || new Date());
+
+  // Local state for tags (to show selection immediately)
+  const [localTags, setLocalTags] = useState<string[]>(task.tags || []);
+
+  // Local state for planned duration
+  const [localPlannedDuration, setLocalPlannedDuration] = useState(task.plannedDuration || 0);
+  const [plannedHours, setPlannedHours] = useState(Math.floor((task.plannedDuration || 0) / 60));
+  const [plannedMinutes, setPlannedMinutes] = useState((task.plannedDuration || 0) % 60);
 
   // Subtasks state
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
@@ -90,7 +100,7 @@ export function TaskDetailModal({
   // Timer state
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0); // in seconds
-  const [sessionActualTime, setSessionActualTime] = useState(0); // Track time added this session
+  const [totalSessionTime, setTotalSessionTime] = useState(0); // Total time added in this session (seconds)
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Pomodoro state
@@ -135,14 +145,25 @@ export function TaskDetailModal({
   const updateTaskMutation = api.task.update.useMutation({
     onSuccess: () => {
       utils.task.list.invalidate();
+      utils.task.getTags.invalidate();
     },
   });
 
-  // Calculate totals
-  const totalPlanned = (task.plannedDuration || 0) * 60; // convert to seconds
-  const totalActual = ((task.actualDuration || 0) + sessionActualTime) * 60 + elapsedTime;
+  // Reset local state when task changes
+  useEffect(() => {
+    setLocalTags(task.tags || []);
+    setLocalPlannedDuration(task.plannedDuration || 0);
+    setPlannedHours(Math.floor((task.plannedDuration || 0) / 60));
+    setPlannedMinutes((task.plannedDuration || 0) % 60);
+    setTotalSessionTime(0);
+    setElapsedTime(0);
+  }, [task.id, task.tags, task.plannedDuration]);
 
-  // Timer effect
+  // Calculate display times
+  const baseActualSeconds = (task.actualDuration || 0) * 60;
+  const displayActualSeconds = baseActualSeconds + totalSessionTime + elapsedTime;
+
+  // Timer effect - runs every second when timer is active
   useEffect(() => {
     if (isTimerRunning) {
       timerRef.current = setInterval(() => {
@@ -151,11 +172,13 @@ export function TaskDetailModal({
     } else {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     }
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
+        timerRef.current = null;
       }
     };
   }, [isTimerRunning]);
@@ -174,7 +197,6 @@ export function TaskDetailModal({
   // Start focus timer
   const startTimer = useCallback(() => {
     setIsTimerRunning(true);
-    setElapsedTime(0);
   }, []);
 
   // Stop timer and save elapsed time to database
@@ -182,16 +204,17 @@ export function TaskDetailModal({
     setIsTimerRunning(false);
 
     if (elapsedTime > 0) {
-      const minutesToAdd = Math.ceil(elapsedTime / 60);
+      // Save to session total for display
+      setTotalSessionTime((prev) => prev + elapsedTime);
+
+      // Convert to minutes for database (round up)
+      const minutesToAdd = Math.max(1, Math.round(elapsedTime / 60));
 
       // Update in database
       updateActualDurationMutation.mutate({
         taskId: task.id,
         additionalMinutes: minutesToAdd,
       });
-
-      // Track locally for display
-      setSessionActualTime((prev) => prev + minutesToAdd);
     }
 
     setElapsedTime(0);
@@ -219,30 +242,36 @@ export function TaskDetailModal({
     deleteChecklistItemMutation.mutate({ id: itemId });
   }, [deleteChecklistItemMutation]);
 
-  // Handle tag selection
+  // Handle tag selection - update local state immediately
   const handleTagSelect = useCallback((tag: string) => {
-    const currentTags = task.tags || [];
-    const newTags = currentTags.includes(tag)
-      ? currentTags.filter((t) => t !== tag)
-      : [...currentTags, tag];
+    const newTags = localTags.includes(tag)
+      ? localTags.filter((t) => t !== tag)
+      : [...localTags, tag];
 
+    // Update local state immediately for UI feedback
+    setLocalTags(newTags);
+
+    // Update in database
     updateTaskMutation.mutate({
       id: task.id,
       tags: newTags,
     });
 
     onUpdate?.(task.id, { tags: newTags });
-    setShowTagSelector(false);
-  }, [task.id, task.tags, updateTaskMutation, onUpdate]);
+  }, [task.id, localTags, updateTaskMutation, onUpdate]);
 
   // Add new tag
   const [newTagInput, setNewTagInput] = useState("");
   const handleAddNewTag = useCallback(() => {
     if (!newTagInput.trim()) return;
 
-    const currentTags = task.tags || [];
-    const newTags = [...currentTags, newTagInput.trim()];
+    const newTag = newTagInput.trim();
+    const newTags = [...localTags, newTag];
 
+    // Update local state immediately
+    setLocalTags(newTags);
+
+    // Update in database
     updateTaskMutation.mutate({
       id: task.id,
       tags: newTags,
@@ -251,7 +280,21 @@ export function TaskDetailModal({
     onUpdate?.(task.id, { tags: newTags });
     setNewTagInput("");
     setShowTagSelector(false);
-  }, [newTagInput, task.id, task.tags, updateTaskMutation, onUpdate]);
+  }, [newTagInput, task.id, localTags, updateTaskMutation, onUpdate]);
+
+  // Save planned duration
+  const savePlannedDuration = useCallback(() => {
+    const totalMinutes = (plannedHours * 60) + plannedMinutes;
+    setLocalPlannedDuration(totalMinutes);
+
+    updateTaskMutation.mutate({
+      id: task.id,
+      plannedDuration: totalMinutes,
+    });
+
+    onUpdate?.(task.id, { plannedDuration: totalMinutes });
+    setShowPlannedTimeEditor(false);
+  }, [plannedHours, plannedMinutes, task.id, updateTaskMutation, onUpdate]);
 
   // Adjust pomodoro session time
   const adjustPomodoroSession = useCallback((delta: number) => {
@@ -271,21 +314,17 @@ export function TaskDetailModal({
     const lastDay = new Date(year, month + 1, 0);
     const days: (Date | null)[] = [];
 
-    // Add empty slots for days before the first day of month
-    const startDay = firstDay.getDay() || 7; // Convert Sunday (0) to 7
+    const startDay = firstDay.getDay() || 7;
     for (let i = 1; i < startDay; i++) {
       days.push(null);
     }
 
-    // Add all days of the month
     for (let d = 1; d <= lastDay.getDate(); d++) {
       days.push(new Date(year, month, d));
     }
 
     return days;
   };
-
-  const currentTags = task.tags || [];
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
@@ -313,7 +352,7 @@ export function TaskDetailModal({
                 className="flex items-center gap-1 text-sm hover:bg-accent px-2 py-1 rounded"
               >
                 <Tag className="h-3 w-3" />
-                {currentTags.length > 0 ? currentTags.join(", ") : "Ajouter un tag"}
+                {localTags.length > 0 ? localTags.join(", ") : "Ajouter un tag"}
               </button>
 
               {/* Tag Selector Dropdown */}
@@ -327,14 +366,14 @@ export function TaskDetailModal({
                         onClick={() => handleTagSelect(tag)}
                         className={cn(
                           "w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between",
-                          currentTags.includes(tag) && "bg-primary/10"
+                          localTags.includes(tag) && "bg-primary/10"
                         )}
                       >
                         <span className="flex items-center gap-2">
                           <Tag className="h-3 w-3" />
                           {tag}
                         </span>
-                        {currentTags.includes(tag) && <Check className="h-4 w-4 text-primary" />}
+                        {localTags.includes(tag) && <Check className="h-4 w-4 text-primary" />}
                       </button>
                     ))
                   ) : (
@@ -527,36 +566,117 @@ export function TaskDetailModal({
                   <div className="text-xs text-muted-foreground uppercase">
                     {mode === "focus" ? "ACTUAL" : "REMAINING"}
                   </div>
-                  <div className="text-2xl font-mono">
+                  <div className={cn(
+                    "text-2xl font-mono",
+                    isTimerRunning && mode === "focus" && "text-emerald-500"
+                  )}>
                     {mode === "focus"
-                      ? formatMinutes(Math.floor(totalActual / 60))
+                      ? formatTime(displayActualSeconds)
                       : formatTime(pomodoroRemaining)}
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="text-right relative">
                   <div className="text-xs text-muted-foreground uppercase">
                     {mode === "focus" ? "PLANNED" : "SESSION"}
                   </div>
-                  <div className="text-2xl font-mono">
-                    {mode === "focus"
-                      ? formatMinutes(task.plannedDuration || 0)
-                      : formatMinutes(pomodoroSession)}
-                  </div>
-                  {mode === "pomodoro" && (
-                    <div className="flex items-center gap-2 mt-1">
+                  {mode === "focus" ? (
+                    <>
                       <button
-                        onClick={() => adjustPomodoroSession(5)}
-                        className="text-xs text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowPlannedTimeEditor(!showPlannedTimeEditor)}
+                        className="text-2xl font-mono hover:text-primary flex items-center gap-1"
                       >
-                        ↑5
+                        {formatMinutes(localPlannedDuration)}
+                        <Edit2 className="h-3 w-3 opacity-50" />
                       </button>
-                      <button
-                        onClick={() => adjustPomodoroSession(-5)}
-                        className="text-xs text-muted-foreground hover:text-foreground"
-                      >
-                        ↓5
-                      </button>
-                    </div>
+
+                      {/* Planned Time Editor */}
+                      {showPlannedTimeEditor && (
+                        <div className="absolute top-full right-0 mt-2 bg-card border rounded-lg shadow-lg p-4 min-w-[200px] z-20">
+                          <div className="text-sm font-medium mb-3">Temps planifié</div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <div>
+                              <label className="text-xs text-muted-foreground">Heures</label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max="23"
+                                value={plannedHours}
+                                onChange={(e) => setPlannedHours(Math.max(0, parseInt(e.target.value) || 0))}
+                                className="w-16 h-8 text-center"
+                              />
+                            </div>
+                            <span className="text-xl font-bold mt-4">:</span>
+                            <div>
+                              <label className="text-xs text-muted-foreground">Minutes</label>
+                              <Input
+                                type="number"
+                                min="0"
+                                max="59"
+                                value={plannedMinutes}
+                                onChange={(e) => setPlannedMinutes(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+                                className="w-16 h-8 text-center"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setShowPlannedTimeEditor(false)}
+                              className="flex-1"
+                            >
+                              Annuler
+                            </Button>
+                            <Button
+                              size="sm"
+                              onClick={savePlannedDuration}
+                              className="flex-1"
+                            >
+                              Enregistrer
+                            </Button>
+                          </div>
+
+                          {/* Quick presets */}
+                          <div className="mt-3 pt-3 border-t">
+                            <div className="text-xs text-muted-foreground mb-2">Raccourcis</div>
+                            <div className="flex flex-wrap gap-1">
+                              {[15, 30, 45, 60, 90, 120].map((mins) => (
+                                <button
+                                  key={mins}
+                                  onClick={() => {
+                                    setPlannedHours(Math.floor(mins / 60));
+                                    setPlannedMinutes(mins % 60);
+                                  }}
+                                  className="px-2 py-1 text-xs bg-muted rounded hover:bg-accent"
+                                >
+                                  {mins < 60 ? `${mins}m` : `${mins / 60}h`}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-2xl font-mono">
+                        {formatMinutes(pomodoroSession)}
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <button
+                          onClick={() => adjustPomodoroSession(5)}
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          ↑5
+                        </button>
+                        <button
+                          onClick={() => adjustPomodoroSession(-5)}
+                          className="text-xs text-muted-foreground hover:text-foreground"
+                        >
+                          ↓5
+                        </button>
+                      </div>
+                    </>
                   )}
                 </div>
                 <Button
@@ -567,7 +687,13 @@ export function TaskDetailModal({
                       setIsPomodoroRunning(!isPomodoroRunning);
                     }
                   }}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2"
+                  className={cn(
+                    "gap-2",
+                    (mode === "focus" ? isTimerRunning : isPomodoroRunning)
+                      ? "bg-orange-500 hover:bg-orange-600"
+                      : "bg-emerald-500 hover:bg-emerald-600",
+                    "text-white"
+                  )}
                 >
                   {(mode === "focus" ? isTimerRunning : isPomodoroRunning) ? (
                     <>
