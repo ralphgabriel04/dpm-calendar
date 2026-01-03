@@ -430,4 +430,131 @@ export const taskRouter = createTRPCRouter({
         });
       });
     }),
+
+  // Update actual duration (for focus timer)
+  updateActualDuration: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        additionalMinutes: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.taskId, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return ctx.db.task.update({
+        where: { id: input.taskId },
+        data: {
+          actualDuration: (task.actualDuration || 0) + input.additionalMinutes,
+        },
+      });
+    }),
+
+  // Get all unique tags
+  getTags: protectedProcedure.query(async ({ ctx }) => {
+    const tasks = await ctx.db.task.findMany({
+      where: { userId: ctx.session.user.id },
+      select: { tags: true },
+    });
+
+    const allTags = tasks.flatMap((t) => t.tags);
+    return Array.from(new Set(allTags)).sort();
+  }),
+
+  // ============================================
+  // CHECKLIST ITEMS
+  // ============================================
+
+  // Add checklist item
+  addChecklistItem: protectedProcedure
+    .input(
+      z.object({
+        taskId: z.string(),
+        title: z.string().min(1),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.taskId, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Get max position
+      const maxPosition = await ctx.db.checklistItem.aggregate({
+        where: { taskId: input.taskId },
+        _max: { position: true },
+      });
+
+      return ctx.db.checklistItem.create({
+        data: {
+          taskId: input.taskId,
+          title: input.title,
+          position: (maxPosition._max.position || 0) + 1,
+        },
+      });
+    }),
+
+  // Toggle checklist item
+  toggleChecklistItem: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.checklistItem.findFirst({
+        where: { id: input.id },
+        include: { task: true },
+      });
+
+      if (!item || item.task.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return ctx.db.checklistItem.update({
+        where: { id: input.id },
+        data: { isCompleted: !item.isCompleted },
+      });
+    }),
+
+  // Delete checklist item
+  deleteChecklistItem: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const item = await ctx.db.checklistItem.findFirst({
+        where: { id: input.id },
+        include: { task: true },
+      });
+
+      if (!item || item.task.userId !== ctx.session.user.id) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return ctx.db.checklistItem.delete({
+        where: { id: input.id },
+      });
+    }),
+
+  // Get checklist items for a task
+  getChecklistItems: protectedProcedure
+    .input(z.object({ taskId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.taskId, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      return ctx.db.checklistItem.findMany({
+        where: { taskId: input.taskId },
+        orderBy: { position: "asc" },
+      });
+    }),
 });

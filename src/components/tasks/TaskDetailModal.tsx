@@ -1,45 +1,31 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { format, addDays, addWeeks, startOfWeek } from "date-fns";
-import { fr } from "date-fns/locale";
+import { format, addDays } from "date-fns";
 import {
   X,
   Play,
   Pause,
-  Square,
   Plus,
   Check,
-  Circle,
   Calendar as CalendarIcon,
   Clock,
   Timer,
-  ChevronUp,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Maximize2,
   Minimize2,
   MoreHorizontal,
-  Hash,
-  Archive,
-  CalendarPlus,
+  Tag,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { DayView } from "@/components/calendar";
 import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
+import { trpc as api } from "@/lib/trpc";
 import type { CalendarEvent } from "@/lib/calendar/utils";
-
-interface SubTask {
-  id: string;
-  title: string;
-  completed: boolean;
-  actualTime: number; // in seconds
-  plannedTime: number; // in seconds
-  isRunning: boolean;
-}
 
 interface TaskDetailModalProps {
   isOpen: boolean;
@@ -48,15 +34,14 @@ interface TaskDetailModalProps {
     id: string;
     title: string;
     description?: string;
-    channel?: string;
+    tags?: string[];
     plannedDuration?: number; // in minutes
     actualDuration?: number; // in minutes
     dueAt?: Date;
     startAt?: Date;
-    subtasks?: SubTask[];
   };
   events?: CalendarEvent[];
-  onUpdate?: (taskId: string, data: Partial<TaskDetailModalProps["task"]>) => void;
+  onUpdate?: (taskId: string, data: Record<string, unknown>) => void;
   onSnooze?: (taskId: string) => void;
   onMoveToNextWeek?: (taskId: string) => void;
   onMoveToBacklog?: (taskId: string) => void;
@@ -96,17 +81,16 @@ export function TaskDetailModal({
   const [isExpanded, setIsExpanded] = useState(false);
   const [mode, setMode] = useState<"focus" | "pomodoro">("focus");
   const [showMoveMenu, setShowMoveMenu] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTagSelector, setShowTagSelector] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date>(task.startAt || new Date());
 
   // Subtasks state
-  const [subtasks, setSubtasks] = useState<SubTask[]>(task.subtasks || []);
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
 
   // Timer state
-  const [activeSubtaskId, setActiveSubtaskId] = useState<string | null>(null);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0); // in seconds
+  const [sessionActualTime, setSessionActualTime] = useState(0); // Track time added this session
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Pomodoro state
@@ -114,9 +98,49 @@ export function TaskDetailModal({
   const [pomodoroRemaining, setPomodoroRemaining] = useState(25 * 60); // seconds
   const [isPomodoroRunning, setIsPomodoroRunning] = useState(false);
 
+  // tRPC queries and mutations
+  const utils = api.useUtils();
+
+  const { data: checklistItems = [], isLoading: loadingChecklist } = api.task.getChecklistItems.useQuery(
+    { taskId: task.id },
+    { enabled: isOpen }
+  );
+
+  const { data: allTags = [] } = api.task.getTags.useQuery(undefined, { enabled: isOpen });
+
+  const addChecklistItemMutation = api.task.addChecklistItem.useMutation({
+    onSuccess: () => {
+      utils.task.getChecklistItems.invalidate({ taskId: task.id });
+    },
+  });
+
+  const toggleChecklistItemMutation = api.task.toggleChecklistItem.useMutation({
+    onSuccess: () => {
+      utils.task.getChecklistItems.invalidate({ taskId: task.id });
+    },
+  });
+
+  const deleteChecklistItemMutation = api.task.deleteChecklistItem.useMutation({
+    onSuccess: () => {
+      utils.task.getChecklistItems.invalidate({ taskId: task.id });
+    },
+  });
+
+  const updateActualDurationMutation = api.task.updateActualDuration.useMutation({
+    onSuccess: () => {
+      utils.task.list.invalidate();
+    },
+  });
+
+  const updateTaskMutation = api.task.update.useMutation({
+    onSuccess: () => {
+      utils.task.list.invalidate();
+    },
+  });
+
   // Calculate totals
   const totalPlanned = (task.plannedDuration || 0) * 60; // convert to seconds
-  const totalActual = subtasks.reduce((acc, st) => acc + st.actualTime, 0) + elapsedTime;
+  const totalActual = ((task.actualDuration || 0) + sessionActualTime) * 60 + elapsedTime;
 
   // Timer effect
   useEffect(() => {
@@ -147,52 +171,87 @@ export function TaskDetailModal({
     return () => clearInterval(interval);
   }, [isPomodoroRunning, pomodoroRemaining]);
 
-  // Start timer for a subtask
-  const startTimer = useCallback((subtaskId?: string) => {
-    setActiveSubtaskId(subtaskId || null);
+  // Start focus timer
+  const startTimer = useCallback(() => {
     setIsTimerRunning(true);
     setElapsedTime(0);
   }, []);
 
-  // Stop timer and save elapsed time
+  // Stop timer and save elapsed time to database
   const stopTimer = useCallback(() => {
     setIsTimerRunning(false);
-    if (activeSubtaskId) {
-      setSubtasks((prev) =>
-        prev.map((st) =>
-          st.id === activeSubtaskId
-            ? { ...st, actualTime: st.actualTime + elapsedTime }
-            : st
-        )
-      );
+
+    if (elapsedTime > 0) {
+      const minutesToAdd = Math.ceil(elapsedTime / 60);
+
+      // Update in database
+      updateActualDurationMutation.mutate({
+        taskId: task.id,
+        additionalMinutes: minutesToAdd,
+      });
+
+      // Track locally for display
+      setSessionActualTime((prev) => prev + minutesToAdd);
     }
+
     setElapsedTime(0);
-    setActiveSubtaskId(null);
-  }, [activeSubtaskId, elapsedTime]);
+  }, [elapsedTime, task.id, updateActualDurationMutation]);
 
   // Add subtask
   const addSubtask = useCallback(() => {
     if (!newSubtaskTitle.trim()) return;
-    const newSubtask: SubTask = {
-      id: `subtask-${Date.now()}`,
+
+    addChecklistItemMutation.mutate({
+      taskId: task.id,
       title: newSubtaskTitle.trim(),
-      completed: false,
-      actualTime: 0,
-      plannedTime: 0,
-      isRunning: false,
-    };
-    setSubtasks((prev) => [...prev, newSubtask]);
+    });
+
     setNewSubtaskTitle("");
-  }, [newSubtaskTitle]);
+  }, [newSubtaskTitle, task.id, addChecklistItemMutation]);
 
   // Toggle subtask completion
-  const toggleSubtask = useCallback((subtaskId: string) => {
-    setSubtasks((prev) =>
-      prev.map((st) =>
-        st.id === subtaskId ? { ...st, completed: !st.completed } : st
-      )
-    );
-  }, []);
+  const toggleSubtask = useCallback((itemId: string) => {
+    toggleChecklistItemMutation.mutate({ id: itemId });
+  }, [toggleChecklistItemMutation]);
+
+  // Delete subtask
+  const deleteSubtask = useCallback((itemId: string) => {
+    deleteChecklistItemMutation.mutate({ id: itemId });
+  }, [deleteChecklistItemMutation]);
+
+  // Handle tag selection
+  const handleTagSelect = useCallback((tag: string) => {
+    const currentTags = task.tags || [];
+    const newTags = currentTags.includes(tag)
+      ? currentTags.filter((t) => t !== tag)
+      : [...currentTags, tag];
+
+    updateTaskMutation.mutate({
+      id: task.id,
+      tags: newTags,
+    });
+
+    onUpdate?.(task.id, { tags: newTags });
+    setShowTagSelector(false);
+  }, [task.id, task.tags, updateTaskMutation, onUpdate]);
+
+  // Add new tag
+  const [newTagInput, setNewTagInput] = useState("");
+  const handleAddNewTag = useCallback(() => {
+    if (!newTagInput.trim()) return;
+
+    const currentTags = task.tags || [];
+    const newTags = [...currentTags, newTagInput.trim()];
+
+    updateTaskMutation.mutate({
+      id: task.id,
+      tags: newTags,
+    });
+
+    onUpdate?.(task.id, { tags: newTags });
+    setNewTagInput("");
+    setShowTagSelector(false);
+  }, [newTagInput, task.id, task.tags, updateTaskMutation, onUpdate]);
 
   // Adjust pomodoro session time
   const adjustPomodoroSession = useCallback((delta: number) => {
@@ -226,6 +285,8 @@ export function TaskDetailModal({
     return days;
   };
 
+  const currentTags = task.tags || [];
+
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-20">
       {/* Backdrop */}
@@ -245,19 +306,64 @@ export function TaskDetailModal({
         <div className={cn("flex-1 flex flex-col overflow-hidden", isExpanded && "max-w-[600px]")}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground uppercase">Channel</span>
-              <span className="flex items-center gap-1 text-sm">
-                <Hash className="h-3 w-3" />
-                {task.channel || "work"}
-              </span>
+            <div className="flex items-center gap-2 relative">
+              <span className="text-xs text-muted-foreground uppercase">Tags</span>
+              <button
+                onClick={() => setShowTagSelector(!showTagSelector)}
+                className="flex items-center gap-1 text-sm hover:bg-accent px-2 py-1 rounded"
+              >
+                <Tag className="h-3 w-3" />
+                {currentTags.length > 0 ? currentTags.join(", ") : "Ajouter un tag"}
+              </button>
+
+              {/* Tag Selector Dropdown */}
+              {showTagSelector && (
+                <div className="absolute top-full left-0 mt-1 bg-card border rounded-lg shadow-lg py-2 min-w-[200px] z-20">
+                  <div className="px-3 py-1 text-xs text-muted-foreground">Tags existants</div>
+                  {allTags.length > 0 ? (
+                    allTags.map((tag) => (
+                      <button
+                        key={tag}
+                        onClick={() => handleTagSelect(tag)}
+                        className={cn(
+                          "w-full px-3 py-2 text-left text-sm hover:bg-accent flex items-center justify-between",
+                          currentTags.includes(tag) && "bg-primary/10"
+                        )}
+                      >
+                        <span className="flex items-center gap-2">
+                          <Tag className="h-3 w-3" />
+                          {tag}
+                        </span>
+                        {currentTags.includes(tag) && <Check className="h-4 w-4 text-primary" />}
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-3 py-2 text-sm text-muted-foreground">Aucun tag</div>
+                  )}
+                  <div className="border-t my-2" />
+                  <div className="px-3 py-1">
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Nouveau tag..."
+                        value={newTagInput}
+                        onChange={(e) => setNewTagInput(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && handleAddNewTag()}
+                        className="h-8 text-sm"
+                      />
+                      <Button size="sm" onClick={handleAddNewTag} className="h-8">
+                        <Plus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-4 text-sm">
                 <span className="text-muted-foreground">START</span>
                 <button
-                  onClick={() => setShowDatePicker(!showDatePicker)}
+                  onClick={() => setShowMoveMenu(!showMoveMenu)}
                   className="hover:text-primary"
                 >
                   Today
@@ -478,49 +584,45 @@ export function TaskDetailModal({
               </div>
             </div>
 
-            {/* Subtasks */}
+            {/* Subtasks / Checklist Items */}
             <div className="space-y-2 mb-6">
-              {subtasks.map((subtask) => (
-                <div
-                  key={subtask.id}
-                  className="flex items-center gap-3 py-2 group"
-                >
-                  <button
-                    onClick={() => toggleSubtask(subtask.id)}
-                    className={cn(
-                      "h-5 w-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors",
-                      subtask.completed
-                        ? "bg-emerald-500 border-emerald-500"
-                        : "border-muted-foreground/30 hover:border-primary"
-                    )}
+              {loadingChecklist ? (
+                <div className="text-sm text-muted-foreground">Chargement...</div>
+              ) : (
+                checklistItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center gap-3 py-2 group"
                   >
-                    {subtask.completed && <Check className="h-3 w-3 text-white" />}
-                  </button>
-                  <span
-                    className={cn(
-                      "flex-1 text-sm",
-                      subtask.completed && "line-through text-muted-foreground"
-                    )}
-                  >
-                    {subtask.title}
-                  </span>
-                  <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <span className="text-xs text-muted-foreground">
-                      {formatTime(subtask.actualTime)}
+                    <button
+                      onClick={() => toggleSubtask(item.id)}
+                      className={cn(
+                        "h-5 w-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors",
+                        item.isCompleted
+                          ? "bg-emerald-500 border-emerald-500"
+                          : "border-muted-foreground/30 hover:border-primary"
+                      )}
+                    >
+                      {item.isCompleted && <Check className="h-3 w-3 text-white" />}
+                    </button>
+                    <span
+                      className={cn(
+                        "flex-1 text-sm",
+                        item.isCompleted && "line-through text-muted-foreground"
+                      )}
+                    >
+                      {item.title}
                     </span>
-                    <span className="text-xs text-muted-foreground">--:--</span>
-                    {!subtask.completed && (
-                      <button
-                        onClick={() => startTimer(subtask.id)}
-                        className="p-1 hover:bg-accent rounded"
-                        title="Start timer for this subtask"
-                      >
-                        <Play className="h-3 w-3" />
-                      </button>
-                    )}
+                    <button
+                      onClick={() => deleteSubtask(item.id)}
+                      className="p-1 hover:bg-destructive/10 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                      title="Supprimer"
+                    >
+                      <Trash2 className="h-3 w-3 text-destructive" />
+                    </button>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
 
               {/* Add Subtask */}
               <div className="flex items-center gap-3 py-2">
@@ -528,12 +630,23 @@ export function TaskDetailModal({
                   <Plus className="h-3 w-3 text-muted-foreground" />
                 </button>
                 <Input
-                  placeholder="Add subtask"
+                  placeholder="Ajouter une sous-tâche"
                   value={newSubtaskTitle}
                   onChange={(e) => setNewSubtaskTitle(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && addSubtask()}
                   className="flex-1 border-0 p-0 h-auto focus-visible:ring-0 text-sm text-muted-foreground"
+                  disabled={addChecklistItemMutation.isPending}
                 />
+                {newSubtaskTitle && (
+                  <Button
+                    size="sm"
+                    onClick={addSubtask}
+                    disabled={addChecklistItemMutation.isPending}
+                    className="h-7"
+                  >
+                    {addChecklistItemMutation.isPending ? "..." : "Ajouter"}
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -548,30 +661,30 @@ export function TaskDetailModal({
             {/* Help Text */}
             <div className="space-y-6 text-sm">
               <div>
-                <h3 className="font-semibold mb-2">Add a task:</h3>
+                <h3 className="font-semibold mb-2">Ajouter une tâche:</h3>
                 <p className="text-muted-foreground">
-                  You&apos;ve already created your first task. You can add more with the keyboard
-                  shortcut <kbd className="px-1 py-0.5 bg-muted rounded text-red-500">A</kbd> or by
-                  clicking the &quot;Add Task&quot; button.
+                  Vous avez déjà créé votre première tâche. Vous pouvez en ajouter d&apos;autres avec le raccourci
+                  clavier <kbd className="px-1 py-0.5 bg-muted rounded text-red-500">A</kbd> ou en
+                  cliquant sur le bouton &quot;Ajouter une tâche&quot;.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Complete daily planning:</h3>
+                <h3 className="font-semibold mb-2">Planification quotidienne:</h3>
                 <p className="text-muted-foreground">
-                  Before you can use the rest of the app, you must finish planning one day. Check out
-                  this <a href="/daily-planning" className="text-primary hover:underline">guide</a> on
-                  how to plan your day.
+                  Avant de pouvoir utiliser le reste de l&apos;application, vous devez terminer la planification d&apos;une journée.
+                  Consultez ce <a href="/daily-planning" className="text-primary hover:underline">guide</a> pour
+                  planifier votre journée.
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Add integrations:</h3>
+                <h3 className="font-semibold mb-2">Ajouter des intégrations:</h3>
                 <p className="text-muted-foreground">
-                  DPM Calendar can connect with multiple tools. These integrations are useful for
-                  importing items into your daily plan. Check out the{" "}
-                  <a href="/settings" className="text-primary hover:underline">settings</a> to add
-                  integrations.
+                  DPM Calendar peut se connecter à plusieurs outils. Ces intégrations sont utiles pour
+                  importer des éléments dans votre plan quotidien. Consultez les{" "}
+                  <a href="/settings" className="text-primary hover:underline">paramètres</a> pour ajouter
+                  des intégrations.
                 </p>
               </div>
             </div>
