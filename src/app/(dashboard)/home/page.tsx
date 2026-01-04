@@ -13,6 +13,10 @@ import {
   Sun,
   Moon,
   CloudSun,
+  Flame,
+  BarChart3,
+  ListChecks,
+  Clock,
 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -90,14 +94,19 @@ export default function HomePage() {
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
 
+  const utils = trpc.useUtils();
+
   const { data: tasksData } = trpc.task.list.useQuery({
     includeCompleted: true,
   });
 
-  // Fetch today's events
+  // Fetch upcoming events (next 7 days)
+  const nextWeek = new Date(today);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+
   const { data: eventsData } = trpc.event.list.useQuery({
     startDate: today,
-    endDate: tomorrow,
+    endDate: nextWeek,
   });
 
   // Fetch habits
@@ -183,8 +192,13 @@ export default function HomePage() {
   // Focus time (from tasks with plannedDuration that are time-blocked)
   const focusTimeMinutes = plannedMinutes;
 
-  // Task mutations
-  const updateTaskMutation = trpc.task.update.useMutation();
+  // Task mutations with cache invalidation
+  const updateTaskMutation = trpc.task.update.useMutation({
+    onSuccess: () => {
+      // Invalidate task list to refresh data immediately
+      utils.task.list.invalidate();
+    },
+  });
 
   const handleCompleteTask = (taskId: string) => {
     updateTaskMutation.mutate({
@@ -201,7 +215,19 @@ export default function HomePage() {
     });
   };
 
-  // Quick actions
+  // Handle task selection (switch current task)
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
+
+  const handleSelectTask = (taskId: string) => {
+    setSelectedTaskId(taskId);
+    // Set the selected task to IN_PROGRESS
+    updateTaskMutation.mutate({
+      id: taskId,
+      status: "IN_PROGRESS",
+    });
+  };
+
+  // Quick actions - expanded list
   const quickActions = [
     {
       label: "Nouvelle tâche",
@@ -218,6 +244,21 @@ export default function HomePage() {
       label: "Focus",
       icon: Target,
       onClick: () => router.push("/planner?focus=true"),
+    },
+    {
+      label: "Habitudes",
+      icon: Flame,
+      onClick: () => router.push("/habits"),
+    },
+    {
+      label: "Analytics",
+      icon: BarChart3,
+      onClick: () => router.push("/analytics"),
+    },
+    {
+      label: "Toutes les tâches",
+      icon: ListChecks,
+      onClick: () => router.push("/tasks"),
     },
   ];
 
@@ -286,10 +327,12 @@ export default function HomePage() {
             <div className="lg:col-span-2 space-y-6">
               {/* Current task card */}
               <CurrentTaskCard
-                task={currentTask}
+                task={selectedTaskId ? pendingTasks.find(t => t.id === selectedTaskId) || currentTask : currentTask}
                 nextTask={nextTask}
+                allTasks={pendingTasks}
                 onComplete={handleCompleteTask}
                 onSkip={handleSkipTask}
+                onSelectTask={handleSelectTask}
               />
 
               {/* Daily overview */}
@@ -350,35 +393,38 @@ export default function HomePage() {
                     </Button>
                   </div>
                   <div className="space-y-2">
-                    {pendingTasks.slice(0, 5).map((task) => (
-                      <div
-                        key={task.id}
-                        className={cn(
-                          "flex items-center gap-3 p-2 rounded-lg",
-                          "hover:bg-muted/50 transition-colors cursor-pointer",
-                          task.id === currentTask?.id && "bg-primary/5 border border-primary/20"
-                        )}
-                        onClick={() => router.push("/tasks")}
-                      >
-                        <div
+                    {pendingTasks.slice(0, 5).map((task) => {
+                      const isCurrentTask = (selectedTaskId ? selectedTaskId === task.id : task.id === currentTask?.id);
+                      return (
+                        <button
+                          key={task.id}
                           className={cn(
-                            "h-2 w-2 rounded-full",
-                            task.priority === "URGENT" && "bg-red-500",
-                            task.priority === "HIGH" && "bg-orange-500",
-                            task.priority === "MEDIUM" && "bg-yellow-500",
-                            task.priority === "LOW" && "bg-green-500"
+                            "w-full flex items-center gap-3 p-2 rounded-lg text-left",
+                            "hover:bg-muted/50 transition-colors",
+                            isCurrentTask && "bg-primary/5 border border-primary/20"
                           )}
-                        />
-                        <span className="text-sm flex-1 truncate">
-                          {task.title}
-                        </span>
-                        {task.plannedDuration && (
-                          <span className="text-xs text-muted-foreground">
-                            {task.plannedDuration}m
+                          onClick={() => handleSelectTask(task.id)}
+                        >
+                          <div
+                            className={cn(
+                              "h-2 w-2 rounded-full",
+                              task.priority === "URGENT" && "bg-red-500",
+                              task.priority === "HIGH" && "bg-orange-500",
+                              task.priority === "MEDIUM" && "bg-yellow-500",
+                              task.priority === "LOW" && "bg-green-500"
+                            )}
+                          />
+                          <span className="text-sm flex-1 truncate">
+                            {task.title}
                           </span>
-                        )}
-                      </div>
-                    ))}
+                          {task.plannedDuration && (
+                            <span className="text-xs text-muted-foreground">
+                              {task.plannedDuration}m
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Play, Pause, Check, SkipForward, Clock, Zap } from "lucide-react";
+import { Play, Pause, Check, SkipForward, Clock, Zap, Timer, ChevronDown, RotateCcw, Coffee } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
@@ -17,27 +17,101 @@ interface Task {
 interface CurrentTaskCardProps {
   task: Task | null;
   nextTask?: Task | null;
+  allTasks?: Task[];
   onComplete?: (taskId: string) => void;
   onSkip?: (taskId: string) => void;
+  onSelectTask?: (taskId: string) => void;
   onStartFocus?: (taskId: string) => void;
   className?: string;
+}
+
+// Pomodoro settings
+const POMODORO_WORK = 25 * 60; // 25 minutes
+const POMODORO_SHORT_BREAK = 5 * 60; // 5 minutes
+const POMODORO_LONG_BREAK = 15 * 60; // 15 minutes
+
+type TimerMode = "normal" | "pomodoro";
+type PomodoroPhase = "work" | "shortBreak" | "longBreak";
+
+// LocalStorage key for timer persistence
+const TIMER_STORAGE_KEY = "dpm-current-task-timer";
+
+interface TimerState {
+  taskId: string;
+  elapsedSeconds: number;
+  isRunning: boolean;
+  mode: TimerMode;
+  pomodoroPhase: PomodoroPhase;
+  pomodoroCount: number;
+  pomodoroTimeLeft: number;
 }
 
 export function CurrentTaskCard({
   task,
   nextTask,
+  allTasks = [],
   onComplete,
   onSkip,
+  onSelectTask,
   onStartFocus,
   className,
 }: CurrentTaskCardProps) {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [timerMode, setTimerMode] = useState<TimerMode>("normal");
+  const [pomodoroPhase, setPomodoroPhase] = useState<PomodoroPhase>("work");
+  const [pomodoroTimeLeft, setPomodoroTimeLeft] = useState(POMODORO_WORK);
+  const [pomodoroCount, setPomodoroCount] = useState(0);
+  const [showTaskSelector, setShowTaskSelector] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  // Timer logic
+  // Load timer state from localStorage on mount
+  useEffect(() => {
+    if (!task) return;
+
+    const saved = localStorage.getItem(TIMER_STORAGE_KEY);
+    if (saved) {
+      try {
+        const state: TimerState = JSON.parse(saved);
+        if (state.taskId === task.id) {
+          setElapsedSeconds(state.elapsedSeconds);
+          setIsTimerRunning(state.isRunning);
+          setTimerMode(state.mode);
+          setPomodoroPhase(state.pomodoroPhase);
+          setPomodoroCount(state.pomodoroCount);
+          setPomodoroTimeLeft(state.pomodoroTimeLeft);
+        } else {
+          // Different task, reset but don't clear other task's data
+          setElapsedSeconds(0);
+          setIsTimerRunning(false);
+        }
+      } catch (e) {
+        console.error("Failed to parse timer state", e);
+      }
+    }
+    setInitialized(true);
+  }, [task?.id]);
+
+  // Save timer state to localStorage
+  useEffect(() => {
+    if (!task || !initialized) return;
+
+    const state: TimerState = {
+      taskId: task.id,
+      elapsedSeconds,
+      isRunning: isTimerRunning,
+      mode: timerMode,
+      pomodoroPhase,
+      pomodoroCount,
+      pomodoroTimeLeft,
+    };
+    localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(state));
+  }, [task?.id, elapsedSeconds, isTimerRunning, timerMode, pomodoroPhase, pomodoroCount, pomodoroTimeLeft, initialized]);
+
+  // Normal timer logic
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    if (isTimerRunning) {
+    if (isTimerRunning && timerMode === "normal") {
       interval = setInterval(() => {
         setElapsedSeconds((s) => s + 1);
       }, 1000);
@@ -45,13 +119,61 @@ export function CurrentTaskCard({
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isTimerRunning]);
+  }, [isTimerRunning, timerMode]);
 
-  // Reset timer when task changes
+  // Pomodoro timer logic
   useEffect(() => {
-    setElapsedSeconds(0);
-    setIsTimerRunning(false);
-  }, [task?.id]);
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerRunning && timerMode === "pomodoro") {
+      interval = setInterval(() => {
+        setPomodoroTimeLeft((time) => {
+          if (time <= 1) {
+            // Timer finished - will be handled in next effect
+            return 0;
+          }
+          return time - 1;
+        });
+        setElapsedSeconds((s) => s + 1);
+      }, 1000);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning, timerMode]);
+
+  // Handle pomodoro completion
+  useEffect(() => {
+    if (timerMode === "pomodoro" && pomodoroTimeLeft === 0 && isTimerRunning) {
+      setIsTimerRunning(false);
+
+      // Play notification sound and show notification
+      if (typeof window !== "undefined" && "Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification(pomodoroPhase === "work" ? "Pause !" : "Retour au travail !", {
+            body: pomodoroPhase === "work"
+              ? "Bon travail ! Prends une pause."
+              : "La pause est terminée. C'est reparti !",
+          });
+        }
+      }
+
+      if (pomodoroPhase === "work") {
+        const newCount = pomodoroCount + 1;
+        setPomodoroCount(newCount);
+        // After 4 pomodoros, take a long break
+        if (newCount % 4 === 0) {
+          setPomodoroPhase("longBreak");
+          setPomodoroTimeLeft(POMODORO_LONG_BREAK);
+        } else {
+          setPomodoroPhase("shortBreak");
+          setPomodoroTimeLeft(POMODORO_SHORT_BREAK);
+        }
+      } else {
+        setPomodoroPhase("work");
+        setPomodoroTimeLeft(POMODORO_WORK);
+      }
+    }
+  }, [pomodoroTimeLeft, isTimerRunning, timerMode, pomodoroPhase, pomodoroCount]);
 
   const formatTimer = (seconds: number) => {
     const hrs = Math.floor(seconds / 3600);
@@ -63,14 +185,43 @@ export function CurrentTaskCard({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "URGENT": return "text-red-500";
-      case "HIGH": return "text-orange-500";
-      case "MEDIUM": return "text-yellow-500";
-      default: return "text-green-500";
+  const resetTimer = () => {
+    setElapsedSeconds(0);
+    setIsTimerRunning(false);
+    setPomodoroPhase("work");
+    setPomodoroTimeLeft(POMODORO_WORK);
+    setPomodoroCount(0);
+  };
+
+  const toggleTimerMode = () => {
+    const newMode = timerMode === "normal" ? "pomodoro" : "normal";
+    setTimerMode(newMode);
+    if (newMode === "pomodoro") {
+      setPomodoroPhase("work");
+      setPomodoroTimeLeft(POMODORO_WORK);
+    }
+    setIsTimerRunning(false);
+  };
+
+  const handleTaskSelect = (taskId: string) => {
+    setShowTaskSelector(false);
+    onSelectTask?.(taskId);
+  };
+
+  const handleComplete = () => {
+    if (task) {
+      // Clear timer state when completing
+      localStorage.removeItem(TIMER_STORAGE_KEY);
+      setElapsedSeconds(0);
+      setIsTimerRunning(false);
+      onComplete?.(task.id);
     }
   };
+
+  // Available tasks for selection (excluding current and completed)
+  const selectableTasks = allTasks.filter(
+    (t) => t.id !== task?.id && t.status !== "DONE" && t.status !== "CANCELLED"
+  );
 
   if (!task) {
     return (
@@ -100,7 +251,7 @@ export function CurrentTaskCard({
     )}>
       {/* Main task area */}
       <div className="p-4 md:p-6 space-y-4">
-        {/* Priority badge */}
+        {/* Header with badge and timer mode */}
         <div className="flex items-center justify-between">
           <div className={cn(
             "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium",
@@ -109,18 +260,77 @@ export function CurrentTaskCard({
             <Zap className="h-3 w-3" />
             Tâche actuelle
           </div>
-          {task.plannedDuration && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="h-3.5 w-3.5" />
-              {task.plannedDuration} min
+          <div className="flex items-center gap-2">
+            {/* Timer mode toggle */}
+            <button
+              onClick={toggleTimerMode}
+              className={cn(
+                "flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-colors",
+                timerMode === "pomodoro"
+                  ? "bg-red-500/10 text-red-500"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              )}
+              title={timerMode === "pomodoro" ? "Mode Pomodoro actif" : "Activer Pomodoro"}
+            >
+              <Timer className="h-3 w-3" />
+              {timerMode === "pomodoro" ? "Pomodoro" : "Normal"}
+            </button>
+            {task.plannedDuration && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3.5 w-3.5" />
+                {task.plannedDuration} min
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Task title with dropdown */}
+        <div className="relative">
+          <button
+            onClick={() => selectableTasks.length > 0 && setShowTaskSelector(!showTaskSelector)}
+            className="w-full text-left flex items-center gap-2 group"
+          >
+            <h2 className="text-xl md:text-2xl font-semibold leading-tight flex-1">
+              {task.title}
+            </h2>
+            {selectableTasks.length > 0 && (
+              <ChevronDown className={cn(
+                "h-5 w-5 text-muted-foreground transition-transform",
+                showTaskSelector && "rotate-180"
+              )} />
+            )}
+          </button>
+
+          {/* Task selector dropdown */}
+          {showTaskSelector && selectableTasks.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-2 z-10 rounded-xl border bg-card shadow-lg max-h-60 overflow-auto">
+              <div className="p-2 border-b text-xs text-muted-foreground">
+                Changer de tâche
+              </div>
+              {selectableTasks.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => handleTaskSelect(t.id)}
+                  className="w-full flex items-center gap-3 px-3 py-2 hover:bg-muted/50 transition-colors text-left"
+                >
+                  <div className={cn(
+                    "h-2 w-2 rounded-full",
+                    t.priority === "URGENT" && "bg-red-500",
+                    t.priority === "HIGH" && "bg-orange-500",
+                    t.priority === "MEDIUM" && "bg-yellow-500",
+                    t.priority === "LOW" && "bg-green-500"
+                  )} />
+                  <span className="text-sm flex-1 truncate">{t.title}</span>
+                  {t.plannedDuration && (
+                    <span className="text-xs text-muted-foreground">
+                      {t.plannedDuration}m
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
           )}
         </div>
-
-        {/* Task title */}
-        <h2 className="text-xl md:text-2xl font-semibold leading-tight">
-          {task.title}
-        </h2>
 
         {/* Description if exists */}
         {task.description && (
@@ -129,15 +339,56 @@ export function CurrentTaskCard({
           </p>
         )}
 
+        {/* Pomodoro phase indicator */}
+        {timerMode === "pomodoro" && (
+          <div className="flex items-center justify-center gap-4">
+            <div className={cn(
+              "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium",
+              pomodoroPhase === "work" && "bg-red-500/10 text-red-500",
+              pomodoroPhase === "shortBreak" && "bg-green-500/10 text-green-500",
+              pomodoroPhase === "longBreak" && "bg-blue-500/10 text-blue-500"
+            )}>
+              {pomodoroPhase === "work" && <Zap className="h-4 w-4" />}
+              {pomodoroPhase !== "work" && <Coffee className="h-4 w-4" />}
+              {pomodoroPhase === "work" && "Travail"}
+              {pomodoroPhase === "shortBreak" && "Pause courte"}
+              {pomodoroPhase === "longBreak" && "Pause longue"}
+            </div>
+            <div className="flex items-center gap-1">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "h-2 w-2 rounded-full",
+                    i <= (pomodoroCount % 4 || (pomodoroCount > 0 && pomodoroCount % 4 === 0 ? 4 : 0))
+                      ? "bg-red-500"
+                      : "bg-muted"
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Timer display */}
         <div className="flex items-center justify-center py-4 md:py-6">
           <div className={cn(
             "text-4xl md:text-5xl font-mono font-bold tracking-wider",
-            isTimerRunning ? "text-primary" : "text-foreground"
+            isTimerRunning && timerMode === "normal" && "text-primary",
+            isTimerRunning && timerMode === "pomodoro" && pomodoroPhase === "work" && "text-red-500",
+            isTimerRunning && timerMode === "pomodoro" && pomodoroPhase !== "work" && "text-green-500",
+            !isTimerRunning && "text-foreground"
           )}>
-            {formatTimer(elapsedSeconds)}
+            {timerMode === "pomodoro" ? formatTimer(pomodoroTimeLeft) : formatTimer(elapsedSeconds)}
           </div>
         </div>
+
+        {/* Total time in pomodoro mode */}
+        {timerMode === "pomodoro" && elapsedSeconds > 0 && (
+          <div className="text-center text-sm text-muted-foreground">
+            Temps total: {formatTimer(elapsedSeconds)}
+          </div>
+        )}
 
         {/* Action buttons */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2 sm:gap-3">
@@ -163,7 +414,7 @@ export function CurrentTaskCard({
           <Button
             variant="default"
             size="lg"
-            onClick={() => onComplete?.(task.id)}
+            onClick={handleComplete}
             className="flex-1 sm:flex-none sm:min-w-[120px] bg-green-600 hover:bg-green-700"
           >
             <Check className="h-4 w-4 mr-2" />
@@ -179,12 +430,24 @@ export function CurrentTaskCard({
             <SkipForward className="h-4 w-4 mr-2" />
             Passer
           </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={resetTimer}
+            title="Réinitialiser le timer"
+          >
+            <RotateCcw className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
-      {/* Next task preview */}
+      {/* Next task preview - now clickable */}
       {nextTask && (
-        <div className="border-t bg-muted/30 px-4 md:px-6 py-3">
+        <button
+          onClick={() => onSelectTask?.(nextTask.id)}
+          className="w-full border-t bg-muted/30 px-4 md:px-6 py-3 hover:bg-muted/50 transition-colors text-left"
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <SkipForward className="h-4 w-4" />
@@ -199,7 +462,7 @@ export function CurrentTaskCard({
               </span>
             )}
           </div>
-        </div>
+        </button>
       )}
     </div>
   );
