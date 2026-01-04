@@ -5,6 +5,7 @@ import { httpBatchLink } from "@trpc/client";
 import { useState } from "react";
 import superjson from "superjson";
 import { Toaster } from "sonner";
+import { SessionProvider } from "next-auth/react";
 import { trpc } from "@/lib/trpc";
 import { ThemeProvider } from "@/components/theme";
 import { CommandPalette } from "@/components/command";
@@ -53,21 +54,23 @@ export function Providers({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          {children}
-          <CommandPaletteWrapper />
-          <Toaster
-            position="bottom-right"
-            richColors
-            closeButton
-            toastOptions={{
-              className: "rounded-lg",
-            }}
-          />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </trpc.Provider>
+    <SessionProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            {children}
+            <CommandPaletteWrapper />
+            <Toaster
+              position="bottom-right"
+              richColors
+              closeButton
+              toastOptions={{
+                className: "rounded-lg",
+              }}
+            />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </trpc.Provider>
+    </SessionProvider>
   );
 }

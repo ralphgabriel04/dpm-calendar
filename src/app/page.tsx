@@ -73,7 +73,7 @@ const featureTabs = [
       "Rapports de productivité détaillés",
       "Temps par projet et catégorie",
       "Graphiques et tendances",
-      "Export des données",
+      "Exportation des données",
     ],
   },
   {
@@ -99,10 +99,10 @@ const personas = [
     color: "blue",
     description: "Optimisez votre temps d'étude et réussissez vos examens.",
     benefits: [
-      "Planification des cours et révisions",
-      "Suivi des devoirs et deadlines",
-      "Sessions de travail Pomodoro",
-      "Équilibre études / vie sociale",
+      "Planification des cours et des révisions",
+      "Suivi des devoirs et dates de remise",
+      "Technique de travail Pomodoro",
+      "Équilibre étude / vie sociale",
     ],
   },
   {
@@ -113,21 +113,21 @@ const personas = [
     description: "Développez votre entreprise avec une organisation optimale.",
     benefits: [
       "Gestion de projets multiples",
-      "Suivi des objectifs business",
-      "Planification des réunions clients",
-      "Analytics de productivité",
+      "Suivi des objectifs",
+      "Planification des réunions",
+      "Analyse de la productivité",
     ],
   },
   {
     id: "freelances",
-    title: "Freelances",
+    title: "Freelanceurs",
     icon: Briefcase,
     color: "emerald",
     description: "Gérez vos clients et projets en toute simplicité.",
     benefits: [
-      "Time tracking par client",
+      "Gestion du temps",
       "Gestion multi-projets",
-      "Rappels de deadlines",
+      "Rappels des dates importantes",
       "Vue consolidée du planning",
     ],
   },
@@ -214,7 +214,7 @@ export default function Home() {
                 href="/login"
                 className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
               >
-                Commencer gratuitement
+                Commencer
               </Link>
             </div>
           </div>
@@ -254,7 +254,7 @@ export default function Home() {
                 href="/login"
                 className="group flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
               >
-                Commencer gratuitement
+                Commencer
                 <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link
@@ -674,7 +674,7 @@ export default function Home() {
               href="/login"
               className="group flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
             >
-              Commencer gratuitement
+              Commencer
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
