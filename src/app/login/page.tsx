@@ -6,7 +6,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Calendar, CheckSquare, Target, BarChart3, Github, Loader2 } from "lucide-react";
+import { Calendar, CheckSquare, Target, BarChart3, Github, Loader2, Building2 } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -145,6 +145,33 @@ export default function LoginPage() {
                 </svg>
               )}
               {loadingProvider === "apple" ? "Connexion..." : "Continuer avec Apple"}
+            </Button>
+
+            {/* SSO Enterprise - Divider */}
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-dashed" />
+              </div>
+              <div className="relative flex justify-center text-xs">
+                <span className="bg-background px-3 text-muted-foreground">
+                  SSO Entreprise
+                </span>
+              </div>
+            </div>
+
+            {/* SSO Enterprise */}
+            <Button
+              onClick={() => handleOAuthSignIn("sso")}
+              variant="outline"
+              className="h-12 w-full justify-center gap-3 text-base font-medium border-violet-500/30 hover:border-violet-500/50 hover:bg-violet-500/5"
+              disabled={loadingProvider !== null}
+            >
+              {loadingProvider === "sso" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Building2 className="h-5 w-5 text-violet-500" />
+              )}
+              {loadingProvider === "sso" ? "Connexion..." : "Connexion SSO"}
             </Button>
           </div>
 

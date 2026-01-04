@@ -5,6 +5,7 @@ import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 import Apple from "next-auth/providers/apple";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
+import type { OIDCConfig } from "next-auth/providers";
 import { db } from "@/server/db/client";
 
 // Check if OAuth providers are configured
@@ -12,6 +13,9 @@ const hasGoogleOAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT
 const hasMicrosoftOAuth = process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET;
 const hasAppleOAuth = process.env.APPLE_ID && process.env.APPLE_SECRET;
 const hasGitHubOAuth = process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET;
+
+// Enterprise SSO (OIDC)
+const hasSSOOIDC = process.env.SSO_CLIENT_ID && process.env.SSO_CLIENT_SECRET && process.env.SSO_ISSUER;
 
 // Build providers list dynamically
 const providers = [];
@@ -66,8 +70,34 @@ if (hasAppleOAuth) {
   );
 }
 
+// Enterprise SSO via OIDC (works with Okta, Auth0, OneLogin, Azure AD, etc.)
+if (hasSSOOIDC) {
+  const ssoProvider: OIDCConfig<Record<string, unknown>> = {
+    id: "sso",
+    name: process.env.SSO_PROVIDER_NAME || "SSO",
+    type: "oidc",
+    clientId: process.env.SSO_CLIENT_ID!,
+    clientSecret: process.env.SSO_CLIENT_SECRET!,
+    issuer: process.env.SSO_ISSUER!,
+    authorization: {
+      params: {
+        scope: "openid email profile",
+      },
+    },
+    profile(profile) {
+      return {
+        id: profile.sub as string,
+        name: (profile.name || profile.preferred_username || profile.email) as string,
+        email: profile.email as string,
+        image: profile.picture as string | undefined,
+      };
+    },
+  };
+  providers.push(ssoProvider);
+}
+
 // Check if any OAuth provider is configured
-const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth || hasGitHubOAuth;
+const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth || hasGitHubOAuth || hasSSOOIDC;
 
 // Demo credentials provider for testing (when no OAuth is configured)
 if (!hasAnyOAuth) {
