@@ -60,6 +60,7 @@ export default function CalendarPage() {
     navigateToday,
     visibleCalendarIds,
     toggleCalendarVisibility,
+    showOnlyCalendar,
     getViewRange,
   } = useCalendarStore();
 
@@ -565,6 +566,12 @@ export default function CalendarPage() {
     toggleCalendarVisibility(calendarId);
   };
 
+  // Handle show only this calendar
+  const handleShowOnlyThisCalendar = (calendarId: string) => {
+    const allCalendarIds = calendars.map((c) => c.id);
+    showOnlyCalendar(calendarId, allCalendarIds);
+  };
+
   // Global drag start handler
   const handleDragStart = useCallback((event: DragStartEvent) => {
     const { active } = event;
@@ -716,11 +723,13 @@ export default function CalendarPage() {
         {/* Sidebar */}
         <CalendarSidebar
           currentDate={currentDate}
+          viewType={viewType}
           onDateChange={setCurrentDate}
           calendars={calendars}
           sections={sections}
           events={events}
           onToggleCalendar={handleToggleCalendar}
+          onShowOnlyThisCalendar={handleShowOnlyThisCalendar}
           onCreateEvent={handleCreateEvent}
           onEventClick={handleEventClick}
           onCreateCalendar={handleCreateCalendar}

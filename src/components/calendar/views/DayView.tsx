@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { format, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
@@ -58,6 +58,22 @@ export function DayView({
   const totalHeight = (endHour - startHour) * hourHeight;
   const [activeEvent, setActiveEvent] = useState<CalendarEvent | null>(null);
 
+  // Auto-scroll to current time on mount
+  useEffect(() => {
+    if (scrollRef.current && isToday(date)) {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinutes = now.getMinutes();
+
+      // Calculate scroll position (scroll to 1 hour before current time)
+      const scrollHour = Math.max(startHour, currentHour - 1);
+      const minutesFromStart = (scrollHour - startHour) * 60 + currentMinutes;
+      const scrollPosition = (minutesFromStart / 60) * hourHeight;
+
+      scrollRef.current.scrollTop = scrollPosition;
+    }
+  }, [date, startHour, hourHeight]);
+
   // Configure sensors for drag detection
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: {
@@ -89,17 +105,47 @@ export function DayView({
     const dragData = active.data.current;
     const dropData = over.data.current;
 
-    if (!dropData || dropData.type !== "timeSlot") return;
+    if (!dropData || dropData.type !== "dayColumn") return;
 
-    const { date: dropDate, hour, minutes } = dropData as {
+    const { date: dropDate, startHour: dropStartHour, hourHeight: dropHourHeight } = dropData as {
       date: Date;
-      hour: number;
-      minutes: number;
+      startHour: number;
+      hourHeight: number;
     };
 
-    // Calculate new start time
-    const newStart = new Date(dropDate);
-    newStart.setHours(hour, minutes, 0, 0);
+    // Calculate drop position from the pointer position
+    // Use the delta from the drag event combined with the active rect
+    let newStart = new Date(dropDate);
+
+    // Get the drop position relative to the droppable
+    if (over.rect && event.activatorEvent) {
+      const activatorEvent = event.activatorEvent as MouseEvent | TouchEvent;
+      let clientY = 0;
+
+      if ('clientY' in activatorEvent) {
+        clientY = activatorEvent.clientY;
+      } else if ('touches' in activatorEvent && activatorEvent.touches[0]) {
+        clientY = activatorEvent.touches[0].clientY;
+      }
+
+      // Add the delta to get final position
+      const finalY = clientY + (event.delta?.y || 0);
+      const relativeY = finalY - over.rect.top;
+
+      // Calculate time from position
+      const totalMinutes = (relativeY / (dropHourHeight || 60)) * 60 + (dropStartHour || 0) * 60;
+      const roundedMinutes = Math.round(totalMinutes / 15) * 15; // Round to 15-min intervals
+
+      const hours = Math.floor(roundedMinutes / 60);
+      const minutes = roundedMinutes % 60;
+
+      // Clamp to valid range
+      const clampedHours = Math.max(0, Math.min(23, hours));
+      newStart.setHours(clampedHours, minutes >= 0 ? minutes : 0, 0, 0);
+    } else {
+      // Fallback: use start hour
+      newStart.setHours(dropStartHour || startHour, 0, 0, 0);
+    }
 
     // Handle task drop
     if (dragData?.type === "task" && onTaskDrop) {

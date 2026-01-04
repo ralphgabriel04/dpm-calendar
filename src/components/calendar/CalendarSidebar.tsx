@@ -56,13 +56,17 @@ interface CalendarSection {
   isExpanded: boolean;
 }
 
+type ViewType = "day" | "week" | "month" | "agenda" | "timeline" | "workload";
+
 interface CalendarSidebarProps {
   currentDate: Date;
+  viewType?: ViewType;
   onDateChange: (date: Date) => void;
   calendars: Calendar[];
   sections?: CalendarSection[];
   events?: CalendarEvent[];
   onToggleCalendar: (id: string) => void;
+  onShowOnlyThisCalendar?: (id: string) => void;
   onCreateEvent?: () => void;
   onEventClick?: (event: CalendarEvent) => void;
   onCreateCalendar?: (name: string, color: string, sectionId?: string) => void;
@@ -93,15 +97,25 @@ const CALENDAR_COLORS = [
   "#f97316", // Orange
   "#6366f1", // Indigo
   "#14b8a6", // Teal
+  "#84cc16", // Lime
+  "#a855f7", // Purple
+  "#f43f5e", // Rose
+  "#0ea5e9", // Sky
+  "#10b981", // Emerald
+  "#eab308", // Yellow
+  "#64748b", // Slate
+  "#78716c", // Stone
 ];
 
 export function CalendarSidebar({
   currentDate,
+  viewType = "day",
   onDateChange,
   calendars,
   sections = [],
   events = [],
   onToggleCalendar,
+  onShowOnlyThisCalendar,
   onCreateEvent,
   onEventClick,
   onCreateCalendar,
@@ -243,6 +257,7 @@ export function CalendarSidebar({
             <UpcomingEventsWidget
               events={events}
               date={currentDate}
+              viewType={viewType}
               onEventClick={onEventClick}
               maxEvents={4}
               className="border-0 p-0 bg-transparent"
@@ -256,6 +271,7 @@ export function CalendarSidebar({
             <TimeBreakdownWidget
               events={events}
               date={currentDate}
+              viewType={viewType}
               className="border-0 p-0 bg-transparent"
             />
           </div>
@@ -343,6 +359,30 @@ export function CalendarSidebar({
                       }}
                     />
                   ))}
+                  {/* Custom color picker */}
+                  <label
+                    className={cn(
+                      "h-6 w-6 rounded-full cursor-pointer transition-all duration-200 hover:scale-110",
+                      "flex items-center justify-center border-2 border-dashed border-muted-foreground/50",
+                      !CALENDAR_COLORS.includes(newSectionColor) && "ring-2 ring-offset-2 ring-offset-background scale-110"
+                    )}
+                    style={{
+                      backgroundColor: !CALENDAR_COLORS.includes(newSectionColor) ? newSectionColor : "transparent",
+                      // @ts-expect-error CSS custom property for ring color
+                      "--tw-ring-color": newSectionColor,
+                    }}
+                    title="Couleur personnalisée"
+                  >
+                    {CALENDAR_COLORS.includes(newSectionColor) && (
+                      <Plus className="h-3 w-3 text-muted-foreground" />
+                    )}
+                    <input
+                      type="color"
+                      value={newSectionColor}
+                      onChange={(e) => setNewSectionColor(e.target.value)}
+                      className="sr-only"
+                    />
+                  </label>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -412,6 +452,30 @@ export function CalendarSidebar({
                       }}
                     />
                   ))}
+                  {/* Custom color picker */}
+                  <label
+                    className={cn(
+                      "h-6 w-6 rounded-full cursor-pointer transition-all duration-200 hover:scale-110",
+                      "flex items-center justify-center border-2 border-dashed border-muted-foreground/50",
+                      !CALENDAR_COLORS.includes(newCalendarColor) && "ring-2 ring-offset-2 ring-offset-background scale-110"
+                    )}
+                    style={{
+                      backgroundColor: !CALENDAR_COLORS.includes(newCalendarColor) ? newCalendarColor : "transparent",
+                      // @ts-expect-error CSS custom property for ring color
+                      "--tw-ring-color": newCalendarColor,
+                    }}
+                    title="Couleur personnalisée"
+                  >
+                    {CALENDAR_COLORS.includes(newCalendarColor) && (
+                      <Plus className="h-3 w-3 text-muted-foreground" />
+                    )}
+                    <input
+                      type="color"
+                      value={newCalendarColor}
+                      onChange={(e) => setNewCalendarColor(e.target.value)}
+                      className="sr-only"
+                    />
+                  </label>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -473,6 +537,30 @@ export function CalendarSidebar({
                           }}
                         />
                       ))}
+                      {/* Custom color picker */}
+                      <label
+                        className={cn(
+                          "h-6 w-6 rounded-full cursor-pointer transition-all duration-200 hover:scale-110",
+                          "flex items-center justify-center border-2 border-dashed border-muted-foreground/50",
+                          !CALENDAR_COLORS.includes(editColor) && "ring-2 ring-offset-2 ring-offset-background scale-110"
+                        )}
+                        style={{
+                          backgroundColor: !CALENDAR_COLORS.includes(editColor) ? editColor : "transparent",
+                          // @ts-expect-error CSS custom property for ring color
+                          "--tw-ring-color": editColor,
+                        }}
+                        title="Couleur personnalisée"
+                      >
+                        {CALENDAR_COLORS.includes(editColor) && (
+                          <Plus className="h-3 w-3 text-muted-foreground" />
+                        )}
+                        <input
+                          type="color"
+                          value={editColor}
+                          onChange={(e) => setEditColor(e.target.value)}
+                          className="sr-only"
+                        />
+                      </label>
                     </div>
                     <div className="flex gap-2">
                       <Button
@@ -563,6 +651,7 @@ export function CalendarSidebar({
                           calendar={calendar}
                           sections={sortedSections}
                           onToggle={() => onToggleCalendar(calendar.id)}
+                          onShowOnlyThis={onShowOnlyThisCalendar ? () => onShowOnlyThisCalendar(calendar.id) : undefined}
                           isEditing={editingCalendar === calendar.id}
                           editName={editName}
                           editColor={editColor}
@@ -604,6 +693,7 @@ export function CalendarSidebar({
                     calendar={calendar}
                     sections={sortedSections}
                     onToggle={() => onToggleCalendar(calendar.id)}
+                    onShowOnlyThis={onShowOnlyThisCalendar ? () => onShowOnlyThisCalendar(calendar.id) : undefined}
                     isEditing={editingCalendar === calendar.id}
                     editName={editName}
                     editColor={editColor}
@@ -635,6 +725,7 @@ export function CalendarSidebar({
                     calendar={calendar}
                     sections={[]}
                     onToggle={() => onToggleCalendar(calendar.id)}
+                    onShowOnlyThis={onShowOnlyThisCalendar ? () => onShowOnlyThisCalendar(calendar.id) : undefined}
                     isEditing={false}
                     editName=""
                     editColor=""
@@ -717,6 +808,7 @@ interface CalendarItemProps {
   calendar: Calendar;
   sections: CalendarSection[];
   onToggle: () => void;
+  onShowOnlyThis?: () => void;
   isEditing: boolean;
   editName: string;
   editColor: string;
@@ -733,6 +825,7 @@ function CalendarItem({
   calendar,
   sections,
   onToggle,
+  onShowOnlyThis,
   isEditing,
   editName,
   editColor,
@@ -775,6 +868,30 @@ function CalendarItem({
               }}
             />
           ))}
+          {/* Custom color picker */}
+          <label
+            className={cn(
+              "h-6 w-6 rounded-full cursor-pointer transition-all duration-200 hover:scale-110",
+              "flex items-center justify-center border-2 border-dashed border-muted-foreground/50",
+              !CALENDAR_COLORS.includes(editColor) && "ring-2 ring-offset-2 ring-offset-background scale-110"
+            )}
+            style={{
+              backgroundColor: !CALENDAR_COLORS.includes(editColor) ? editColor : "transparent",
+              // @ts-expect-error CSS custom property for ring color
+              "--tw-ring-color": editColor,
+            }}
+            title="Couleur personnalisée"
+          >
+            {CALENDAR_COLORS.includes(editColor) && (
+              <Plus className="h-3 w-3 text-muted-foreground" />
+            )}
+            <input
+              type="color"
+              value={editColor}
+              onChange={(e) => onEditColorChange(e.target.value)}
+              className="sr-only"
+            />
+          </label>
         </div>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" onClick={onCancelEdit} className="flex-1">
@@ -826,7 +943,7 @@ function CalendarItem({
               <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
+          <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem onClick={onToggle}>
               {calendar.isVisible ? (
                 <>
@@ -840,6 +957,12 @@ function CalendarItem({
                 </>
               )}
             </DropdownMenuItem>
+            {onShowOnlyThis && (
+              <DropdownMenuItem onClick={onShowOnlyThis}>
+                <Eye className="h-4 w-4 mr-2" />
+                Afficher uniquement cet agenda
+              </DropdownMenuItem>
+            )}
             {calendar.provider === "LOCAL" && (
               <>
                 <DropdownMenuItem onClick={onStartEdit}>

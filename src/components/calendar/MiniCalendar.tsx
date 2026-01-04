@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   format,
   startOfMonth,
@@ -26,6 +26,13 @@ interface MiniCalendarProps {
 
 export function MiniCalendar({ value, onChange, className }: MiniCalendarProps) {
   const [viewDate, setViewDate] = useState(value || new Date());
+
+  // Sync viewDate when value changes from external source
+  useEffect(() => {
+    if (value && !isSameMonth(value, viewDate)) {
+      setViewDate(value);
+    }
+  }, [value]);
 
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);

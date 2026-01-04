@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal } from "@/components/ui/Modal";
+import { SidePanel } from "@/components/ui/SidePanel";
 import { EventForm, type EventFormData } from "./EventForm";
 
 interface EventModalProps {
@@ -28,11 +28,11 @@ export function EventModal({
   };
 
   return (
-    <Modal
+    <SidePanel
       open={open}
       onOpenChange={onOpenChange}
-      title={mode === "create" ? "Nouvel événement" : "Modifier l'événement"}
-      className="max-w-lg"
+      title={mode === "create" ? "Nouvel evenement" : "Modifier l'evenement"}
+      width="md"
     >
       <EventForm
         initialData={initialData}
@@ -42,6 +42,6 @@ export function EventModal({
         isLoading={isLoading}
         mode={mode}
       />
-    </Modal>
+    </SidePanel>
   );
 }

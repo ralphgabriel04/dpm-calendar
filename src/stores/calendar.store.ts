@@ -29,6 +29,7 @@ interface CalendarState {
   navigateToday: () => void;
   toggleCalendarVisibility: (calendarId: string) => void;
   setVisibleCalendars: (calendarIds: string[]) => void;
+  showOnlyCalendar: (calendarId: string, allCalendarIds: string[]) => void;
 
   // Computed
   getViewRange: () => { start: Date; end: Date };
@@ -106,6 +107,18 @@ export const useCalendarStore = create<CalendarState>()(
 
       setVisibleCalendars: (calendarIds) =>
         set({ visibleCalendarIds: calendarIds }),
+
+      showOnlyCalendar: (calendarId, allCalendarIds) => {
+        // If this calendar is already the only visible one, show all calendars
+        const { visibleCalendarIds } = get();
+        if (visibleCalendarIds.length === 1 && visibleCalendarIds[0] === calendarId) {
+          // Show all calendars
+          set({ visibleCalendarIds: allCalendarIds });
+        } else {
+          // Show only this calendar
+          set({ visibleCalendarIds: [calendarId] });
+        }
+      },
 
       getViewRange: () => {
         const { currentDate, viewType } = get();

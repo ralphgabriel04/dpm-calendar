@@ -1,10 +1,13 @@
 "use client";
 
-import { useMemo } from "react";
-import { startOfDay, endOfDay, differenceInMinutes } from "date-fns";
-import { ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
+import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, differenceInMinutes, format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
+
+type ViewType = "day" | "week" | "month" | "agenda" | "timeline" | "workload";
 
 interface TimeCategory {
   id: string;
@@ -16,6 +19,7 @@ interface TimeCategory {
 interface TimeBreakdownWidgetProps {
   events: CalendarEvent[];
   date?: Date;
+  viewType?: ViewType;
   onViewAll?: () => void;
   className?: string;
 }
@@ -57,30 +61,52 @@ function getCategoryColor(categoryName: string): string {
 export function TimeBreakdownWidget({
   events,
   date = new Date(),
+  viewType = "day",
   onViewAll,
   className,
 }: TimeBreakdownWidgetProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Calculate date range based on view type
+  const { rangeStart, rangeEnd } = useMemo(() => {
+    switch (viewType) {
+      case "day":
+        return { rangeStart: startOfDay(date), rangeEnd: endOfDay(date) };
+      case "week":
+      case "timeline":
+        return {
+          rangeStart: startOfWeek(date, { weekStartsOn: 1 }),
+          rangeEnd: endOfWeek(date, { weekStartsOn: 1 }),
+        };
+      case "month":
+      case "workload":
+        return {
+          rangeStart: startOfMonth(date),
+          rangeEnd: endOfMonth(date),
+        };
+      default:
+        return { rangeStart: startOfDay(date), rangeEnd: endOfDay(date) };
+    }
+  }, [date, viewType]);
+
   // Calculate time breakdown by category/calendar
   const categories = useMemo(() => {
-    const dayStart = startOfDay(date);
-    const dayEnd = endOfDay(date);
-
-    // Filter events for today
-    const todayEvents = events.filter((event) => {
+    // Filter events in range
+    const rangeEvents = events.filter((event) => {
       const eventStart = new Date(event.startAt);
       const eventEnd = new Date(event.endAt);
-      return eventStart <= dayEnd && eventEnd >= dayStart;
+      return eventStart <= rangeEnd && eventEnd >= rangeStart;
     });
 
     // Group by calendar/category
     const categoryMap = new Map<string, TimeCategory>();
 
-    todayEvents.forEach((event) => {
-      // Calculate duration in minutes (clamp to day boundaries)
+    rangeEvents.forEach((event) => {
+      // Calculate duration in minutes (clamp to range boundaries)
       const eventStart = new Date(event.startAt);
       const eventEnd = new Date(event.endAt);
-      const clampedStart = eventStart < dayStart ? dayStart : eventStart;
-      const clampedEnd = eventEnd > dayEnd ? dayEnd : eventEnd;
+      const clampedStart = eventStart < rangeStart ? rangeStart : eventStart;
+      const clampedEnd = eventEnd > rangeEnd ? rangeEnd : eventEnd;
       const minutes = differenceInMinutes(clampedEnd, clampedStart);
 
       if (minutes <= 0) return;
@@ -105,7 +131,7 @@ export function TimeBreakdownWidget({
 
     // Convert to array and sort by minutes (descending)
     return Array.from(categoryMap.values()).sort((a, b) => b.minutes - a.minutes);
-  }, [events, date]);
+  }, [events, rangeStart, rangeEnd]);
 
   // Calculate max minutes for scaling
   const maxMinutes = useMemo(() => {
@@ -121,12 +147,38 @@ export function TimeBreakdownWidget({
     return mins > 0 ? `${hours}h${mins}` : `${hours}h`;
   };
 
+  // Generate title based on view type
+  const title = useMemo(() => {
+    switch (viewType) {
+      case "day":
+        return "Répartition du temps";
+      case "week":
+      case "timeline":
+        return "Temps de la semaine";
+      case "month":
+      case "workload":
+        return `Temps - ${format(date, "MMMM", { locale: fr })}`;
+      default:
+        return "Répartition du temps";
+    }
+  }, [date, viewType]);
+
   return (
     <div className={cn("rounded-xl bg-card border p-4", className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold">Répartition du temps</h3>
-        {onViewAll && categories.length > 0 && (
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="flex items-center gap-1 text-sm font-semibold hover:text-primary transition-colors"
+        >
+          {isCollapsed ? (
+            <ChevronRight className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+          {title}
+        </button>
+        {onViewAll && categories.length > 0 && !isCollapsed && (
           <button
             onClick={onViewAll}
             className="text-xs text-primary hover:underline flex items-center gap-1"
@@ -137,47 +189,52 @@ export function TimeBreakdownWidget({
         )}
       </div>
 
-      {/* Categories */}
-      {categories.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-4">
-          Aucune donnée
-        </p>
-      ) : (
-        <div className="space-y-3">
-          {categories.map((category) => {
-            const percentage = (category.minutes / maxMinutes) * 100;
+      {/* Collapsible content */}
+      {!isCollapsed && (
+        <>
+          {/* Categories */}
+          {categories.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Aucune donnée
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {categories.map((category) => {
+                const percentage = (category.minutes / maxMinutes) * 100;
 
-            return (
-              <div key={category.id} className="space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium">{category.name}</span>
-                  <span className="text-muted-foreground text-xs">
-                    {formatDuration(category.minutes)}
-                  </span>
-                </div>
-                <div className="h-2 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${percentage}%`,
-                      backgroundColor: category.color,
-                    }}
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      )}
+                return (
+                  <div key={category.id} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium">{category.name}</span>
+                      <span className="text-muted-foreground text-xs">
+                        {formatDuration(category.minutes)}
+                      </span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{
+                          width: `${percentage}%`,
+                          backgroundColor: category.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
 
-      {/* Total */}
-      {categories.length > 0 && (
-        <div className="mt-4 pt-3 border-t flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Total</span>
-          <span className="font-medium">
-            {formatDuration(categories.reduce((sum, c) => sum + c.minutes, 0))}
-          </span>
-        </div>
+          {/* Total */}
+          {categories.length > 0 && (
+            <div className="mt-4 pt-3 border-t flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Total</span>
+              <span className="font-medium">
+                {formatDuration(categories.reduce((sum, c) => sum + c.minutes, 0))}
+              </span>
+            </div>
+          )}
+        </>
       )}
     </div>
   );

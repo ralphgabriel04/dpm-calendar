@@ -46,12 +46,13 @@ interface SpeechRecognitionConstructor {
   new(): SpeechRecognition;
 }
 
-declare global {
-  interface Window {
-    SpeechRecognition: SpeechRecognitionConstructor;
-    webkitSpeechRecognition: SpeechRecognitionConstructor;
-  }
-}
+// Use any for window properties to avoid global type conflicts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getWindowSpeechRecognition = (): SpeechRecognitionConstructor | undefined => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const win = window as any;
+  return win.SpeechRecognition || win.webkitSpeechRecognition;
+};
 
 export function VoiceInput({
   onTranscript,
@@ -72,8 +73,7 @@ export function VoiceInput({
 
   // Check if Web Speech API is supported
   useEffect(() => {
-    const SpeechRecognitionAPI =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognitionAPI = getWindowSpeechRecognition();
     setIsSupported(!!SpeechRecognitionAPI);
   }, []);
 
@@ -84,8 +84,7 @@ export function VoiceInput({
       return;
     }
 
-    const SpeechRecognitionAPI =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognitionAPI = getWindowSpeechRecognition();
 
     if (!SpeechRecognitionAPI) return;
 
@@ -234,8 +233,7 @@ export function useVoiceInput(options: {
   const [isSupported, setIsSupported] = useState(false);
 
   useEffect(() => {
-    const SpeechRecognitionAPI =
-      window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognitionAPI = getWindowSpeechRecognition();
     setIsSupported(!!SpeechRecognitionAPI);
   }, []);
 

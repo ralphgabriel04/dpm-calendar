@@ -41,10 +41,17 @@ export function SlotSuggestions({
   const [priority, setPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM");
   const [type, setType] = useState<"event" | "task" | "focus">("task");
   const [expanded, setExpanded] = useState(true);
+  const [searchDays, setSearchDays] = useState(7);
 
   const { data: slots, isLoading, refetch } = api.suggestion.getOptimalSlots.useQuery(
-    { duration, priority, type },
-    { enabled: expanded }
+    { duration, priority, type, searchDays },
+    {
+      enabled: expanded,
+      // Auto-refresh every 30 seconds when expanded
+      refetchInterval: expanded ? 30000 : false,
+      // Refetch on window focus
+      refetchOnWindowFocus: true,
+    }
   );
 
   const handleSelectSlot = (slot: { startAt: Date; endAt: Date }) => {
@@ -218,21 +225,19 @@ export function SlotSuggestions({
             </div>
           )}
 
-          {/* Refresh button */}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => refetch()}
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <Sparkles className="h-4 w-4 mr-2" />
-            )}
-            Actualiser les suggestions
-          </Button>
+          {/* More suggestions button */}
+          {searchDays < 14 && slots && slots.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSearchDays(14)}
+              className="w-full"
+              disabled={isLoading}
+            >
+              <Calendar className="h-4 w-4 mr-2" />
+              Plus de suggestions (2 semaines)
+            </Button>
+          )}
         </div>
       )}
     </div>
