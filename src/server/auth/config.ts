@@ -3,13 +3,15 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import Google from "next-auth/providers/google";
 import MicrosoftEntraId from "next-auth/providers/microsoft-entra-id";
 import Apple from "next-auth/providers/apple";
+import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import { db } from "@/server/db/client";
 
 // Check if OAuth providers are configured
 const hasGoogleOAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
-const hasMicrosoftOAuth = process.env.MICROSOFT_AUTH_CLIENT_ID && process.env.MICROSOFT_AUTH_CLIENT_SECRET;
+const hasMicrosoftOAuth = process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET;
 const hasAppleOAuth = process.env.APPLE_ID && process.env.APPLE_SECRET;
+const hasGitHubOAuth = process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET;
 
 // Build providers list dynamically
 const providers = [];
@@ -34,9 +36,23 @@ if (hasGoogleOAuth) {
 if (hasMicrosoftOAuth) {
   providers.push(
     MicrosoftEntraId({
-      clientId: process.env.MICROSOFT_AUTH_CLIENT_ID!,
-      clientSecret: process.env.MICROSOFT_AUTH_CLIENT_SECRET!,
+      clientId: process.env.MICROSOFT_CLIENT_ID!,
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET!,
       issuer: "https://login.microsoftonline.com/common/v2.0",
+      authorization: {
+        params: {
+          scope: "openid email profile User.Read Calendars.ReadWrite offline_access",
+        },
+      },
+    })
+  );
+}
+
+if (hasGitHubOAuth) {
+  providers.push(
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
     })
   );
 }
@@ -51,7 +67,7 @@ if (hasAppleOAuth) {
 }
 
 // Check if any OAuth provider is configured
-const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth;
+const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth || hasGitHubOAuth;
 
 // Demo credentials provider for testing (when no OAuth is configured)
 if (!hasAnyOAuth) {

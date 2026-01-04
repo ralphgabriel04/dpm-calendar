@@ -887,6 +887,7 @@ model UserPreferences {
   defaultCalendarId String?
   workingHoursStart String  @default("09:00")
   workingHoursEnd   String  @default("18:00")
+  weeklyWorkHours   Json?   // Per-day work schedule: { monday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] }, ... }
   customShortcuts  Json?
   dashboardWidgets Json?
 

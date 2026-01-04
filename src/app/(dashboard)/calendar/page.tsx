@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useCallback, useRef } from "react";
-import { ChevronLeft, ChevronRight, Plus, List, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Clock, BarChart3 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, List, PanelLeftClose, PanelLeft, PanelRightClose, PanelRight, Clock, BarChart3, Eye } from "lucide-react";
 import { format, addHours, setHours, setMinutes, addMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import { toast } from "sonner";
@@ -51,8 +51,10 @@ export default function CalendarPage() {
   const {
     currentDate,
     viewType,
+    hoursViewMode,
     setCurrentDate,
     setViewType,
+    setHoursViewMode,
     navigatePrev,
     navigateNext,
     navigateToday,
@@ -90,6 +92,12 @@ export default function CalendarPage() {
 
   // Fetch calendars
   const { data: calendarsData, refetch: refetchCalendars } = trpc.calendar.list.useQuery();
+
+  // Fetch user preferences for work hours
+  const { data: userPreferences } = trpc.user.getPreferences.useQuery();
+
+  // State for hours view dropdown
+  const [hoursDropdownOpen, setHoursDropdownOpen] = useState(false);
 
   // Fetch sections
   const { data: sectionsData, refetch: refetchSections } = trpc.calendarSection.list.useQuery();
@@ -301,6 +309,70 @@ export default function CalendarPage() {
       isExpanded: section.isExpanded,
     }));
   }, [sectionsData]);
+
+  // Calculate start/end hours based on view mode and user preferences
+  const { calendarStartHour, calendarEndHour } = useMemo(() => {
+    switch (hoursViewMode) {
+      case "full":
+        return { calendarStartHour: 0, calendarEndHour: 24 };
+      case "work-hours":
+        if (userPreferences?.weeklyWorkHours) {
+          // Parse weekly work hours to find earliest start and latest end
+          const weeklyHours = userPreferences.weeklyWorkHours as Record<string, { enabled: boolean; slots: { start: string; end: string }[] }>;
+          let earliestStart = 24;
+          let latestEnd = 0;
+
+          Object.values(weeklyHours).forEach((day) => {
+            if (day.enabled && day.slots) {
+              day.slots.forEach((slot) => {
+                const startParts = slot.start.split(":");
+                const endParts = slot.end.split(":");
+                const startHour = parseInt(startParts[0] || "0", 10);
+                const endHour = parseInt(endParts[0] || "0", 10);
+                const endMinutes = parseInt(endParts[1] || "0", 10);
+
+                if (startHour < earliestStart) earliestStart = startHour;
+                // Round up if there are minutes
+                const adjustedEndHour = endMinutes > 0 ? endHour + 1 : endHour;
+                if (adjustedEndHour > latestEnd) latestEnd = adjustedEndHour;
+              });
+            }
+          });
+
+          // If no valid hours found, fall back to business hours
+          if (earliestStart === 24 || latestEnd === 0) {
+            return { calendarStartHour: 6, calendarEndHour: 22 };
+          }
+
+          // Add some padding (1 hour before and after)
+          return {
+            calendarStartHour: Math.max(0, earliestStart - 1),
+            calendarEndHour: Math.min(24, latestEnd + 1),
+          };
+        } else if (userPreferences?.workingHoursStart && userPreferences?.workingHoursEnd) {
+          // Fall back to simple working hours
+          const startParts = userPreferences.workingHoursStart.split(":");
+          const endParts = userPreferences.workingHoursEnd.split(":");
+          const startHour = parseInt(startParts[0] || "9", 10);
+          const endHour = parseInt(endParts[0] || "17", 10);
+          return {
+            calendarStartHour: Math.max(0, startHour - 1),
+            calendarEndHour: Math.min(24, endHour + 1),
+          };
+        }
+        return { calendarStartHour: 6, calendarEndHour: 22 };
+      case "business":
+      default:
+        return { calendarStartHour: 6, calendarEndHour: 22 };
+    }
+  }, [hoursViewMode, userPreferences]);
+
+  // Hours view mode options
+  const hoursViewModeLabels: Record<string, string> = {
+    full: "24 heures",
+    business: "Heures bureau",
+    "work-hours": "Mes heures",
+  };
 
   // Calendar CRUD handlers
   const handleCreateCalendar = useCallback((name: string, color: string, sectionId?: string) => {
@@ -589,9 +661,9 @@ export default function CalendarPage() {
 
     switch (viewType) {
       case "day":
-        return <DayView date={currentDate} {...commonProps} />;
+        return <DayView date={currentDate} startHour={calendarStartHour} endHour={calendarEndHour} {...commonProps} />;
       case "week":
-        return <WeekView date={currentDate} {...commonProps} />;
+        return <WeekView date={currentDate} startHour={calendarStartHour} endHour={calendarEndHour} {...commonProps} />;
       case "month":
         return (
           <MonthView
@@ -739,6 +811,54 @@ export default function CalendarPage() {
                   </button>
                 ))}
               </div>
+
+              {/* Hours view mode dropdown - only for day/week views */}
+              {(viewType === "day" || viewType === "week") && (
+                <div className="relative hidden md:block">
+                  <button
+                    onClick={() => setHoursDropdownOpen(!hoursDropdownOpen)}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md border transition-colors",
+                      hoursDropdownOpen
+                        ? "bg-accent border-accent"
+                        : "bg-background hover:bg-accent"
+                    )}
+                  >
+                    <Eye className="h-3.5 w-3.5" />
+                    <span>{hoursViewModeLabels[hoursViewMode]}</span>
+                  </button>
+                  {hoursDropdownOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setHoursDropdownOpen(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-1 z-50 bg-popover border rounded-lg shadow-lg overflow-hidden min-w-[140px]">
+                        {(["business", "work-hours", "full"] as const).map((mode) => (
+                          <button
+                            key={mode}
+                            onClick={() => {
+                              setHoursViewMode(mode);
+                              setHoursDropdownOpen(false);
+                            }}
+                            className={cn(
+                              "w-full px-3 py-2 text-left text-sm transition-colors flex items-center justify-between",
+                              hoursViewMode === mode
+                                ? "bg-accent text-accent-foreground"
+                                : "hover:bg-accent/50"
+                            )}
+                          >
+                            <span>{hoursViewModeLabels[mode]}</span>
+                            {hoursViewMode === mode && (
+                              <span className="text-primary">✓</span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
 
               {/* Right panel toggle */}
               <Button

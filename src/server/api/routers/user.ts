@@ -30,6 +30,13 @@ export const userRouter = createTRPCRouter({
         connectedCalendars: z.array(z.string()).default([]),
         workingHoursStart: z.string().default("09:00"),
         workingHoursEnd: z.string().default("17:00"),
+        weeklyWorkHours: z.record(z.string(), z.object({
+          enabled: z.boolean(),
+          slots: z.array(z.object({
+            start: z.string(),
+            end: z.string(),
+          })),
+        })).optional(),
         planningTime: z.enum(["morning", "evening"]).default("morning"),
       })
     )
@@ -45,6 +52,7 @@ export const userRouter = createTRPCRouter({
           connectedCalendars: input.connectedCalendars,
           workingHoursStart: input.workingHoursStart,
           workingHoursEnd: input.workingHoursEnd,
+          weeklyWorkHours: input.weeklyWorkHours,
           planningTime: input.planningTime,
         },
         update: {
@@ -52,6 +60,7 @@ export const userRouter = createTRPCRouter({
           connectedCalendars: input.connectedCalendars,
           workingHoursStart: input.workingHoursStart,
           workingHoursEnd: input.workingHoursEnd,
+          weeklyWorkHours: input.weeklyWorkHours,
           planningTime: input.planningTime,
         },
       });
@@ -96,6 +105,13 @@ export const userRouter = createTRPCRouter({
         showWeekNumbers: z.boolean().optional(),
         workingHoursStart: z.string().optional(),
         workingHoursEnd: z.string().optional(),
+        weeklyWorkHours: z.record(z.string(), z.object({
+          enabled: z.boolean(),
+          slots: z.array(z.object({
+            start: z.string(),
+            end: z.string(),
+          })),
+        })).optional(),
         planningTime: z.enum(["morning", "evening"]).optional(),
       })
     )

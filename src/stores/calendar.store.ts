@@ -9,11 +9,13 @@ import {
 } from "date-fns";
 
 type ViewType = "day" | "week" | "month" | "agenda" | "timeline" | "workload";
+type HoursViewMode = "full" | "business" | "work-hours";
 
 interface CalendarState {
   // View state
   currentDate: Date;
   viewType: ViewType;
+  hoursViewMode: HoursViewMode;
 
   // Filters
   visibleCalendarIds: string[];
@@ -21,6 +23,7 @@ interface CalendarState {
   // Actions
   setCurrentDate: (date: Date) => void;
   setViewType: (viewType: ViewType) => void;
+  setHoursViewMode: (mode: HoursViewMode) => void;
   navigatePrev: () => void;
   navigateNext: () => void;
   navigateToday: () => void;
@@ -36,11 +39,14 @@ export const useCalendarStore = create<CalendarState>()(
     (set, get) => ({
       currentDate: new Date(),
       viewType: "week",
+      hoursViewMode: "business",
       visibleCalendarIds: [],
 
       setCurrentDate: (date) => set({ currentDate: date }),
 
       setViewType: (viewType) => set({ viewType }),
+
+      setHoursViewMode: (mode) => set({ hoursViewMode: mode }),
 
       navigatePrev: () => {
         const { currentDate, viewType } = get();
@@ -141,6 +147,7 @@ export const useCalendarStore = create<CalendarState>()(
       name: "dpm-calendar-storage",
       partialize: (state) => ({
         viewType: state.viewType,
+        hoursViewMode: state.hoursViewMode,
         visibleCalendarIds: state.visibleCalendarIds,
       }),
     }

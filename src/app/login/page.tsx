@@ -2,21 +2,35 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Calendar, CheckSquare, Target, BarChart3 } from "lucide-react";
+import { Calendar, CheckSquare, Target, BarChart3, Github, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+
+  const handleOAuthSignIn = async (provider: string) => {
+    setLoadingProvider(provider);
+    try {
+      await signIn(provider, { callbackUrl: "/calendar" });
+    } catch {
+      setLoadingProvider(null);
+    }
+  };
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return;
     setIsLoading(true);
-    await signIn("credentials", { email, callbackUrl: "/calendar" });
-    setIsLoading(false);
+    try {
+      await signIn("credentials", { email, callbackUrl: "/calendar" });
+    } catch {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -25,7 +39,7 @@ export default function LoginPage() {
       <div className="flex w-full flex-col items-center justify-center px-4 py-12 lg:w-1/2">
         <div className="w-full max-w-md">
           {/* Logo */}
-          <div className="mb-8 flex items-center gap-3">
+          <Link href="/" className="mb-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Image
               src="/logo.png"
               alt="DPM Calendar"
@@ -35,7 +49,7 @@ export default function LoginPage() {
               priority
             />
             <span className="text-xl sm:text-2xl font-bold">DPM Calendar</span>
-          </div>
+          </Link>
 
           {/* Welcome Text */}
           <div className="mb-8">
@@ -43,7 +57,7 @@ export default function LoginPage() {
               Bienvenue !
             </h1>
             <p className="mt-2 text-muted-foreground">
-              Connectez-vous avec votre compte Google, Microsoft ou Apple.
+              Connectez-vous ou créez un compte pour commencer.
             </p>
           </div>
 
@@ -51,56 +65,86 @@ export default function LoginPage() {
           <div className="space-y-3">
             {/* Google */}
             <Button
-              onClick={() => signIn("google", { callbackUrl: "/calendar" })}
+              onClick={() => handleOAuthSignIn("google")}
               variant="outline"
               className="h-12 w-full justify-center gap-3 text-base font-medium"
+              disabled={loadingProvider !== null}
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
-                <path
-                  fill="#4285F4"
-                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                />
-                <path
-                  fill="#34A853"
-                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                />
-                <path
-                  fill="#FBBC05"
-                  d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                />
-                <path
-                  fill="#EA4335"
-                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                />
-              </svg>
-              Se connecter avec Google
+              {loadingProvider === "google" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+              )}
+              {loadingProvider === "google" ? "Connexion..." : "Continuer avec Google"}
             </Button>
 
             {/* Microsoft */}
             <Button
-              onClick={() => signIn("microsoft-entra-id", { callbackUrl: "/calendar" })}
+              onClick={() => handleOAuthSignIn("microsoft-entra-id")}
               variant="outline"
               className="h-12 w-full justify-center gap-3 text-base font-medium"
+              disabled={loadingProvider !== null}
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
-                <path fill="#F25022" d="M1 1h10v10H1z" />
-                <path fill="#00A4EF" d="M1 13h10v10H1z" />
-                <path fill="#7FBA00" d="M13 1h10v10H13z" />
-                <path fill="#FFB900" d="M13 13h10v10H13z" />
-              </svg>
-              Se connecter avec Microsoft
+              {loadingProvider === "microsoft-entra-id" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
+                  <path fill="#F25022" d="M1 1h10v10H1z" />
+                  <path fill="#00A4EF" d="M1 13h10v10H1z" />
+                  <path fill="#7FBA00" d="M13 1h10v10H13z" />
+                  <path fill="#FFB900" d="M13 13h10v10H13z" />
+                </svg>
+              )}
+              {loadingProvider === "microsoft-entra-id" ? "Connexion..." : "Continuer avec Microsoft"}
+            </Button>
+
+            {/* GitHub */}
+            <Button
+              onClick={() => handleOAuthSignIn("github")}
+              variant="outline"
+              className="h-12 w-full justify-center gap-3 text-base font-medium"
+              disabled={loadingProvider !== null}
+            >
+              {loadingProvider === "github" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Github className="h-5 w-5" />
+              )}
+              {loadingProvider === "github" ? "Connexion..." : "Continuer avec GitHub"}
             </Button>
 
             {/* Apple */}
             <Button
-              onClick={() => signIn("apple", { callbackUrl: "/calendar" })}
+              onClick={() => handleOAuthSignIn("apple")}
               variant="outline"
               className="h-12 w-full justify-center gap-3 text-base font-medium"
+              disabled={loadingProvider !== null}
             >
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-              </svg>
-              Se connecter avec Apple
+              {loadingProvider === "apple" ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
+                </svg>
+              )}
+              {loadingProvider === "apple" ? "Connexion..." : "Continuer avec Apple"}
             </Button>
           </div>
 
@@ -111,7 +155,7 @@ export default function LoginPage() {
             </div>
             <div className="relative flex justify-center text-sm">
               <span className="bg-background px-4 text-muted-foreground">
-                Ou
+                ou avec votre email
               </span>
             </div>
           </div>
@@ -120,7 +164,7 @@ export default function LoginPage() {
           <form onSubmit={handleEmailLogin} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-muted-foreground">
-                Email
+                Adresse email
               </label>
               <Input
                 id="email"
@@ -130,22 +174,43 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-12"
                 required
+                disabled={isLoading || loadingProvider !== null}
               />
             </div>
             <Button
               type="submit"
               className="h-12 w-full text-base"
-              disabled={isLoading || !email}
+              disabled={isLoading || !email || loadingProvider !== null}
             >
-              {isLoading ? "Connexion..." : "Se connecter"}
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Connexion...
+                </>
+              ) : (
+                "Continuer avec l'email"
+              )}
             </Button>
           </form>
 
+          {/* Terms */}
+          <p className="mt-6 text-center text-xs text-muted-foreground">
+            En continuant, vous acceptez nos{" "}
+            <Link href="/terms" className="text-primary hover:underline">
+              Conditions d&apos;utilisation
+            </Link>{" "}
+            et notre{" "}
+            <Link href="/privacy" className="text-primary hover:underline">
+              Politique de confidentialité
+            </Link>
+            .
+          </p>
+
           {/* Help Text */}
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            Besoin d&apos;aide ? Contactez-nous a{" "}
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Besoin d&apos;aide ?{" "}
             <a href="mailto:support@dpmcalendar.com" className="text-primary hover:underline">
-              support@dpmcalendar.com
+              Contactez-nous
             </a>
           </p>
         </div>

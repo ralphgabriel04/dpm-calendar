@@ -240,7 +240,7 @@ export default function Home() {
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
               Votre temps,{" "}
               <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-                optimisé
+                mérite mieux
               </span>
             </h1>
 
