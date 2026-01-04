@@ -259,7 +259,7 @@ export const suggestionRouter = createTRPCRouter({
           userId: ctx.session.user.id,
           type: "AUTO_SCHEDULE",
           title: `Planifier "${task.title}"`,
-          description: `Creneau suggere: ${format(input.suggestedSlot.startAt, "EEEE d MMMM HH:mm", { locale: fr })}`,
+          description: `Créneau suggéré: ${format(input.suggestedSlot.startAt, "EEEE d MMMM HH:mm", { locale: fr })}`,
           actionData: {
             taskId: task.id,
             slot: input.suggestedSlot,
@@ -340,25 +340,25 @@ function getSlotReason(slotStart: Date, score: number, type: string): string {
 
   if (score >= 70) {
     if (hour >= 9 && hour <= 11) {
-      return "Creneau matinal optimal pour la concentration";
+      return "Créneau matinal optimal pour la concentration";
     }
     if (hour >= 14 && hour <= 16) {
-      return "Bon creneau de l'apres-midi";
+      return "Bon créneau de l'après-midi";
     }
-    return "Creneau recommande";
+    return "Créneau recommandé";
   }
 
   if (score >= 50) {
-    return "Creneau disponible";
+    return "Créneau disponible";
   }
 
   if (hour >= 17) {
-    return "Fin de journee - a eviter si possible";
+    return "Fin de journée - à éviter si possible";
   }
 
   if (hour < 9) {
-    return "Tot le matin - verifiez votre disponibilite";
+    return "Tôt le matin - vérifiez votre disponibilité";
   }
 
-  return "Creneau alternatif";
+  return "Créneau alternatif";
 }

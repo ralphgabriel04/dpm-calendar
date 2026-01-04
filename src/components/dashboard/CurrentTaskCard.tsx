@@ -83,10 +83,10 @@ export function CurrentTaskCard({
           <Check className="h-8 w-8 text-muted-foreground" />
         </div>
         <h3 className="text-lg font-medium text-muted-foreground">
-          Aucune tache en cours
+          Aucune tâche en cours
         </h3>
         <p className="text-sm text-muted-foreground/70 mt-1">
-          Toutes vos taches sont terminees ou planifiez-en une nouvelle
+          Toutes vos tâches sont terminées ou planifiez-en une nouvelle
         </p>
       </div>
     );
@@ -107,7 +107,7 @@ export function CurrentTaskCard({
             "bg-primary/10 text-primary"
           )}>
             <Zap className="h-3 w-3" />
-            Tache actuelle
+            Tâche actuelle
           </div>
           {task.plannedDuration && (
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -155,7 +155,7 @@ export function CurrentTaskCard({
             ) : (
               <>
                 <Play className="h-4 w-4 mr-2" />
-                {elapsedSeconds > 0 ? "Reprendre" : "Demarrer"}
+                {elapsedSeconds > 0 ? "Reprendre" : "Démarrer"}
               </>
             )}
           </Button>

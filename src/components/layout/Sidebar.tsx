@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   CheckSquare,
   Settings,
@@ -34,7 +35,7 @@ import { LanguageToggle } from "@/components/language";
 
 // Types
 interface NavItem {
-  name: string;
+  nameKey: string;
   href: string;
   icon: React.ElementType;
   badge?: string;
@@ -42,64 +43,64 @@ interface NavItem {
 
 interface NavSection {
   id: string;
-  title: string;
+  titleKey: string;
   items: NavItem[];
   defaultExpanded?: boolean;
 }
 
 // Main navigation (always visible)
 const mainNavigation: NavItem[] = [
-  { name: "Accueil", href: "/home", icon: Home },
-  { name: "Aujourd'hui", href: "/planner", icon: LayoutDashboard },
-  { name: "Calendrier", href: "/calendar", icon: Calendar },
+  { nameKey: "home", href: "/home", icon: Home },
+  { nameKey: "today", href: "/planner", icon: LayoutDashboard },
+  { nameKey: "calendar", href: "/calendar", icon: Calendar },
 ];
 
 // Grouped navigation sections
 const navSections: NavSection[] = [
   {
     id: "daily-rituals",
-    title: "ROUTINES QUOTIDIENNES",
+    titleKey: "sections.dailyRituals",
     defaultExpanded: true,
     items: [
-      { name: "Planification du jour", href: "/daily-planning", icon: Sunrise },
-      { name: "Focus", href: "/planner?focus=true", icon: Target },
+      { nameKey: "dailyPlanning", href: "/daily-planning", icon: Sunrise },
+      { nameKey: "focus", href: "/planner?focus=true", icon: Target },
     ],
   },
   {
     id: "weekly-rituals",
-    title: "ROUTINES HEBDOMADAIRES",
+    titleKey: "sections.weeklyRituals",
     defaultExpanded: false,
     items: [
-      { name: "Revue de la semaine", href: "/planner?view=week", icon: CalendarDays },
-      { name: "Objectifs hebdo", href: "/goals", icon: Star },
+      { nameKey: "weekReview", href: "/planner?view=week", icon: CalendarDays },
+      { nameKey: "weeklyGoals", href: "/goals", icon: Star },
     ],
   },
   {
     id: "productivity",
-    title: "PRODUCTIVITÉ",
+    titleKey: "sections.productivity",
     defaultExpanded: true,
     items: [
-      { name: "Tâches", href: "/tasks", icon: CheckSquare },
-      { name: "Matrice", href: "/matrix", icon: Grid3X3 },
-      { name: "Habitudes", href: "/habits", icon: Flame },
-      { name: "Objectifs", href: "/goals", icon: Target },
+      { nameKey: "tasks", href: "/tasks", icon: CheckSquare },
+      { nameKey: "matrix", href: "/matrix", icon: Grid3X3 },
+      { nameKey: "habits", href: "/habits", icon: Flame },
+      { nameKey: "goals", href: "/goals", icon: Target },
     ],
   },
   {
     id: "automation",
-    title: "AUTOMATISATION",
+    titleKey: "sections.automation",
     defaultExpanded: false,
     items: [
-      { name: "Règles", href: "/rules", icon: Shield },
+      { nameKey: "rules", href: "/rules", icon: Shield },
     ],
   },
   {
     id: "insights",
-    title: "ANALYSES",
+    titleKey: "sections.insights",
     defaultExpanded: true,
     items: [
-      { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-      { name: "Analytics", href: "/analytics", icon: BarChart3 },
+      { nameKey: "dashboard", href: "/dashboard", icon: LayoutDashboard },
+      { nameKey: "analytics", href: "/analytics", icon: BarChart3 },
     ],
   },
 ];
@@ -111,12 +112,14 @@ function CollapsibleSection({
   onToggle,
   pathname,
   sidebarCollapsed,
+  t,
 }: {
   section: NavSection;
   isExpanded: boolean;
   onToggle: () => void;
   pathname: string;
   sidebarCollapsed: boolean;
+  t: (key: string) => string;
 }) {
   // In collapsed mode, just show icons without section headers
   if (sidebarCollapsed) {
@@ -124,11 +127,12 @@ function CollapsibleSection({
       <div className="space-y-1">
         {section.items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href.split("?")[0]);
+          const itemName = t(item.nameKey);
           return (
             <Link
-              key={item.name}
+              key={item.nameKey}
               href={item.href}
-              title={item.name}
+              title={itemName}
               className={cn(
                 "flex items-center justify-center rounded-md p-3 transition-all duration-200",
                 isActive
@@ -151,7 +155,7 @@ function CollapsibleSection({
         onClick={onToggle}
         className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
       >
-        <span>{section.title}</span>
+        <span>{t(section.titleKey)}</span>
         <ChevronDown
           className={cn(
             "h-3 w-3 transition-transform duration-200",
@@ -169,9 +173,10 @@ function CollapsibleSection({
       >
         {section.items.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href.split("?")[0]);
+          const itemName = t(item.nameKey);
           return (
             <Link
-              key={item.name}
+              key={item.nameKey}
               href={item.href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ml-2",
@@ -181,7 +186,7 @@ function CollapsibleSection({
               )}
             >
               <item.icon className="h-4 w-4 flex-shrink-0" />
-              <span>{item.name}</span>
+              <span>{itemName}</span>
               {item.badge && (
                 <span className="ml-auto text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">
                   {item.badge}
@@ -198,6 +203,7 @@ function CollapsibleSection({
 export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
+  const t = useTranslations("sidebar");
 
   // Section expanded states
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
@@ -295,11 +301,12 @@ export function Sidebar() {
           <div className="space-y-1 mb-4">
             {mainNavigation.map((item) => {
               const isActive = pathname.startsWith(item.href);
+              const itemName = t(item.nameKey);
               return (
                 <Link
-                  key={item.name}
+                  key={item.nameKey}
                   href={item.href}
-                  title={sidebarCollapsed ? item.name : undefined}
+                  title={sidebarCollapsed ? itemName : undefined}
                   className={cn(
                     "flex items-center rounded-md text-sm font-medium transition-all duration-200",
                     sidebarCollapsed
@@ -322,7 +329,7 @@ export function Sidebar() {
                       sidebarCollapsed && "lg:hidden"
                     )}
                   >
-                    {item.name}
+                    {itemName}
                   </span>
                 </Link>
               );
@@ -342,6 +349,7 @@ export function Sidebar() {
                 onToggle={() => toggleSection(section.id)}
                 pathname={pathname}
                 sidebarCollapsed={sidebarCollapsed}
+                t={t}
               />
             ))}
           </div>
@@ -356,7 +364,7 @@ export function Sidebar() {
         >
           <Link
             href="/settings"
-            title={sidebarCollapsed ? "Paramètres" : undefined}
+            title={sidebarCollapsed ? t("settings") : undefined}
             className={cn(
               "flex items-center rounded-md text-sm font-medium transition-all duration-200",
               sidebarCollapsed
@@ -379,7 +387,7 @@ export function Sidebar() {
                 sidebarCollapsed && "lg:hidden"
               )}
             >
-              Paramètres
+              {t("settings")}
             </span>
           </Link>
         </div>
@@ -389,7 +397,7 @@ export function Sidebar() {
           <button
             onClick={toggleSidebar}
             className="p-2 rounded-full hover:bg-accent transition-colors"
-            title={sidebarCollapsed ? "Ouvrir le menu" : "Fermer le menu"}
+            title={sidebarCollapsed ? t("openMenu") : t("closeMenu")}
           >
             {sidebarCollapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -418,7 +426,7 @@ export function Sidebar() {
                 sidebarCollapsed && "lg:hidden"
               )}
             >
-              DPM Calendar v0.1.0
+              {t("version")}
             </div>
             <div className="flex items-center gap-1">
               <LanguageToggle collapsed={sidebarCollapsed} />

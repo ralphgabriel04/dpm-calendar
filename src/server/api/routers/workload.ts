@@ -228,9 +228,9 @@ export const workloadRouter = createTRPCRouter({
 
         let recommendation: string | null = null;
         if (isCriticalWeek) {
-          recommendation = "Semaine critique! Envisagez de reporter des taches non urgentes.";
+          recommendation = "Semaine critique! Envisagez de reporter des tâches non urgentes.";
         } else if (isWarningWeek) {
-          recommendation = "Charge elevee cette semaine. Planifiez des pauses.";
+          recommendation = "Charge élevée cette semaine. Planifiez des pauses.";
         }
 
         weekAnalyses.push({
@@ -322,19 +322,19 @@ export const workloadRouter = createTRPCRouter({
 
           if (hoursUntilDue < 0) {
             urgencyScore += 40;
-            factors.push("Tache en retard");
+            factors.push("Tâche en retard");
           } else if (daysUntilDue === 0) {
             urgencyScore += 35;
-            factors.push("Echeance aujourd'hui");
+            factors.push("Échéance aujourd'hui");
           } else if (daysUntilDue === 1) {
             urgencyScore += 25;
-            factors.push("Echeance demain");
+            factors.push("Échéance demain");
           } else if (daysUntilDue <= 3) {
             urgencyScore += 15;
-            factors.push(`Echeance dans ${daysUntilDue} jours`);
+            factors.push(`Échéance dans ${daysUntilDue} jours`);
           } else if (daysUntilDue <= 7) {
             urgencyScore += 8;
-            factors.push("Echeance cette semaine");
+            factors.push("Échéance cette semaine");
           }
         }
 
@@ -342,11 +342,11 @@ export const workloadRouter = createTRPCRouter({
         switch (task.priority) {
           case "URGENT":
             urgencyScore += 25;
-            factors.push("Priorite urgente");
+            factors.push("Priorité urgente");
             break;
           case "HIGH":
             urgencyScore += 15;
-            factors.push("Haute priorite");
+            factors.push("Haute priorité");
             break;
           case "MEDIUM":
             urgencyScore += 5;
@@ -368,14 +368,14 @@ export const workloadRouter = createTRPCRouter({
             factors.push("Pas assez de temps disponible");
           } else if (totalAvailable < estimatedMinutes * 1.5) {
             urgencyScore += 10;
-            factors.push("Temps limite");
+            factors.push("Temps limité");
           }
         }
 
         // Factor 4: Task complexity (based on estimated duration)
         if (estimatedMinutes >= 180) {
           urgencyScore += 5;
-          factors.push("Tache longue");
+          factors.push("Tâche longue");
         }
 
         // Normalize to 0-100
@@ -391,11 +391,11 @@ export const workloadRouter = createTRPCRouter({
         // Generate suggestion
         let suggestedAction: string;
         if (urgencyLevel === "critical") {
-          suggestedAction = "A traiter immediatement";
+          suggestedAction = "À traiter immédiatement";
         } else if (urgencyLevel === "high") {
-          suggestedAction = "Planifiez cette tache aujourd'hui";
+          suggestedAction = "Planifiez cette tâche aujourd'hui";
         } else if (urgencyLevel === "medium") {
-          suggestedAction = "A programmer cette semaine";
+          suggestedAction = "À programmer cette semaine";
         } else {
           suggestedAction = "Peut attendre";
         }
@@ -451,15 +451,15 @@ export const workloadRouter = createTRPCRouter({
     if (todayEvents >= 6 || todayTasks >= 8) {
       alerts.push({
         type: "critical",
-        title: "Journee surchargee",
-        message: `Vous avez ${todayEvents} evenements et ${todayTasks} taches aujourd'hui`,
+        title: "Journée surchargée",
+        message: `Vous avez ${todayEvents} événements et ${todayTasks} tâches aujourd'hui`,
         date: today,
       });
     } else if (todayEvents >= 4 || todayTasks >= 5) {
       alerts.push({
         type: "warning",
-        title: "Journee chargee",
-        message: "Pensez a prioriser vos taches",
+        title: "Journée chargée",
+        message: "Pensez à prioriser vos tâches",
         date: today,
       });
     }
@@ -476,8 +476,8 @@ export const workloadRouter = createTRPCRouter({
     if (overdueTasks > 0) {
       alerts.push({
         type: "critical",
-        title: "Taches en retard",
-        message: `${overdueTasks} tache(s) en retard`,
+        title: "Tâches en retard",
+        message: `${overdueTasks} tâche(s) en retard`,
       });
     }
 
@@ -504,8 +504,8 @@ export const workloadRouter = createTRPCRouter({
     if (nextWeekEvents.length >= 15 || nextWeekTasks.length >= 20) {
       alerts.push({
         type: "warning",
-        title: "Semaine prochaine chargee",
-        message: "Preparez-vous pour une semaine intense",
+        title: "Semaine prochaine chargée",
+        message: "Préparez-vous pour une semaine intense",
         date: weekStart,
       });
     }

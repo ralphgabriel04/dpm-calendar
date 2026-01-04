@@ -77,7 +77,7 @@ export function SlotSuggestions({
       >
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
-          <span className="font-semibold">Suggestions de creneaux</span>
+          <span className="font-semibold">Suggestions de créneaux</span>
         </div>
         {expanded ? (
           <ChevronUp className="h-4 w-4 text-muted-foreground" />
@@ -92,7 +92,7 @@ export function SlotSuggestions({
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">
-                Duree
+                Durée
               </label>
               <Select
                 value={duration.toString()}
@@ -126,16 +126,16 @@ export function SlotSuggestions({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="task">Tache</SelectItem>
+                  <SelectItem value="task">Tâche</SelectItem>
                   <SelectItem value="focus">Focus</SelectItem>
-                  <SelectItem value="event">Evenement</SelectItem>
+                  <SelectItem value="event">Événement</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div>
               <label className="text-xs text-muted-foreground mb-1 block">
-                Priorite
+                Priorité
               </label>
               <Select
                 value={priority}
@@ -213,8 +213,8 @@ export function SlotSuggestions({
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Calendar className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Aucun creneau disponible</p>
-              <p className="text-xs">Essayez une duree plus courte</p>
+              <p className="text-sm">Aucun créneau disponible</p>
+              <p className="text-xs">Essayez une durée plus courte</p>
             </div>
           )}
 

@@ -54,7 +54,7 @@ export function MicroCommitment({ className, compact = false }: MicroCommitmentP
       setActiveSession({
         sessionId: data.sessionId,
         taskId: data.taskId,
-        taskTitle: task?.taskTitle || "Tache",
+        taskTitle: task?.taskTitle || "Tâche",
         duration: data.duration,
         startTime: new Date(),
       });
@@ -193,7 +193,7 @@ export function MicroCommitment({ className, compact = false }: MicroCommitmentP
                     className="bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Termine
+                    Terminé
                   </Button>
                   <Button
                     variant="outline"
@@ -208,7 +208,7 @@ export function MicroCommitment({ className, compact = false }: MicroCommitmentP
               </div>
 
               <p className="text-xs text-center text-muted-foreground">
-                Restez concentre pendant {activeSession.duration} minutes
+                Restez concentré pendant {activeSession.duration} minutes
               </p>
             </div>
           ) : isLoading ? (
@@ -275,8 +275,8 @@ export function MicroCommitment({ className, compact = false }: MicroCommitmentP
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <Target className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Aucune tache a demarrer</p>
-              <p className="text-xs">Ajoutez des taches pour utiliser les micro-engagements</p>
+              <p className="text-sm">Aucune tâche à démarrer</p>
+              <p className="text-xs">Ajoutez des tâches pour utiliser les micro-engagements</p>
             </div>
           )}
 
@@ -284,7 +284,7 @@ export function MicroCommitment({ className, compact = false }: MicroCommitmentP
             <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
               <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
                 <AlertTriangle className="h-4 w-4" />
-                <span className="text-sm font-medium">Conseils personnalises</span>
+                <span className="text-sm font-medium">Conseils personnalisés</span>
               </div>
               <ul className="text-xs text-muted-foreground mt-1 space-y-1">
                 {patterns.recommendations.map((rec, i) => (

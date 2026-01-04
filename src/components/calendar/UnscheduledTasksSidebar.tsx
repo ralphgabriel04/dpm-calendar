@@ -32,13 +32,13 @@ export function UnscheduledTasksSidebar({
       {/* Header */}
       <div className="flex items-center gap-2 p-3 border-b">
         <ListTodo className="h-4 w-4 text-muted-foreground" />
-        <h3 className="font-semibold text-sm">Taches a planifier</h3>
+        <h3 className="font-semibold text-sm">Tâches à planifier</h3>
       </div>
 
       {/* Task count */}
       <div className="px-3 py-2 text-xs text-muted-foreground border-b">
-        {tasks?.length || 0} tache{(tasks?.length || 0) > 1 ? "s" : ""} non
-        planifiee{(tasks?.length || 0) > 1 ? "s" : ""}
+        {tasks?.length || 0} tâche{(tasks?.length || 0) > 1 ? "s" : ""} non
+        planifiée{(tasks?.length || 0) > 1 ? "s" : ""}
       </div>
 
       {/* Task list */}
@@ -66,9 +66,9 @@ export function UnscheduledTasksSidebar({
         ) : (
           <div className="flex flex-col items-center justify-center h-32 text-center text-muted-foreground">
             <ListTodo className="h-8 w-8 mb-2 opacity-50" />
-            <p className="text-sm">Aucune tache a planifier</p>
+            <p className="text-sm">Aucune tâche à planifier</p>
             <p className="text-xs mt-1">
-              Glissez des taches ici depuis la page Taches
+              Glissez des tâches ici depuis la page Tâches
             </p>
           </div>
         )}
@@ -77,7 +77,7 @@ export function UnscheduledTasksSidebar({
       {/* Help text */}
       <div className="p-3 border-t bg-muted/30">
         <p className="text-xs text-muted-foreground text-center">
-          Glissez une tache sur le calendrier pour la planifier
+          Glissez une tâche sur le calendrier pour la planifier
         </p>
       </div>
     </div>

@@ -182,13 +182,13 @@ export const energyRouter = createTRPCRouter({
       // Generate recommendations
       const recommendations: string[] = [];
       if (bestHour >= 9 && bestHour <= 11) {
-        recommendations.push("Planifiez vos taches importantes le matin");
+        recommendations.push("Planifiez vos tâches importantes le matin");
       }
       if (worstHour >= 13 && worstHour <= 15) {
-        recommendations.push("Prevoyez des pauses apres le dejeuner");
+        recommendations.push("Prévoyez des pauses après le déjeuner");
       }
       if (trend === "declining") {
-        recommendations.push("Votre energie semble baisser - pensez a faire des pauses");
+        recommendations.push("Votre énergie semble baisser - pensez à faire des pauses");
       }
 
       const formatHour = (h: number) => `${h.toString().padStart(2, "0")}:00`;

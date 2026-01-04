@@ -67,7 +67,7 @@ const DAYS_OF_WEEK = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 
 const METRIC_LABELS = {
   hours: "heures",
-  tasks: "taches",
+  tasks: "tâches",
   overload: "score",
 };
 
@@ -156,7 +156,7 @@ export function ContributionHeatmap({
   if (weeks.length === 0) {
     return (
       <div className={cn("rounded-xl border bg-card p-6", className)}>
-        <p className="text-muted-foreground text-center">Aucune donnee disponible</p>
+        <p className="text-muted-foreground text-center">Aucune donnée disponible</p>
       </div>
     );
   }
@@ -164,7 +164,7 @@ export function ContributionHeatmap({
   return (
     <div className={cn("rounded-xl border bg-card p-6", className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold">Activite</h3>
+        <h3 className="font-semibold">Activité</h3>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span>Moins</span>
           <div className="flex gap-0.5">
@@ -240,7 +240,7 @@ export function ContributionHeatmap({
                         {day.details && (
                           <div className="mt-1 pt-1 border-t">
                             <p>Focus: {Math.round(day.details.focusMins / 60)}h</p>
-                            <p>Taches: {day.details.tasksCompleted}/{day.details.tasksPlanned}</p>
+                            <p>Tâches: {day.details.tasksCompleted}/{day.details.tasksPlanned}</p>
                           </div>
                         )}
                       </TooltipContent>

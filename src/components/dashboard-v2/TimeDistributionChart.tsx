@@ -26,7 +26,7 @@ export function TimeDistributionChart({
 
   const data = [
     { name: "Focus", value: focusMins, color: COLORS.focus },
-    { name: "Reunions", value: meetingMins, color: COLORS.meeting },
+    { name: "Réunions", value: meetingMins, color: COLORS.meeting },
     { name: "Pauses", value: breakMins, color: COLORS.break },
   ].filter((d) => d.value > 0);
 
@@ -43,7 +43,7 @@ export function TimeDistributionChart({
       <div className={cn("rounded-xl border bg-card p-6", className)}>
         <h3 className="font-semibold mb-4">Distribution du temps</h3>
         <div className="h-[200px] flex items-center justify-center">
-          <p className="text-muted-foreground">Aucune donnee</p>
+          <p className="text-muted-foreground">Aucune donnée</p>
         </div>
       </div>
     );
@@ -95,7 +95,7 @@ export function TimeDistributionChart({
         <div className="text-center">
           <div className="flex items-center justify-center gap-1">
             <div className="w-2 h-2 rounded-full bg-blue-500" />
-            <span className="text-xs text-muted-foreground">Reunions</span>
+            <span className="text-xs text-muted-foreground">Réunions</span>
           </div>
           <p className="font-medium text-sm">{formatMinutes(meetingMins)}</p>
         </div>

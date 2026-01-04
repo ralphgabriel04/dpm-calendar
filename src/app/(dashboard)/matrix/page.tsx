@@ -118,7 +118,7 @@ export default function MatrixPage() {
   };
 
   const handleDelete = async (taskId: string) => {
-    if (confirm("Voulez-vous vraiment supprimer cette tache?")) {
+    if (confirm("Voulez-vous vraiment supprimer cette tâche?")) {
       await deleteTask.mutateAsync({ id: taskId });
     }
   };
@@ -140,7 +140,7 @@ export default function MatrixPage() {
             <div>
               <h1 className="text-2xl font-bold">Matrice Eisenhower</h1>
               <p className="text-sm text-muted-foreground">
-                Organisez vos taches par urgence et importance
+                Organisez vos tâches par urgence et importance
               </p>
             </div>
             <TooltipProvider>
@@ -152,10 +152,10 @@ export default function MatrixPage() {
                 </TooltipTrigger>
                 <TooltipContent side="bottom" className="max-w-sm">
                   <div className="space-y-2 text-sm">
-                    <p><strong>Quadrant 1 - Faire:</strong> Taches urgentes et importantes. A faire immediatement.</p>
-                    <p><strong>Quadrant 2 - Planifier:</strong> Taches importantes mais pas urgentes. A planifier.</p>
-                    <p><strong>Quadrant 3 - Deleguer:</strong> Taches urgentes mais pas importantes. A deleguer si possible.</p>
-                    <p><strong>Quadrant 4 - Eliminer:</strong> Taches ni urgentes ni importantes. A eliminer.</p>
+                    <p><strong>Quadrant 1 - Faire:</strong> Tâches urgentes et importantes. À faire immédiatement.</p>
+                    <p><strong>Quadrant 2 - Planifier:</strong> Tâches importantes mais pas urgentes. À planifier.</p>
+                    <p><strong>Quadrant 3 - Déléguer:</strong> Tâches urgentes mais pas importantes. À déléguer si possible.</p>
+                    <p><strong>Quadrant 4 - Éliminer:</strong> Tâches ni urgentes ni importantes. À éliminer.</p>
                   </div>
                 </TooltipContent>
               </Tooltip>
@@ -164,7 +164,7 @@ export default function MatrixPage() {
 
           <Button onClick={() => setIsCreateOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Nouvelle tache
+            Nouvelle tâche
           </Button>
         </div>
 
@@ -183,14 +183,14 @@ export default function MatrixPage() {
 
         {/* Legend */}
         <div className="bg-card rounded-xl border p-4">
-          <h3 className="font-semibold mb-3">Comment ca fonctionne</h3>
+          <h3 className="font-semibold mb-3">Comment ça fonctionne</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
             <div className="flex items-start gap-2">
               <div className="w-3 h-3 mt-1 rounded-full bg-red-500" />
               <div>
                 <p className="font-medium">Urgent</p>
                 <p className="text-muted-foreground text-xs">
-                  Priorite URGENTE ou echeance dans 2 jours
+                  Priorité URGENTE ou échéance dans 2 jours
                 </p>
               </div>
             </div>
@@ -199,7 +199,7 @@ export default function MatrixPage() {
               <div>
                 <p className="font-medium">Important</p>
                 <p className="text-muted-foreground text-xs">
-                  Priorite HAUTE ou URGENTE
+                  Priorité HAUTE ou URGENTE
                 </p>
               </div>
             </div>
@@ -208,7 +208,7 @@ export default function MatrixPage() {
               <div>
                 <p className="font-medium">Moyen</p>
                 <p className="text-muted-foreground text-xs">
-                  Priorite MOYENNE
+                  Priorité MOYENNE
                 </p>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function MatrixPage() {
               <div>
                 <p className="font-medium">Faible</p>
                 <p className="text-muted-foreground text-xs">
-                  Priorite FAIBLE, pas d'echeance proche
+                  Priorité FAIBLE, pas d'échéance proche
                 </p>
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function MatrixPage() {
       <Modal
         open={isCreateOpen}
         onOpenChange={setIsCreateOpen}
-        title="Nouvelle tache"
+        title="Nouvelle tâche"
         className="max-w-2xl max-h-[90vh] overflow-auto"
       >
         <TaskForm
@@ -244,7 +244,7 @@ export default function MatrixPage() {
       <Modal
         open={!!editingTaskId}
         onOpenChange={() => setEditingTaskId(null)}
-        title="Modifier la tache"
+        title="Modifier la tâche"
         className="max-w-2xl max-h-[90vh] overflow-auto"
       >
         {editingTask && (

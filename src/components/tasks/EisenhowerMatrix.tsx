@@ -61,7 +61,7 @@ const QUADRANTS: Quadrant[] = [
   },
   {
     id: "delegate",
-    title: "Deleguer",
+    title: "Déléguer",
     subtitle: "Urgent mais pas important",
     icon: Clock,
     color: "text-yellow-600",
@@ -70,7 +70,7 @@ const QUADRANTS: Quadrant[] = [
   },
   {
     id: "eliminate",
-    title: "Eliminer",
+    title: "Éliminer",
     subtitle: "Ni urgent ni important",
     icon: Trash2,
     color: "text-gray-600",
@@ -215,7 +215,7 @@ export function EisenhowerMatrix({
             <div className="space-y-2">
               {tasks.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  Aucune tache dans ce quadrant
+                  Aucune tâche dans ce quadrant
                 </p>
               ) : (
                 tasks.map((task) => (

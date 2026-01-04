@@ -43,8 +43,8 @@ export function UpcomingEventsWidget({
   };
 
   const title = isToday(date)
-    ? "Evenements aujourd'hui"
-    : `Evenements - ${format(date, "d MMMM", { locale: fr })}`;
+    ? "Événements aujourd'hui"
+    : `Événements - ${format(date, "d MMMM", { locale: fr })}`;
 
   return (
     <div className={cn("rounded-xl bg-card border p-4", className)}>
@@ -65,7 +65,7 @@ export function UpcomingEventsWidget({
       {/* Events list */}
       {todayEvents.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-4">
-          Aucun evenement
+          Aucun événement
         </p>
       ) : (
         <div className="space-y-2">
@@ -113,7 +113,7 @@ export function UpcomingEventsWidget({
                 {/* Time */}
                 <div className="flex-shrink-0 text-xs text-muted-foreground">
                   {event.isAllDay ? (
-                    "Toute la journee"
+                    "Toute la journée"
                   ) : (
                     `${formatTime(event.startAt)} - ${formatTime(event.endAt)}`
                   )}

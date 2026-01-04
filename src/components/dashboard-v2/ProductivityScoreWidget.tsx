@@ -24,11 +24,11 @@ function getScoreColor(score: number): string {
 
 function getScoreLabel(score: number): string {
   if (score >= 90) return "Excellent";
-  if (score >= 75) return "Tres bien";
+  if (score >= 75) return "Très bien";
   if (score >= 60) return "Bien";
   if (score >= 40) return "Moyen";
   if (score >= 20) return "Faible";
-  return "A ameliorer";
+  return "À améliorer";
 }
 
 function getScoreBgColor(score: number): string {
@@ -39,10 +39,10 @@ function getScoreBgColor(score: number): string {
 }
 
 const BREAKDOWN_ITEMS = [
-  { key: "taskCompletion", label: "Taches", icon: CheckCircle2, weight: 30 },
+  { key: "taskCompletion", label: "Tâches", icon: CheckCircle2, weight: 30 },
   { key: "focusTime", label: "Focus", icon: Clock, weight: 30 },
   { key: "habitStreak", label: "Habitudes", icon: Target, weight: 20 },
-  { key: "timeBalance", label: "Equilibre", icon: Zap, weight: 20 },
+  { key: "timeBalance", label: "Équilibre", icon: Zap, weight: 20 },
 ] as const;
 
 export function ProductivityScoreWidget({
@@ -56,7 +56,7 @@ export function ProductivityScoreWidget({
 
   return (
     <div className={cn("rounded-xl border bg-card p-6", className)}>
-      <h3 className="font-semibold mb-4">Score de productivite</h3>
+      <h3 className="font-semibold mb-4">Score de productivité</h3>
 
       {/* Main Score */}
       <div className="flex items-center justify-center mb-6">
@@ -116,7 +116,7 @@ export function ProductivityScoreWidget({
       {/* Breakdown */}
       {breakdown && (
         <div className="space-y-3">
-          <div className="text-xs text-muted-foreground mb-2">Repartition du score</div>
+          <div className="text-xs text-muted-foreground mb-2">Répartition du score</div>
           {BREAKDOWN_ITEMS.map(({ key, label, icon: Icon, weight }) => {
             const value = breakdown[key as keyof typeof breakdown];
             return (
@@ -145,16 +145,16 @@ export function ProductivityScoreWidget({
       <div className="mt-6 pt-4 border-t">
         <div className="text-xs text-muted-foreground">
           {score < 40 && (
-            <p>Conseil: Essayez de terminer au moins 3 taches prioritaires par jour.</p>
+            <p>Conseil: Essayez de terminer au moins 3 tâches prioritaires par jour.</p>
           )}
           {score >= 40 && score < 60 && (
-            <p>Conseil: Augmentez votre temps de focus en bloquant des creneaux dedies.</p>
+            <p>Conseil: Augmentez votre temps de focus en bloquant des créneaux dédiés.</p>
           )}
           {score >= 60 && score < 80 && (
-            <p>Conseil: Maintenez vos habitudes pour ameliorer votre score.</p>
+            <p>Conseil: Maintenez vos habitudes pour améliorer votre score.</p>
           )}
           {score >= 80 && (
-            <p>Excellent travail! Continuez sur cette lancee.</p>
+            <p>Excellent travail! Continuez sur cette lancée.</p>
           )}
         </div>
       </div>

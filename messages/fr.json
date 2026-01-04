@@ -16,13 +16,30 @@
   },
   "sidebar": {
     "home": "Accueil",
+    "today": "Aujourd'hui",
     "calendar": "Calendrier",
     "tasks": "Tâches",
     "habits": "Habitudes",
     "goals": "Objectifs",
     "analytics": "Analytics",
     "settings": "Paramètres",
-    "rules": "Règles"
+    "rules": "Règles",
+    "matrix": "Matrice",
+    "dashboard": "Dashboard",
+    "dailyPlanning": "Planification du jour",
+    "focus": "Focus",
+    "weekReview": "Revue de la semaine",
+    "weeklyGoals": "Objectifs hebdo",
+    "sections": {
+      "dailyRituals": "ROUTINES QUOTIDIENNES",
+      "weeklyRituals": "ROUTINES HEBDOMADAIRES",
+      "productivity": "PRODUCTIVITÉ",
+      "automation": "AUTOMATISATION",
+      "insights": "ANALYSES"
+    },
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "version": "DPM Calendar v0.1.0"
   },
   "theme": {
     "light": "Clair",
@@ -32,7 +49,9 @@
   "language": {
     "label": "Langue",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer en Français"
   },
   "calendar": {
     "today": "Aujourd'hui",
@@ -40,7 +59,9 @@
     "week": "Semaine",
     "month": "Mois",
     "agenda": "Agenda",
-    "newEvent": "Nouvel événement"
+    "newEvent": "Nouvel événement",
+    "noEvents": "Aucun événement",
+    "allDay": "Toute la journée"
   },
   "tasks": {
     "title": "Tâches",
@@ -49,7 +70,12 @@
     "pending": "En attente",
     "inProgress": "En cours",
     "priority": "Priorité",
-    "dueDate": "Date d'échéance"
+    "dueDate": "Date d'échéance",
+    "noTask": "Aucune tâche",
+    "currentTask": "Tâche actuelle",
+    "finish": "Terminer",
+    "start": "Démarrer",
+    "resume": "Reprendre"
   },
   "habits": {
     "title": "Habitudes",
@@ -71,5 +97,21 @@
       "title": "Fonctionnalités innovantes",
       "subtitle": "Découvrez les outils qui transformeront votre productivité"
     }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
+    "workload": "Charge de travail aujourd'hui",
+    "quickActions": "Actions rapides",
+    "upcoming": "À venir",
+    "viewAll": "Voir tout",
+    "tasksOfDay": "Tâches du jour",
+    "manage": "Gérer",
+    "tipOfDay": "Conseil du jour",
+    "alreadyCompleted": "Super! Tu as déjà complété {count} tâche(s). Continue comme ça!",
+    "startImportant": "Commence par ta tâche la plus importante. Une fois terminée, le reste sera plus facile!"
   }
 }

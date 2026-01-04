@@ -165,7 +165,7 @@ export const antiProcrastinationRouter = createTRPCRouter({
 
       // Store avoidance in task notes or a separate field
       const currentNotes = task.notes || "";
-      const avoidanceLog = `\n[Evitement ${new Date().toISOString()}]${input.reason ? `: ${input.reason}` : ""}`;
+      const avoidanceLog = `\n[Évitement ${new Date().toISOString()}]${input.reason ? `: ${input.reason}` : ""}`;
 
       await ctx.db.task.update({
         where: { id: input.taskId },
@@ -176,7 +176,7 @@ export const antiProcrastinationRouter = createTRPCRouter({
 
       // Generate a helpful response
       return {
-        message: "C'est normal d'eviter parfois. Voulez-vous essayer juste 5 minutes?",
+        message: "C'est normal d'éviter parfois. Voulez-vous essayer juste 5 minutes?",
         suggestedMicroDuration: 5,
       };
     }),
@@ -219,12 +219,12 @@ export const antiProcrastinationRouter = createTRPCRouter({
     const tasksWithAvoidance = await ctx.db.task.findMany({
       where: {
         userId: ctx.session.user.id,
-        notes: { contains: "[Evitement" },
+        notes: { contains: "[Évitement" },
       },
     });
 
     const avoidanceCount = tasksWithAvoidance.reduce((count, task) => {
-      const matches = (task.notes || "").match(/\[Evitement/g);
+      const matches = (task.notes || "").match(/\[Évitement/g);
       return count + (matches?.length || 0);
     }, 0);
 
@@ -297,7 +297,7 @@ function generateEncouragement(minutes: number, continuing: boolean): string {
   if (minutes >= 10) {
     return `Bravo! ${minutes} minutes de travail accompli. Chaque minute compte!`;
   }
-  return `Bien joue! Vous avez commence - c'est le plus difficile!`;
+  return `Bien joué! Vous avez commencé - c'est le plus difficile!`;
 }
 
 function generateRecommendations(bestHour: number | null, avoidanceCount: number): string[] {
@@ -305,20 +305,20 @@ function generateRecommendations(bestHour: number | null, avoidanceCount: number
 
   if (bestHour !== null) {
     if (bestHour >= 9 && bestHour <= 11) {
-      recommendations.push("Vos meilleures sessions sont le matin - planifiez les taches difficiles a ce moment");
+      recommendations.push("Vos meilleures sessions sont le matin - planifiez les tâches difficiles à ce moment");
     } else if (bestHour >= 14 && bestHour <= 16) {
-      recommendations.push("Vous etes productif l'apres-midi - utilisez ce creneau pour les taches importantes");
+      recommendations.push("Vous êtes productif l'après-midi - utilisez ce créneau pour les tâches importantes");
     }
   }
 
   if (avoidanceCount > 10) {
-    recommendations.push("Vous evitez souvent certaines taches - essayez la technique des 5 minutes");
+    recommendations.push("Vous évitez souvent certaines tâches - essayez la technique des 5 minutes");
   } else if (avoidanceCount > 5) {
-    recommendations.push("Divisez les grandes taches en sous-taches plus petites");
+    recommendations.push("Divisez les grandes tâches en sous-tâches plus petites");
   }
 
   if (recommendations.length === 0) {
-    recommendations.push("Continuez a utiliser les micro-sessions pour maintenir votre productivite!");
+    recommendations.push("Continuez à utiliser les micro-sessions pour maintenir votre productivité!");
   }
 
   return recommendations;

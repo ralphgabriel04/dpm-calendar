@@ -284,7 +284,7 @@ export function FocusMode({
             className="flex-1 bg-green-600 hover:bg-green-700"
           >
             <Check className="h-5 w-5 mr-2" />
-            Terminer la tache
+            Terminer la tâche
           </Button>
           <Button
             variant="outline"

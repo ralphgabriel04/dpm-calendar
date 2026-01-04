@@ -35,7 +35,7 @@ export function DailyOverview({
 
   const stats = [
     {
-      label: "Taches",
+      label: "Tâches",
       value: `${completedTasks}/${totalTasks}`,
       progress: taskProgress,
       icon: CheckCircle2,
@@ -43,7 +43,7 @@ export function DailyOverview({
       bgColor: "bg-green-500",
     },
     {
-      label: "Reunions",
+      label: "Réunions",
       value: meetings.toString(),
       icon: Calendar,
       color: "text-blue-500",
@@ -134,7 +134,7 @@ export function MiniTimeline({ events, className }: MiniTimelineProps) {
     return (
       <div className={cn("text-center py-6 text-muted-foreground", className)}>
         <Clock className="h-8 w-8 mx-auto mb-2 opacity-50" />
-        <p className="text-sm">Aucun evenement a venir</p>
+        <p className="text-sm">Aucun événement à venir</p>
       </div>
     );
   }

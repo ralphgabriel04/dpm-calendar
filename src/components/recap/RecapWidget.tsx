@@ -74,7 +74,7 @@ export function RecapWidget({
   const getTypeLabel = () => {
     switch (type) {
       case "DAILY":
-        return `Resume du ${format(date, "d MMMM", { locale: fr })}`;
+        return `Résumé du ${format(date, "d MMMM", { locale: fr })}`;
       case "WEEKLY":
         return `Semaine du ${format(startOfWeek(date, { weekStartsOn: 1 }), "d MMM", { locale: fr })}`;
       case "MONTHLY":
@@ -132,13 +132,13 @@ export function RecapWidget({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <StatCard
                   icon={<Calendar className="h-4 w-4" />}
-                  label="Evenements"
+                  label="Événements"
                   value={summary?.eventsCount ?? 0}
                   previousValue={prevSummary?.eventsCount}
                 />
                 <StatCard
                   icon={<CheckCircle2 className="h-4 w-4" />}
-                  label="Taches faites"
+                  label="Tâches faites"
                   value={summary?.tasksCompleted ?? 0}
                   previousValue={prevSummary?.tasksCompleted}
                 />
@@ -183,7 +183,7 @@ export function RecapWidget({
                 <div className="space-y-2">
                   <h4 className="text-sm font-medium flex items-center gap-2">
                     <Lightbulb className="h-4 w-4 text-yellow-500" />
-                    A ameliorer
+                    À améliorer
                   </h4>
                   <ul className="space-y-1">
                     {recap.improvements.map((imp, i) => (
@@ -295,7 +295,7 @@ export function RecapWidget({
                   <Textarea
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Notes personnelles sur cette periode..."
+                    placeholder="Notes personnelles sur cette période..."
                     className="min-h-[80px]"
                   />
                   <div className="flex gap-2">
@@ -320,7 +320,7 @@ export function RecapWidget({
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-              <p className="text-sm">Pas de donnees pour cette periode</p>
+              <p className="text-sm">Pas de données pour cette période</p>
             </div>
           )}
         </div>

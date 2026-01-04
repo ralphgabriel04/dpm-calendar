@@ -86,7 +86,7 @@ export function TimeBreakdownWidget({
       if (minutes <= 0) return;
 
       // Use calendar name or event title as category
-      const categoryName = event.calendar?.name || "Evenements";
+      const categoryName = event.calendar?.name || "Événements";
       const categoryId = categoryName.toLowerCase().replace(/\s+/g, "-");
       const color = event.calendar?.color || event.color || getCategoryColor(categoryName);
 
@@ -125,7 +125,7 @@ export function TimeBreakdownWidget({
     <div className={cn("rounded-xl bg-card border p-4", className)}>
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold">Repartition du temps</h3>
+        <h3 className="text-sm font-semibold">Répartition du temps</h3>
         {onViewAll && categories.length > 0 && (
           <button
             onClick={onViewAll}
@@ -140,7 +140,7 @@ export function TimeBreakdownWidget({
       {/* Categories */}
       {categories.length === 0 ? (
         <p className="text-sm text-muted-foreground text-center py-4">
-          Aucune donnee
+          Aucune donnée
         </p>
       ) : (
         <div className="space-y-3">

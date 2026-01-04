@@ -179,7 +179,7 @@ export default function PlannerPage() {
     onSuccess: () => {
       refetchTasks();
       refetchEvents();
-      toast.success("Tache planifiee");
+      toast.success("Tâche planifiée");
     },
   });
 
@@ -187,7 +187,7 @@ export default function PlannerPage() {
     onSuccess: () => {
       refetchEvents();
       closeEventModal();
-      toast.success("Evenement cree");
+      toast.success("Événement créé");
     },
   });
 
@@ -494,7 +494,7 @@ export default function PlannerPage() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                        A faire ({todayTasks.filter((t) => t.status !== "DONE").length})
+                        À faire ({todayTasks.filter((t) => t.status !== "DONE").length})
                       </span>
                     </div>
                     <div className="space-y-2">
@@ -507,7 +507,7 @@ export default function PlannerPage() {
                       ))}
                       {todayTasks.length === 0 && (
                         <p className="text-sm text-muted-foreground text-center py-4">
-                          Aucune tache pour aujourd&apos;hui
+                          Aucune tâche pour aujourd&apos;hui
                         </p>
                       )}
                     </div>
@@ -518,7 +518,7 @@ export default function PlannerPage() {
                     <div>
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                          A venir ({backlogTasks.length})
+                          À venir ({backlogTasks.length})
                         </span>
                       </div>
                       <div className="space-y-2">
@@ -538,7 +538,7 @@ export default function PlannerPage() {
                 <div className="p-3 border-t">
                   <Button className="w-full" size="sm">
                     <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle tache
+                    Nouvelle tâche
                   </Button>
                 </div>
               </div>
@@ -699,7 +699,7 @@ export default function PlannerPage() {
                 {/* Panel header */}
                 <div className="flex items-center justify-between p-3 border-b">
                   <h3 className="font-semibold text-sm">
-                    {selectedTask ? "Details" : "Focus Mode"}
+                    {selectedTask ? "Détails" : "Focus Mode"}
                   </h3>
                   <Button
                     variant="ghost"
@@ -726,11 +726,11 @@ export default function PlannerPage() {
                     <div className="text-center py-8">
                       <Target className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
                       <p className="text-sm text-muted-foreground">
-                        Selectionnez une tache pour voir les details ou demarrer le mode focus
+                        Sélectionnez une tâche pour voir les détails ou démarrer le mode focus
                       </p>
                       <Button className="mt-4" size="sm">
                         <Play className="h-4 w-4 mr-2" />
-                        Demarrer Focus
+                        Démarrer Focus
                       </Button>
                     </div>
                   )}

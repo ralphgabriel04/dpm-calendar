@@ -35,7 +35,7 @@ export default function HomePage() {
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return { text: "Bonjour", icon: Sun };
-    if (hour < 18) return { text: "Bon apres-midi", icon: CloudSun };
+    if (hour < 18) return { text: "Bon après-midi", icon: CloudSun };
     return { text: "Bonsoir", icon: Moon };
   };
 
@@ -162,7 +162,7 @@ export default function HomePage() {
   // Quick actions
   const quickActions = [
     {
-      label: "Nouvelle tache",
+      label: "Nouvelle tâche",
       icon: Plus,
       onClick: () => router.push("/tasks"),
       variant: "primary" as const,
@@ -268,7 +268,7 @@ export default function HomePage() {
               <div className="rounded-xl border bg-card p-4 md:p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    A venir
+                    À venir
                   </h3>
                   <Button
                     variant="ghost"
@@ -288,7 +288,7 @@ export default function HomePage() {
                 <div className="rounded-xl border bg-card p-4 md:p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-muted-foreground">
-                      Taches du jour ({pendingTasks.length})
+                      Tâches du jour ({pendingTasks.length})
                     </h3>
                     <Button
                       variant="ghost"
@@ -296,7 +296,7 @@ export default function HomePage() {
                       onClick={() => router.push("/tasks")}
                       className="text-xs"
                     >
-                      Gerer
+                      Gérer
                       <ArrowRight className="h-3 w-3 ml-1" />
                     </Button>
                   </div>
@@ -342,8 +342,8 @@ export default function HomePage() {
                 </div>
                 <p className="text-sm text-muted-foreground">
                   {completedTasks > 0
-                    ? `Super! Tu as deja complete ${completedTasks} tache${completedTasks > 1 ? "s" : ""}. Continue comme ca!`
-                    : "Commence par ta tache la plus importante. Une fois terminee, le reste sera plus facile!"}
+                    ? `Super! Tu as déjà complété ${completedTasks} tâche${completedTasks > 1 ? "s" : ""}. Continue comme ça!`
+                    : "Commence par ta tâche la plus importante. Une fois terminée, le reste sera plus facile!"}
                 </p>
               </div>
             </div>

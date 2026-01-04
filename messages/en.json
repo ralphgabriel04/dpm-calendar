@@ -16,13 +16,30 @@
   },
   "sidebar": {
     "home": "Home",
+    "today": "Today",
     "calendar": "Calendar",
     "tasks": "Tasks",
     "habits": "Habits",
     "goals": "Goals",
     "analytics": "Analytics",
     "settings": "Settings",
-    "rules": "Rules"
+    "rules": "Rules",
+    "matrix": "Matrix",
+    "dashboard": "Dashboard",
+    "dailyPlanning": "Daily Planning",
+    "focus": "Focus",
+    "weekReview": "Week Review",
+    "weeklyGoals": "Weekly Goals",
+    "sections": {
+      "dailyRituals": "DAILY ROUTINES",
+      "weeklyRituals": "WEEKLY ROUTINES",
+      "productivity": "PRODUCTIVITY",
+      "automation": "AUTOMATION",
+      "insights": "INSIGHTS"
+    },
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "version": "DPM Calendar v0.1.0"
   },
   "theme": {
     "light": "Light",
@@ -32,7 +49,9 @@
   "language": {
     "label": "Language",
     "french": "Français",
-    "english": "English"
+    "english": "English",
+    "switchToEnglish": "Switch to English",
+    "switchToFrench": "Passer en Français"
   },
   "calendar": {
     "today": "Today",
@@ -40,7 +59,9 @@
     "week": "Week",
     "month": "Month",
     "agenda": "Agenda",
-    "newEvent": "New event"
+    "newEvent": "New event",
+    "noEvents": "No events",
+    "allDay": "All day"
   },
   "tasks": {
     "title": "Tasks",
@@ -49,7 +70,12 @@
     "pending": "Pending",
     "inProgress": "In progress",
     "priority": "Priority",
-    "dueDate": "Due date"
+    "dueDate": "Due date",
+    "noTask": "No task",
+    "currentTask": "Current task",
+    "finish": "Finish",
+    "start": "Start",
+    "resume": "Resume"
   },
   "habits": {
     "title": "Habits",
@@ -71,5 +97,21 @@
       "title": "Innovative features",
       "subtitle": "Discover the tools that will transform your productivity"
     }
+  },
+  "home": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "workload": "Today's workload",
+    "quickActions": "Quick actions",
+    "upcoming": "Upcoming",
+    "viewAll": "View all",
+    "tasksOfDay": "Today's tasks",
+    "manage": "Manage",
+    "tipOfDay": "Tip of the day",
+    "alreadyCompleted": "Great! You've already completed {count} task(s). Keep it up!",
+    "startImportant": "Start with your most important task. Once done, the rest will be easier!"
   }
 }

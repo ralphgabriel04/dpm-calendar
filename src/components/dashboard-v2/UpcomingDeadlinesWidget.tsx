@@ -40,10 +40,10 @@ export function UpcomingDeadlinesWidget({
   if (tasks.length === 0) {
     return (
       <div className={cn("rounded-xl border bg-card p-6", className)}>
-        <h3 className="font-semibold mb-4">Echeances a venir</h3>
+        <h3 className="font-semibold mb-4">Échéances à venir</h3>
         <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
           <CheckCircle2 className="h-8 w-8 mb-2" />
-          <p className="text-sm">Aucune echeance</p>
+          <p className="text-sm">Aucune échéance</p>
         </div>
       </div>
     );
@@ -52,7 +52,7 @@ export function UpcomingDeadlinesWidget({
   return (
     <div className={cn("rounded-xl border bg-card p-6", className)}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold">Echeances a venir</h3>
+        <h3 className="font-semibold">Échéances à venir</h3>
         <Clock className="h-5 w-5 text-muted-foreground" />
       </div>
       <div className="space-y-3">
