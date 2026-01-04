@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-type TaskViewType = "list" | "kanban" | "calendar";
+type TaskViewType = "list" | "kanban" | "calendar" | "gantt" | "dashboard" | "workload";
 
 type SortBy = "dueAt" | "priority" | "createdAt" | "title";
 type SortOrder = "asc" | "desc";

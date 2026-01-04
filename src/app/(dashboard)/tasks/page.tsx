@@ -12,6 +12,9 @@ import {
   Search,
   X,
   Check,
+  GanttChart,
+  BarChart3,
+  Activity,
 } from "lucide-react";
 import { useUIStore } from "@/stores/ui.store";
 import { useTaskStore } from "@/stores/task.store";
@@ -19,9 +22,12 @@ import { trpc } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 
 // Components
-import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, type TaskFormData } from "@/components/tasks";
+import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, GanttView, DashboardView, WorkloadView, type TaskFormData } from "@/components/tasks";
+import { EventModal, type EventFormData } from "@/components/events";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { startOfDay, endOfDay, addDays as addDaysDate } from "date-fns";
+import type { CalendarEvent } from "@/lib/calendar/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,6 +74,10 @@ export default function TasksPage() {
     startAt?: Date;
   } | null>(null);
 
+  // Event modal state (for creating events from task detail view)
+  const [eventModalOpen, setEventModalOpen] = useState(false);
+  const [newEventData, setNewEventData] = useState<Partial<EventFormData>>({});
+
   // Fetch tasks
   const { data: tasksData, refetch: refetchTasks } = trpc.task.list.useQuery({
     status: filters.status.length > 0
@@ -79,6 +89,43 @@ export default function TasksPage() {
     search: filters.search || undefined,
     includeCompleted: filters.showCompleted,
   });
+
+  // Fetch events for the task detail calendar view
+  const { data: eventsData, refetch: refetchEvents } = trpc.event.list.useQuery({
+    startDate: startOfDay(addDaysDate(new Date(), -7)),
+    endDate: endOfDay(addDaysDate(new Date(), 30)),
+  });
+
+  // Fetch calendars for event creation
+  const { data: calendarsData } = trpc.calendar.list.useQuery();
+
+  // Transform events
+  const events: CalendarEvent[] = useMemo(() => {
+    if (!eventsData) return [];
+    return eventsData.map((event) => ({
+      id: event.id,
+      title: event.title,
+      startAt: new Date(event.startAt),
+      endAt: new Date(event.endAt),
+      isAllDay: event.isAllDay,
+      color: event.color || event.calendar?.color,
+      calendarId: event.calendarId,
+      calendar: event.calendar ? {
+        name: event.calendar.name,
+        color: event.calendar.color,
+      } : undefined,
+    }));
+  }, [eventsData]);
+
+  // Calendar options for event creation
+  const calendarOptions = useMemo(() => {
+    if (!calendarsData) return [];
+    return calendarsData.map((cal) => ({
+      id: cal.id,
+      name: cal.name,
+      color: cal.color,
+    }));
+  }, [calendarsData]);
 
   // Mutations
   const createTaskMutation = trpc.task.create.useMutation({
@@ -102,6 +149,14 @@ export default function TasksPage() {
 
   const deleteTaskMutation = trpc.task.delete.useMutation({
     onSuccess: () => refetchTasks(),
+  });
+
+  // Event creation mutation
+  const createEventMutation = trpc.event.create.useMutation({
+    onSuccess: () => {
+      refetchEvents();
+      setEventModalOpen(false);
+    },
   });
 
   // Transform tasks
@@ -192,6 +247,33 @@ export default function TasksPage() {
     setDetailTask(null);
   };
 
+  // Handle create event from task detail calendar
+  const handleCreateEventFromSlot = (slot: { startAt: Date; endAt: Date }) => {
+    setNewEventData({
+      startAt: slot.startAt,
+      endAt: slot.endAt,
+      title: detailTask ? `Time block: ${detailTask.title}` : "",
+      calendarId: calendarOptions[0]?.id,
+    });
+    setEventModalOpen(true);
+  };
+
+  // Handle submit event
+  const handleSubmitEvent = (data: EventFormData) => {
+    createEventMutation.mutate({
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      startAt: data.startAt,
+      endAt: data.endAt,
+      isAllDay: data.isAllDay,
+      calendarId: data.calendarId,
+      color: data.color,
+      reminderMinutes: data.reminderMinutes,
+      rrule: data.rrule,
+    });
+  };
+
   const handleTaskStatusChange = (taskId: string, newStatus: string) => {
     // Update task status directly instead of just toggling
     updateTaskMutation.mutate({
@@ -244,6 +326,9 @@ export default function TasksPage() {
     list: { icon: List, label: "Liste" },
     kanban: { icon: LayoutGrid, label: "Kanban" },
     calendar: { icon: Calendar, label: "Calendrier" },
+    gantt: { icon: GanttChart, label: "Gantt" },
+    dashboard: { icon: BarChart3, label: "Dashboard" },
+    workload: { icon: Activity, label: "Charge" },
   };
 
   const sortOptions = [
@@ -301,7 +386,7 @@ export default function TasksPage() {
               return (
                 <button
                   key={view}
-                  onClick={() => setViewType(view as "list" | "kanban" | "calendar")}
+                  onClick={() => setViewType(view)}
                   className={cn(
                     "p-1.5 rounded-md transition-colors",
                     viewType === view
@@ -485,6 +570,21 @@ export default function TasksPage() {
               onTaskSelect={toggleTaskSelection}
             />
           </div>
+        ) : viewType === "gantt" ? (
+          <GanttView
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
+        ) : viewType === "dashboard" ? (
+          <DashboardView
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
+        ) : viewType === "workload" ? (
+          <WorkloadView
+            tasks={tasks}
+            onTaskClick={handleTaskClick}
+          />
         ) : (
           <TaskCalendarView
             tasks={tasks}
@@ -515,6 +615,7 @@ export default function TasksPage() {
           isOpen={!!detailTask}
           onClose={() => setDetailTask(null)}
           task={detailTask}
+          events={events}
           onSnooze={handleTaskSnooze}
           onMoveToNextWeek={handleTaskMoveToNextWeek}
           onMoveToBacklog={handleTaskMoveToBacklog}
@@ -524,8 +625,22 @@ export default function TasksPage() {
               ...data,
             });
           }}
+          onCreateEvent={handleCreateEventFromSlot}
         />
       )}
+
+      {/* Event Modal (for creating events from task detail view) */}
+      <EventModal
+        open={eventModalOpen}
+        onOpenChange={(open) => {
+          if (!open) setEventModalOpen(false);
+        }}
+        initialData={newEventData}
+        calendars={calendarOptions}
+        onSubmit={handleSubmitEvent}
+        isLoading={createEventMutation.isPending}
+        mode="create"
+      />
     </div>
   );
 }

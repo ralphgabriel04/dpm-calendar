@@ -172,7 +172,7 @@ const daysOfWeek = [
   { id: "sunday", label: "Dimanche", short: "Dim" },
 ];
 
-type Step = "welcome" | "task-manager" | "calendar" | "work-hours" | "planning";
+type Step = "welcome" | "task-manager" | "calendar" | "select-calendars" | "work-hours" | "recurring-tasks" | "planning";
 
 interface TimeSlot {
   start: string;
@@ -192,12 +192,40 @@ interface ConnectedCalendar {
   email: string;
 }
 
+interface CalendarToSelect {
+  id: string;
+  name: string;
+  email: string;
+  provider: string;
+  isSelected: boolean;
+}
+
+interface RecurringTaskOption {
+  id: string;
+  title: string;
+  emoji: string;
+  duration: number; // minutes
+  isSelected: boolean;
+}
+
 interface OnboardingData {
   taskManagers: string[];
   connectedCalendars: ConnectedCalendar[];
+  selectedCalendars: CalendarToSelect[];
   weeklyWorkHours: WeeklySchedule;
+  recurringTasks: RecurringTaskOption[];
   planningTime: "morning" | "evening";
 }
+
+// Default recurring tasks
+const defaultRecurringTasks: RecurringTaskOption[] = [
+  { id: "meditate", title: "Meditate", emoji: "🧘", duration: 15, isSelected: false },
+  { id: "check-emails", title: "Check emails", emoji: "📧", duration: 30, isSelected: false },
+  { id: "lunch", title: "Lunch", emoji: "🍽️", duration: 60, isSelected: false },
+  { id: "exercise", title: "Exercise", emoji: "🏃", duration: 45, isSelected: false },
+  { id: "planning", title: "Daily planning", emoji: "📋", duration: 15, isSelected: false },
+  { id: "review", title: "Daily review", emoji: "📝", duration: 15, isSelected: false },
+];
 
 // Default weekly schedule (Mon-Fri 9-17, Sat-Sun disabled)
 const defaultWeeklySchedule: WeeklySchedule = {
@@ -275,7 +303,9 @@ export default function OnboardingPage() {
   const [data, setData] = useState<OnboardingData>({
     taskManagers: [],
     connectedCalendars: [],
+    selectedCalendars: [],
     weeklyWorkHours: defaultWeeklySchedule,
+    recurringTasks: defaultRecurringTasks,
     planningTime: "morning",
   });
 
@@ -293,9 +323,31 @@ export default function OnboardingPage() {
   // Fetch connected calendar accounts
   const { data: calendarAccounts } = trpc.sync.listAccounts.useQuery();
 
-  // Update connected calendars when accounts are fetched
+  // Update connected calendars and selected calendars when accounts are fetched
   useEffect(() => {
     if (calendarAccounts) {
+      // Build the list of individual calendars from all accounts
+      const allCalendars: CalendarToSelect[] = [];
+
+      calendarAccounts.forEach((acc: {
+        id: string;
+        provider: string;
+        email: string;
+        calendars: Array<{ id: string; name: string; color: string | null }>;
+      }) => {
+        if (acc.calendars) {
+          acc.calendars.forEach((cal) => {
+            allCalendars.push({
+              id: cal.id,
+              name: cal.name,
+              email: acc.email,
+              provider: acc.provider.toLowerCase(),
+              isSelected: true, // Default to selected
+            });
+          });
+        }
+      });
+
       setData((prev) => ({
         ...prev,
         connectedCalendars: calendarAccounts.map((acc: { id: string; provider: string; email: string }) => ({
@@ -303,6 +355,7 @@ export default function OnboardingPage() {
           provider: acc.provider.toLowerCase(),
           email: acc.email,
         })),
+        selectedCalendars: allCalendars,
       }));
     }
   }, [calendarAccounts]);
@@ -317,7 +370,7 @@ export default function OnboardingPage() {
     },
   });
 
-  const steps: Step[] = ["welcome", "task-manager", "calendar", "work-hours", "planning"];
+  const steps: Step[] = ["welcome", "task-manager", "calendar", "select-calendars", "work-hours", "recurring-tasks", "planning"];
   const currentStepIndex = steps.indexOf(step);
   const progress = ((currentStepIndex) / (steps.length - 1)) * 100;
 
@@ -623,6 +676,113 @@ export default function OnboardingPage() {
           </div>
         );
 
+      case "select-calendars":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl md:text-3xl font-bold">
+                Sélectionnez les calendriers à afficher
+              </h2>
+              <p className="text-muted-foreground">
+                Choisissez les calendriers que vous souhaitez voir dans DPM Calendar.
+                <br />
+                Vous pourrez modifier cela plus tard.
+              </p>
+            </div>
+
+            <div className="max-w-md mx-auto space-y-4">
+              {/* Select all / Deselect all buttons */}
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => {
+                    setData((prev) => ({
+                      ...prev,
+                      selectedCalendars: prev.selectedCalendars.map((cal) => ({
+                        ...cal,
+                        isSelected: true,
+                      })),
+                    }));
+                  }}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Tout sélectionner
+                </button>
+                <span className="text-muted-foreground">|</span>
+                <button
+                  onClick={() => {
+                    setData((prev) => ({
+                      ...prev,
+                      selectedCalendars: prev.selectedCalendars.map((cal) => ({
+                        ...cal,
+                        isSelected: false,
+                      })),
+                    }));
+                  }}
+                  className="text-sm text-primary hover:underline"
+                >
+                  Tout désélectionner
+                </button>
+              </div>
+
+              {/* Calendar list */}
+              {data.selectedCalendars.length > 0 ? (
+                <div className="space-y-2">
+                  {data.selectedCalendars.map((cal) => {
+                    const Logo = CalendarLogos[cal.provider];
+                    return (
+                      <button
+                        key={cal.id}
+                        onClick={() => {
+                          setData((prev) => ({
+                            ...prev,
+                            selectedCalendars: prev.selectedCalendars.map((c) =>
+                              c.id === cal.id ? { ...c, isSelected: !c.isSelected } : c
+                            ),
+                          }));
+                        }}
+                        className={cn(
+                          "w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left",
+                          cal.isSelected
+                            ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+                            : "border-border hover:border-muted-foreground/50"
+                        )}
+                      >
+                        <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-muted">
+                          {Logo && <Logo className="w-6 h-6" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium truncate">{cal.name}</p>
+                          <p className="text-sm text-muted-foreground truncate">{cal.email}</p>
+                        </div>
+                        <div
+                          className={cn(
+                            "w-6 h-6 rounded border-2 flex items-center justify-center transition-all flex-shrink-0",
+                            cal.isSelected
+                              ? "border-emerald-500 bg-emerald-500"
+                              : "border-muted-foreground/30"
+                          )}
+                        >
+                          {cal.isSelected && <Check className="h-4 w-4 text-white" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Aucun calendrier connecté.</p>
+                  <button
+                    onClick={() => setStep("calendar")}
+                    className="text-primary hover:underline mt-2"
+                  >
+                    Retourner pour connecter un calendrier
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
       case "work-hours":
         return (
           <div className="space-y-6">
@@ -712,6 +872,99 @@ export default function OnboardingPage() {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        );
+
+      case "recurring-tasks":
+        return (
+          <div className="space-y-6">
+            <div className="text-center space-y-2">
+              <h2 className="text-2xl md:text-3xl font-bold">
+                Ajoutez des tâches récurrentes
+              </h2>
+              <p className="text-muted-foreground">
+                Sélectionnez les habitudes et tâches que vous faites régulièrement.
+                <br />
+                Nous les planifierons automatiquement dans votre calendrier.
+              </p>
+            </div>
+
+            <div className="max-w-md mx-auto space-y-4">
+              {/* Predefined recurring tasks */}
+              <div className="grid grid-cols-2 gap-3">
+                {data.recurringTasks.map((task) => (
+                  <button
+                    key={task.id}
+                    onClick={() => {
+                      setData((prev) => ({
+                        ...prev,
+                        recurringTasks: prev.recurringTasks.map((t) =>
+                          t.id === task.id ? { ...t, isSelected: !t.isSelected } : t
+                        ),
+                      }));
+                    }}
+                    className={cn(
+                      "flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left",
+                      task.isSelected
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20"
+                        : "border-border hover:border-muted-foreground/50"
+                    )}
+                  >
+                    <span className="text-2xl">{task.emoji}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{task.title}</p>
+                      <p className="text-xs text-muted-foreground">{task.duration} min</p>
+                    </div>
+                    <div
+                      className={cn(
+                        "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all flex-shrink-0",
+                        task.isSelected
+                          ? "border-emerald-500 bg-emerald-500"
+                          : "border-muted-foreground/30"
+                      )}
+                    >
+                      {task.isSelected && <Check className="h-3 w-3 text-white" />}
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Add custom recurring task button */}
+              <button
+                onClick={() => {
+                  const title = prompt("Nom de la tâche récurrente:");
+                  if (title) {
+                    const duration = parseInt(prompt("Durée en minutes (ex: 30):") || "30", 10);
+                    const emoji = prompt("Emoji (ex: 📝):") || "📝";
+                    setData((prev) => ({
+                      ...prev,
+                      recurringTasks: [
+                        ...prev.recurringTasks,
+                        {
+                          id: `custom-${Date.now()}`,
+                          title,
+                          emoji,
+                          duration: isNaN(duration) ? 30 : duration,
+                          isSelected: true,
+                        },
+                      ],
+                    }));
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
+              >
+                <Plus className="h-5 w-5" />
+                <span className="font-medium">Ajouter une tâche personnalisée</span>
+              </button>
+
+              {/* Skip button */}
+              <button
+                onClick={handleNext}
+                className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
+              >
+                Passer cette étape
+              </button>
             </div>
           </div>
         );

@@ -46,6 +46,7 @@ interface TaskDetailModalProps {
   onSnooze?: (taskId: string) => void;
   onMoveToNextWeek?: (taskId: string) => void;
   onMoveToBacklog?: (taskId: string) => void;
+  onCreateEvent?: (slot: { startAt: Date; endAt: Date }) => void;
 }
 
 // Format time from seconds to MM:SS or HH:MM:SS
@@ -77,6 +78,7 @@ export function TaskDetailModal({
   onSnooze,
   onMoveToNextWeek,
   onMoveToBacklog,
+  onCreateEvent,
 }: TaskDetailModalProps) {
   // View state
   const [isExpanded, setIsExpanded] = useState(false);
@@ -861,13 +863,51 @@ export function TaskDetailModal({
 
         {/* Calendar Side Panel (Expanded View) */}
         {isExpanded && (
-          <div className="flex-1 border-l overflow-hidden">
-            <DayView
-              date={selectedDate}
-              events={events}
-              onEventClick={() => {}}
-              onSlotClick={() => {}}
-            />
+          <div className="flex-1 border-l overflow-hidden flex flex-col">
+            {/* Calendar Header */}
+            <div className="p-4 border-b flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setSelectedDate(addDays(selectedDate, -1))}
+                  className="p-1 hover:bg-accent rounded"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <span className="font-medium">
+                  {format(selectedDate, "EEEE d MMMM")}
+                </span>
+                <button
+                  onClick={() => setSelectedDate(addDays(selectedDate, 1))}
+                  className="p-1 hover:bg-accent rounded"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedDate(new Date())}
+              >
+                Aujourd&apos;hui
+              </Button>
+            </div>
+
+            {/* DayView with slot click handler */}
+            <div className="flex-1 overflow-hidden">
+              <DayView
+                date={selectedDate}
+                events={events}
+                onEventClick={() => {}}
+                onSlotClick={(date, time) => {
+                  if (onCreateEvent) {
+                    // Create a 1-hour event starting at the clicked time
+                    const startAt = time;
+                    const endAt = new Date(time.getTime() + 60 * 60 * 1000);
+                    onCreateEvent({ startAt, endAt });
+                  }
+                }}
+              />
+            </div>
           </div>
         )}
       </div>

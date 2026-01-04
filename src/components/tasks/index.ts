@@ -5,4 +5,7 @@ export { TaskModal } from "./TaskModal";
 export { TaskDetailModal } from "./TaskDetailModal";
 export { TaskListView } from "./TaskListView";
 export { TaskCalendarView } from "./TaskCalendarView";
+export { GanttView } from "./GanttView";
+export { DashboardView } from "./DashboardView";
+export { WorkloadView } from "./WorkloadView";
 export { KanbanBoard, KanbanColumn } from "./kanban";
