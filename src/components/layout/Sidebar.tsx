@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import {
   CheckSquare,
   Settings,
@@ -204,6 +205,10 @@ export function Sidebar() {
   const pathname = usePathname();
   const { sidebarCollapsed, toggleSidebar } = useUIStore();
   const t = useTranslations("sidebar");
+  const { resolvedTheme } = useTheme();
+
+  // Use dark mode logo when theme is dark
+  const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/logo.png";
 
   // Section expanded states
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
@@ -259,7 +264,7 @@ export function Sidebar() {
             )}
           >
             <Image
-              src="/logo.png"
+              src={logoSrc}
               alt="DPM Calendar"
               width={48}
               height={48}
@@ -272,7 +277,7 @@ export function Sidebar() {
           {sidebarCollapsed && (
             <Link href="/" className="hidden lg:flex items-center justify-center">
               <Image
-                src="/logo.png"
+                src={logoSrc}
                 alt="DPM Calendar"
                 width={32}
                 height={32}

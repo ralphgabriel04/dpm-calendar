@@ -1,16 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   Plus,
   Calendar,
   Target,
-  Play,
   ArrowRight,
-  Sparkles,
   Sun,
   Moon,
   CloudSun,
@@ -25,15 +24,55 @@ import {
   DailyOverview,
   MiniTimeline,
   QuickActions,
+  SmartTipsCard,
+  MoodModal,
 } from "@/components/dashboard";
 
 export default function HomePage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [energyLevel, setEnergyLevel] = useState<number | undefined>();
+  const [moodModalOpen, setMoodModalOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [availableMinutes, setAvailableMinutes] = useState(480);
+
+  // Handle energy level change - show modal
+  const handleEnergyChange = (value: number) => {
+    setEnergyLevel(value);
+    setMoodModalOpen(true);
+  };
+
+  // Save mood note (could be saved to database later)
+  const handleSaveMoodNote = (note: string) => {
+    console.log("Mood note saved:", { energyLevel, note });
+    // TODO: Save to database via API
+  };
+
+  // Load available minutes from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem("dpm-available-minutes");
+    if (saved) {
+      setAvailableMinutes(parseInt(saved));
+    }
+  }, []);
+
+  // Save available minutes to localStorage
+  const handleAvailableMinutesChange = (minutes: number) => {
+    setAvailableMinutes(minutes);
+    localStorage.setItem("dpm-available-minutes", minutes.toString());
+  };
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Get current time for greeting
   const getGreeting = () => {
-    const hour = new Date().getHours();
+    const hour = currentTime.getHours();
     if (hour < 12) return { text: "Bonjour", icon: Sun };
     if (hour < 18) return { text: "Bon après-midi", icon: CloudSun };
     return { text: "Bonsoir", icon: Moon };
@@ -41,6 +80,9 @@ export default function HomePage() {
 
   const greeting = getGreeting();
   const GreetingIcon = greeting.icon;
+
+  // Get user's first name
+  const userName = session?.user?.name?.split(" ")[0] || "";
 
   // Fetch today's tasks
   const today = new Date();
@@ -191,10 +233,14 @@ export default function HomePage() {
               </div>
               <div>
                 <h1 className="text-xl md:text-2xl font-bold">
-                  {greeting.text}!
+                  {greeting.text}{userName ? `, ${userName}` : ""} !
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  {format(new Date(), "EEEE d MMMM yyyy", { locale: fr })}
+                  <span className="font-medium text-foreground">
+                    {format(currentTime, "HH:mm", { locale: fr })}
+                  </span>
+                  {" · "}
+                  {format(currentTime, "EEEE d MMMM yyyy", { locale: fr })}
                 </p>
               </div>
             </div>
@@ -203,7 +249,7 @@ export default function HomePage() {
             <div className="hidden sm:block">
               <EnergyCheck
                 value={energyLevel}
-                onChange={setEnergyLevel}
+                onChange={handleEnergyChange}
                 compact
               />
             </div>
@@ -211,7 +257,7 @@ export default function HomePage() {
 
           {/* Energy check - full on mobile */}
           <div className="sm:hidden mt-4">
-            <EnergyCheck value={energyLevel} onChange={setEnergyLevel} />
+            <EnergyCheck value={energyLevel} onChange={handleEnergyChange} />
           </div>
         </div>
       </header>
@@ -228,6 +274,9 @@ export default function HomePage() {
               plannedMinutes={plannedMinutes}
               completedMinutes={completedMinutes}
               meetingMinutes={meetingMinutes}
+              availableMinutes={availableMinutes}
+              onAvailableMinutesChange={handleAvailableMinutesChange}
+              editable
             />
           </div>
 
@@ -334,22 +383,30 @@ export default function HomePage() {
                 </div>
               )}
 
-              {/* Motivational card */}
-              <div className="rounded-xl border bg-gradient-to-br from-primary/10 to-violet-500/10 p-4 md:p-5">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-medium">Conseil du jour</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {completedTasks > 0
-                    ? `Super! Tu as déjà complété ${completedTasks} tâche${completedTasks > 1 ? "s" : ""}. Continue comme ça!`
-                    : "Commence par ta tâche la plus importante. Une fois terminée, le reste sera plus facile!"}
-                </p>
-              </div>
+              {/* Smart Tips Card */}
+              <SmartTipsCard
+                completedTasks={completedTasks}
+                totalTasks={totalTasks}
+                meetingsCount={meetings.length}
+                meetingMinutes={meetingMinutes}
+                energyLevel={energyLevel}
+                habitsCompleted={habitsCompleted}
+                habitsTotal={habitsTotal}
+              />
             </div>
           </div>
         </div>
       </main>
+
+      {/* Mood Modal */}
+      {energyLevel && (
+        <MoodModal
+          isOpen={moodModalOpen}
+          onClose={() => setMoodModalOpen(false)}
+          energyLevel={energyLevel}
+          onSaveNote={handleSaveMoodNote}
+        />
+      )}
     </div>
   );
 }

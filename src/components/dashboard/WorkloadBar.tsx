@@ -1,13 +1,16 @@
 "use client";
 
+import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { AlertTriangle, Clock, CheckCircle2, Calendar } from "lucide-react";
+import { AlertTriangle, Clock, CheckCircle2, Calendar, Edit2, Check, X } from "lucide-react";
 
 interface WorkloadBarProps {
   plannedMinutes: number;
   completedMinutes: number;
   meetingMinutes: number;
   availableMinutes?: number; // Default 8h = 480 min
+  onAvailableMinutesChange?: (minutes: number) => void;
+  editable?: boolean;
   className?: string;
 }
 
@@ -16,8 +19,36 @@ export function WorkloadBar({
   completedMinutes,
   meetingMinutes,
   availableMinutes = 480,
+  onAvailableMinutesChange,
+  editable = false,
   className,
 }: WorkloadBarProps) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editHours, setEditHours] = useState(Math.floor(availableMinutes / 60));
+  const [editMins, setEditMins] = useState(availableMinutes % 60);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleSave = () => {
+    const newMinutes = editHours * 60 + editMins;
+    if (newMinutes >= 30 && newMinutes <= 1440) {
+      onAvailableMinutesChange?.(newMinutes);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditHours(Math.floor(availableMinutes / 60));
+    setEditMins(availableMinutes % 60);
+    setIsEditing(false);
+  };
+
   const totalPlanned = plannedMinutes + meetingMinutes;
   const percentage = Math.min((totalPlanned / availableMinutes) * 100, 100);
   const completedPercentage = Math.min((completedMinutes / availableMinutes) * 100, 100);
@@ -41,20 +72,80 @@ export function WorkloadBar({
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center gap-2">
           <Clock className="h-4 w-4 text-muted-foreground" />
-          <span className="font-medium">
-            {formatTime(totalPlanned)} / {formatTime(availableMinutes)}
-          </span>
-          <span className="text-muted-foreground">
-            ({Math.round(percentage)}%)
-          </span>
+          {isEditing ? (
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <input
+                  ref={inputRef}
+                  type="number"
+                  min={0}
+                  max={24}
+                  value={editHours}
+                  onChange={(e) => setEditHours(Math.min(24, Math.max(0, parseInt(e.target.value) || 0)))}
+                  className="w-12 h-7 px-2 text-center rounded border bg-background text-sm font-medium"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSave();
+                    if (e.key === "Escape") handleCancel();
+                  }}
+                />
+                <span className="text-muted-foreground">h</span>
+                <input
+                  type="number"
+                  min={0}
+                  max={59}
+                  step={15}
+                  value={editMins}
+                  onChange={(e) => setEditMins(Math.min(59, Math.max(0, parseInt(e.target.value) || 0)))}
+                  className="w-12 h-7 px-2 text-center rounded border bg-background text-sm font-medium"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleSave();
+                    if (e.key === "Escape") handleCancel();
+                  }}
+                />
+                <span className="text-muted-foreground">min</span>
+              </div>
+              <button
+                onClick={handleSave}
+                className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900/30 text-green-600"
+                title="Enregistrer"
+              >
+                <Check className="h-4 w-4" />
+              </button>
+              <button
+                onClick={handleCancel}
+                className="p-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-red-600"
+                title="Annuler"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <>
+              <span className="font-medium">
+                {formatTime(totalPlanned)} / {formatTime(availableMinutes)}
+              </span>
+              <span className="text-muted-foreground">
+                ({Math.round(percentage)}%)
+              </span>
+              {editable && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="p-1 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  title="Modifier la durée disponible"
+                >
+                  <Edit2 className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </>
+          )}
         </div>
-        {isOverloaded && (
+        {!isEditing && isOverloaded && (
           <div className="flex items-center gap-1 text-destructive text-xs">
             <AlertTriangle className="h-3.5 w-3.5" />
             <span>Surcharge</span>
           </div>
         )}
-        {isNearCapacity && !isOverloaded && (
+        {!isEditing && isNearCapacity && !isOverloaded && (
           <div className="flex items-center gap-1 text-amber-500 text-xs">
             <AlertTriangle className="h-3.5 w-3.5" />
             <span>Presque plein</span>
