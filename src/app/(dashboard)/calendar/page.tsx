@@ -17,10 +17,13 @@ import {
   useSensors,
   pointerWithin,
 } from "@dnd-kit/core";
+import { Panel, Group } from "react-resizable-panels";
 import { useCalendarStore } from "@/stores/calendar.store";
 import { useUIStore } from "@/stores/ui.store";
+import { useLayoutStore } from "@/stores/layout.store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { ResizableHandle } from "@/components/layout/ResizableHandle";
 
 // Calendar components
 import { WeekView, DayView, MonthView, AgendaView, TimelineView, WorkloadView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
@@ -66,12 +69,18 @@ export default function CalendarPage() {
 
   const { eventModalOpen, eventModalMode, openEventModal, closeEventModal } = useUIStore();
 
+  // Layout store for resizable panels
+  const {
+    panelSizes,
+    calendarSidebarCollapsed,
+    calendarTasksSidebarCollapsed,
+    setPanelSize,
+    toggleCalendarSidebar,
+    toggleCalendarTasksSidebar,
+  } = useLayoutStore();
+
   // State for new event
   const [newEventData, setNewEventData] = useState<Partial<EventFormData>>({});
-
-  // State for sidebar collapse
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [isTasksSidebarCollapsed, setIsTasksSidebarCollapsed] = useState(false);
 
   // State for task detail modal (Focus/Pomodoro mode)
   const [detailTask, setDetailTask] = useState<{
@@ -719,37 +728,56 @@ export default function CalendarPage() {
       onDragMove={handleDragMove}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex h-full">
-        {/* Sidebar */}
-        <CalendarSidebar
-          currentDate={currentDate}
-          viewType={viewType}
-          onDateChange={setCurrentDate}
-          calendars={calendars}
-          sections={sections}
-          events={events}
-          onToggleCalendar={handleToggleCalendar}
-          onShowOnlyThisCalendar={handleShowOnlyThisCalendar}
-          onCreateEvent={handleCreateEvent}
-          onEventClick={handleEventClick}
-          onCreateCalendar={handleCreateCalendar}
-          onUpdateCalendar={handleUpdateCalendar}
-          onDeleteCalendar={handleDeleteCalendar}
-          onMoveCalendarToSection={handleMoveCalendarToSection}
-          onCreateSection={handleCreateSection}
-          onUpdateSection={handleUpdateSection}
-          onDeleteSection={handleDeleteSection}
-          onToggleSectionExpanded={handleToggleSectionExpanded}
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-          className={cn(
-            "hidden lg:flex flex-col border-r transition-all duration-300",
-            isSidebarCollapsed ? "w-12" : "w-72"
-          )}
-        />
+      <Group
+        orientation="horizontal"
+        id="calendar-layout"
+        className="h-full"
+      >
+        {/* Left Sidebar Panel */}
+        <Panel
+          id="calendar-sidebar"
+          defaultSize={calendarSidebarCollapsed ? "3%" : `${panelSizes.calendarSidebar}%`}
+          minSize="3%"
+          maxSize="30%"
+          collapsible
+          collapsedSize="3%"
+          className="hidden lg:block"
+          onResize={(panelSize) => {
+            if (!calendarSidebarCollapsed && panelSize.asPercentage > 3) {
+              setPanelSize("calendarSidebar", panelSize.asPercentage);
+            }
+          }}
+        >
+          <CalendarSidebar
+            currentDate={currentDate}
+            viewType={viewType}
+            onDateChange={setCurrentDate}
+            calendars={calendars}
+            sections={sections}
+            events={events}
+            onToggleCalendar={handleToggleCalendar}
+            onShowOnlyThisCalendar={handleShowOnlyThisCalendar}
+            onCreateEvent={handleCreateEvent}
+            onEventClick={handleEventClick}
+            onCreateCalendar={handleCreateCalendar}
+            onUpdateCalendar={handleUpdateCalendar}
+            onDeleteCalendar={handleDeleteCalendar}
+            onMoveCalendarToSection={handleMoveCalendarToSection}
+            onCreateSection={handleCreateSection}
+            onUpdateSection={handleUpdateSection}
+            onDeleteSection={handleDeleteSection}
+            onToggleSectionExpanded={handleToggleSectionExpanded}
+            isCollapsed={calendarSidebarCollapsed}
+            onToggleCollapse={toggleCalendarSidebar}
+            className="flex flex-col border-r h-full w-full"
+          />
+        </Panel>
+
+        <ResizableHandle disabled={calendarSidebarCollapsed} className="hidden lg:flex" />
 
         {/* Main calendar area */}
-        <div className="flex-1 flex flex-col min-w-0">
+        <Panel id="calendar-main" minSize="30%">
+          <div className="flex-1 flex flex-col min-w-0 h-full">
           {/* Calendar Header */}
           <header className="flex items-center justify-between border-b bg-card px-3 py-2 md:px-4 md:py-3">
             <div className="flex items-center gap-2 md:gap-4">
@@ -757,10 +785,10 @@ export default function CalendarPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                onClick={toggleCalendarSidebar}
                 className="h-8 w-8 p-0 hidden lg:flex"
               >
-                {isSidebarCollapsed ? (
+                {calendarSidebarCollapsed ? (
                   <PanelLeft className="h-4 w-4" />
                 ) : (
                   <PanelLeftClose className="h-4 w-4" />
@@ -873,10 +901,10 @@ export default function CalendarPage() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsTasksSidebarCollapsed(!isTasksSidebarCollapsed)}
+                onClick={toggleCalendarTasksSidebar}
                 className="h-8 w-8 p-0 hidden lg:flex"
               >
-                {isTasksSidebarCollapsed ? (
+                {calendarTasksSidebarCollapsed ? (
                   <PanelRight className="h-4 w-4" />
                 ) : (
                   <PanelRightClose className="h-4 w-4" />
@@ -898,49 +926,64 @@ export default function CalendarPage() {
           <div className="flex-1 overflow-hidden">
             {renderView()}
           </div>
-        </div>
+          </div>
+        </Panel>
 
-        {/* Unscheduled Tasks Sidebar */}
-        <UnscheduledTasksSidebar
-          isCollapsed={isTasksSidebarCollapsed}
-          className={cn(
-            "hidden lg:flex flex-col transition-all duration-300",
-            isTasksSidebarCollapsed ? "w-12" : "w-64"
-          )}
-        />
+        <ResizableHandle disabled={calendarTasksSidebarCollapsed} className="hidden lg:flex" />
 
-        {/* Event Modal */}
-        <EventModal
-          open={eventModalOpen}
-          onOpenChange={(open) => {
-            if (!open) closeEventModal();
+        {/* Right Sidebar Panel - Unscheduled Tasks */}
+        <Panel
+          id="calendar-tasks-sidebar"
+          defaultSize={calendarTasksSidebarCollapsed ? "3%" : `${panelSizes.calendarTasksSidebar}%`}
+          minSize="3%"
+          maxSize="30%"
+          collapsible
+          collapsedSize="3%"
+          className="hidden lg:block"
+          onResize={(panelSize) => {
+            if (!calendarTasksSidebarCollapsed && panelSize.asPercentage > 3) {
+              setPanelSize("calendarTasksSidebar", panelSize.asPercentage);
+            }
           }}
-          initialData={newEventData}
-          calendars={calendarOptions}
-          onSubmit={handleSubmitEvent}
-          isLoading={createEventMutation.isPending}
-          mode={eventModalMode}
-        />
-
-        {/* Task Detail Modal (Focus/Pomodoro mode) */}
-        {detailTask && (
-          <TaskDetailModal
-            isOpen={!!detailTask}
-            onClose={() => setDetailTask(null)}
-            task={detailTask}
-            events={events}
-            onSnooze={handleTaskSnooze}
-            onMoveToNextWeek={handleTaskMoveToNextWeek}
-            onMoveToBacklog={handleTaskMoveToBacklog}
-            onUpdate={(taskId, data) => {
-              updateTaskMutation.mutate({
-                id: taskId,
-                ...data,
-              });
-            }}
+        >
+          <UnscheduledTasksSidebar
+            isCollapsed={calendarTasksSidebarCollapsed}
+            className="flex flex-col h-full w-full"
           />
-        )}
-      </div>
+        </Panel>
+      </Group>
+
+      {/* Event Modal */}
+      <EventModal
+        open={eventModalOpen}
+        onOpenChange={(open) => {
+          if (!open) closeEventModal();
+        }}
+        initialData={newEventData}
+        calendars={calendarOptions}
+        onSubmit={handleSubmitEvent}
+        isLoading={createEventMutation.isPending}
+        mode={eventModalMode}
+      />
+
+      {/* Task Detail Modal (Focus/Pomodoro mode) */}
+      {detailTask && (
+        <TaskDetailModal
+          isOpen={!!detailTask}
+          onClose={() => setDetailTask(null)}
+          task={detailTask}
+          events={events}
+          onSnooze={handleTaskSnooze}
+          onMoveToNextWeek={handleTaskMoveToNextWeek}
+          onMoveToBacklog={handleTaskMoveToBacklog}
+          onUpdate={(taskId, data) => {
+            updateTaskMutation.mutate({
+              id: taskId,
+              ...data,
+            });
+          }}
+        />
+      )}
 
       {/* Global Drag Overlay */}
       <DragOverlay dropAnimation={null}>

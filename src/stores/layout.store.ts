@@ -5,6 +5,9 @@ interface PanelSizes {
   leftSidebar: number;
   rightSidebar: number;
   mainContentSplit: number;
+  // Calendar page specific
+  calendarSidebar: number;
+  calendarTasksSidebar: number;
 }
 
 interface LayoutState {
@@ -14,13 +17,19 @@ interface LayoutState {
   // Collapse states
   leftSidebarCollapsed: boolean;
   rightSidebarCollapsed: boolean;
+  calendarSidebarCollapsed: boolean;
+  calendarTasksSidebarCollapsed: boolean;
 
   // Actions
   setPanelSize: (panel: keyof PanelSizes, size: number) => void;
   setLeftSidebarCollapsed: (collapsed: boolean) => void;
   setRightSidebarCollapsed: (collapsed: boolean) => void;
+  setCalendarSidebarCollapsed: (collapsed: boolean) => void;
+  setCalendarTasksSidebarCollapsed: (collapsed: boolean) => void;
   toggleLeftSidebar: () => void;
   toggleRightSidebar: () => void;
+  toggleCalendarSidebar: () => void;
+  toggleCalendarTasksSidebar: () => void;
   resetToDefaults: () => void;
 }
 
@@ -28,6 +37,8 @@ const DEFAULT_PANEL_SIZES: PanelSizes = {
   leftSidebar: 15,
   rightSidebar: 18,
   mainContentSplit: 50,
+  calendarSidebar: 20,
+  calendarTasksSidebar: 18,
 };
 
 export const useLayoutStore = create<LayoutState>()(
@@ -36,6 +47,8 @@ export const useLayoutStore = create<LayoutState>()(
       panelSizes: DEFAULT_PANEL_SIZES,
       leftSidebarCollapsed: false,
       rightSidebarCollapsed: false,
+      calendarSidebarCollapsed: false,
+      calendarTasksSidebarCollapsed: false,
 
       setPanelSize: (panel, size) =>
         set((state) => ({
@@ -48,6 +61,12 @@ export const useLayoutStore = create<LayoutState>()(
       setRightSidebarCollapsed: (collapsed) =>
         set({ rightSidebarCollapsed: collapsed }),
 
+      setCalendarSidebarCollapsed: (collapsed) =>
+        set({ calendarSidebarCollapsed: collapsed }),
+
+      setCalendarTasksSidebarCollapsed: (collapsed) =>
+        set({ calendarTasksSidebarCollapsed: collapsed }),
+
       toggleLeftSidebar: () =>
         set((state) => ({
           leftSidebarCollapsed: !state.leftSidebarCollapsed,
@@ -58,11 +77,23 @@ export const useLayoutStore = create<LayoutState>()(
           rightSidebarCollapsed: !state.rightSidebarCollapsed,
         })),
 
+      toggleCalendarSidebar: () =>
+        set((state) => ({
+          calendarSidebarCollapsed: !state.calendarSidebarCollapsed,
+        })),
+
+      toggleCalendarTasksSidebar: () =>
+        set((state) => ({
+          calendarTasksSidebarCollapsed: !state.calendarTasksSidebarCollapsed,
+        })),
+
       resetToDefaults: () =>
         set({
           panelSizes: DEFAULT_PANEL_SIZES,
           leftSidebarCollapsed: false,
           rightSidebarCollapsed: false,
+          calendarSidebarCollapsed: false,
+          calendarTasksSidebarCollapsed: false,
         }),
     }),
     {
@@ -71,6 +102,8 @@ export const useLayoutStore = create<LayoutState>()(
         panelSizes: state.panelSizes,
         leftSidebarCollapsed: state.leftSidebarCollapsed,
         rightSidebarCollapsed: state.rightSidebarCollapsed,
+        calendarSidebarCollapsed: state.calendarSidebarCollapsed,
+        calendarTasksSidebarCollapsed: state.calendarTasksSidebarCollapsed,
       }),
     }
   )
