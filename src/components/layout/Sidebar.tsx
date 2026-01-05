@@ -31,6 +31,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
+import { useLayoutStore } from "@/stores/layout.store";
+import { useIsMobile } from "@/hooks";
 import { ThemeToggle } from "@/components/theme";
 import { LanguageToggle } from "@/components/language";
 
@@ -203,7 +205,18 @@ function CollapsibleSection({
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { sidebarCollapsed, toggleSidebar } = useUIStore();
+  const isMobile = useIsMobile();
+
+  // Use UI store for mobile overlay behavior
+  const { sidebarCollapsed: mobileMenuOpen, toggleSidebar: toggleMobileMenu } = useUIStore();
+
+  // Use layout store for desktop collapse state
+  const { leftSidebarCollapsed, toggleLeftSidebar } = useLayoutStore();
+
+  // On mobile, use UI store; on desktop, use layout store
+  const sidebarCollapsed = isMobile ? !mobileMenuOpen : leftSidebarCollapsed;
+  const toggleSidebar = isMobile ? toggleMobileMenu : toggleLeftSidebar;
+
   const t = useTranslations("sidebar");
   const { resolvedTheme } = useTheme();
 
@@ -239,14 +252,12 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col bg-card border-r transition-all duration-300 ease-out",
-          // Mobile: slide in/out
-          sidebarCollapsed ? "-translate-x-full" : "translate-x-0",
-          // Desktop: static positioning, width changes
-          "lg:static lg:translate-x-0",
-          sidebarCollapsed ? "lg:w-16" : "lg:w-64",
-          // Mobile always full width when visible
-          "w-64"
+          "flex flex-col bg-card border-r transition-all duration-300 ease-out",
+          // Mobile: fixed positioning, slide in/out
+          isMobile && "fixed inset-y-0 left-0 z-50 w-64",
+          isMobile && (sidebarCollapsed ? "-translate-x-full" : "translate-x-0"),
+          // Desktop: fill the Panel container
+          !isMobile && "relative w-full h-full"
         )}
       >
         {/* Header */}

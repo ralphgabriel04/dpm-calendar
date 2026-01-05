@@ -45,11 +45,7 @@ const menuItems: MenuItem[] = [
   { id: "search", icon: Search, label: "Recherche" },
 ];
 
-interface RightSidebarMenuProps {
-  className?: string;
-}
-
-export function RightSidebarMenu({ className }: RightSidebarMenuProps) {
+export function RightSidebarMenu() {
   const [activePanel, setActivePanel] = useState<PanelType>(null);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [weekOffset, setWeekOffset] = useState(0);
@@ -471,7 +467,7 @@ export function RightSidebarMenu({ className }: RightSidebarMenuProps) {
 
   if (isCollapsed) {
     return (
-      <div className={cn("flex items-start pt-4", className)}>
+      <div className="flex items-start pt-4 w-full h-full bg-card border-l">
         <button
           onClick={() => setIsCollapsed(false)}
           className="p-2 hover:bg-accent rounded-md"
@@ -483,10 +479,10 @@ export function RightSidebarMenu({ className }: RightSidebarMenuProps) {
   }
 
   return (
-    <div className={cn("flex h-full", className)}>
+    <div className="flex h-full w-full">
       {/* Panel content */}
       {activePanel && (
-        <div className="w-64 border-l bg-card flex flex-col">
+        <div className="flex-1 min-w-0 border-l bg-card flex flex-col">
           <div className="flex items-center justify-between p-2 border-b">
             <button
               onClick={() => setActivePanel(null)}
@@ -500,7 +496,7 @@ export function RightSidebarMenu({ className }: RightSidebarMenuProps) {
       )}
 
       {/* Icon menu */}
-      <div className="w-12 border-l bg-card/50 flex flex-col items-center py-4 gap-1">
+      <div className="w-12 flex-shrink-0 border-l bg-card/50 flex flex-col items-center py-4 gap-1">
         {/* Collapse button */}
         <button
           onClick={() => setIsCollapsed(true)}
