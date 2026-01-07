@@ -18,6 +18,16 @@ import {
   X,
   Layers,
   Eye,
+  Shield,
+  Lock,
+  Cloud,
+  GraduationCap,
+  Briefcase,
+  Users,
+  Rocket,
+  Zap,
+  MousePointerClick,
+  Sparkles,
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme";
 import { LanguageToggle } from "@/components/language";
@@ -609,6 +619,294 @@ export default function Home() {
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
               <span className="font-medium text-sm">Apple</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comment ca fonctionne - 3 Steps */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Comment ca{" "}
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                fonctionne
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Trois etapes simples pour transformer votre productivite
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Step 1 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-500">
+                    <MousePointerClick className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-violet-500/20">01</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Connectez vos calendriers</h3>
+                <p className="text-muted-foreground">
+                  Importez vos evenements Google, Microsoft ou Apple en un clic. Tout est synchronise automatiquement.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-emerald-500/20">02</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Planifiez intelligemment</h3>
+                <p className="text-muted-foreground">
+                  Creez des taches, definissez des objectifs et laissez l&apos;IA vous suggerer le meilleur moment pour les realiser.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500/10 text-pink-500">
+                    <Zap className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-pink-500/20">03</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Atteignez vos objectifs</h3>
+                <p className="text-muted-foreground">
+                  Suivez vos progres, analysez votre productivite et celebrez vos accomplissements.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Personas Section */}
+      <section className="py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Concu pour{" "}
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                vous
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Que vous soyez etudiant, entrepreneur ou freelance, DPM Calendar s&apos;adapte a votre mode de vie.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Etudiants */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 text-violet-500 mb-5 group-hover:scale-110 transition-transform">
+                <GraduationCap className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Etudiants</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Gerez vos cours, examens et projets. Ne manquez plus jamais une deadline.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Rappels de cours
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Suivi des examens
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Planification des revisions
+                </li>
+              </ul>
+            </div>
+
+            {/* Entrepreneurs */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 text-emerald-500 mb-5 group-hover:scale-110 transition-transform">
+                <Rocket className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Entrepreneurs</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Developpez votre business en gardant le controle de votre emploi du temps.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Gestion de projets
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Suivi des objectifs
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Analytics de productivite
+                </li>
+              </ul>
+            </div>
+
+            {/* Freelances */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 text-blue-500 mb-5 group-hover:scale-110 transition-transform">
+                <Briefcase className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Freelances</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Jonglez avec plusieurs clients et projets sans perdre le fil.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Multi-calendriers
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Time tracking
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Facturation facilitee
+                </li>
+              </ul>
+            </div>
+
+            {/* Equipes */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-500 mb-5 group-hover:scale-110 transition-transform">
+                <Users className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Equipes</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Collaborez efficacement et synchronisez les agendas de toute l&apos;equipe.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Calendriers partages
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Planification de reunions
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Coordination simplifiee
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Security Section */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Text */}
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full bg-green-500/10 px-4 py-1.5 text-sm font-medium text-green-600 dark:text-green-400 mb-6">
+                <Shield className="h-4 w-4" />
+                Securite renforcee
+              </div>
+              <h2 className="text-3xl font-bold sm:text-4xl mb-6">
+                Vos donnees sont{" "}
+                <span className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                  protegees
+                </span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Nous prenons la securite de vos donnees tres au serieux. Votre vie privee est notre priorite.
+              </p>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-green-500 flex-shrink-0">
+                    <Lock className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Chiffrement de bout en bout</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Toutes vos donnees sont chiffrees avec les derniers standards de securite.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-green-500 flex-shrink-0">
+                    <Cloud className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Heberge en Europe</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Vos donnees restent en Europe, en conformite avec le RGPD.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500/10 text-green-500 flex-shrink-0">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-1">Authentification securisee</h3>
+                    <p className="text-sm text-muted-foreground">
+                      OAuth 2.0 avec Google et Microsoft, sans stockage de mots de passe.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Trust badges */}
+            <div className="lg:pl-8">
+              <div className="rounded-2xl border border-border bg-card p-8">
+                <h3 className="font-semibold text-lg mb-6 text-center">Certifications & Conformite</h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center mb-3">
+                      <Check className="h-6 w-6 text-green-500" />
+                    </div>
+                    <span className="font-semibold text-sm">RGPD</span>
+                    <span className="text-xs text-muted-foreground">Conforme</span>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                      <Lock className="h-6 w-6 text-blue-500" />
+                    </div>
+                    <span className="font-semibold text-sm">SSL/TLS</span>
+                    <span className="text-xs text-muted-foreground">256-bit</span>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-3">
+                      <Cloud className="h-6 w-6 text-violet-500" />
+                    </div>
+                    <span className="font-semibold text-sm">Backup</span>
+                    <span className="text-xs text-muted-foreground">Quotidien</span>
+                  </div>
+                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center mb-3">
+                      <Shield className="h-6 w-6 text-orange-500" />
+                    </div>
+                    <span className="font-semibold text-sm">OAuth 2.0</span>
+                    <span className="text-xs text-muted-foreground">Securise</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
