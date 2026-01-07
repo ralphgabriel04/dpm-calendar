@@ -228,7 +228,7 @@ export function TimelineView({
   }, [mounted, nowPosition]);
 
   return (
-    <div className={cn("flex flex-col h-full bg-background", className)}>
+    <div className={cn("flex flex-col h-full max-h-full overflow-hidden bg-background", className)}>
       {/* Toolbar */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-2">
@@ -265,7 +265,7 @@ export function TimelineView({
         onMouseLeave={handleMouseLeave}
         onWheel={handleWheel}
       >
-        <div ref={containerRef} style={{ width: totalWidth, minHeight: "100%" }}>
+        <div ref={containerRef} style={{ width: totalWidth }}>
           {/* Day headers */}
           <div
             className="sticky top-0 z-20 flex border-b bg-background"

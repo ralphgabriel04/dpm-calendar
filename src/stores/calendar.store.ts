@@ -38,9 +38,11 @@ interface CalendarState {
 export const useCalendarStore = create<CalendarState>()(
   persist(
     (set, get) => ({
-      currentDate: new Date(),
+      // Initialize with a fixed date (midnight today) - will be updated on client mount
+      // Using Date.now() would cause hydration issues
+      currentDate: new Date(new Date().setHours(0, 0, 0, 0)),
       viewType: "week",
-      hoursViewMode: "business",
+      hoursViewMode: "full",
       visibleCalendarIds: [],
 
       setCurrentDate: (date) => set({ currentDate: date }),

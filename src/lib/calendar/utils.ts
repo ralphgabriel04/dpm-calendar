@@ -164,19 +164,23 @@ export interface EventGroup {
 export interface CalendarEvent {
   id: string;
   title: string;
-  description?: string;
-  location?: string;
+  description?: string | null;
+  location?: string | null;
   startAt: Date;
   endAt: Date;
   isAllDay: boolean;
-  color?: string;
+  color?: string | null;
   calendarId: string;
-  rrule?: string;
-  parentEventId?: string;
+  rrule?: string | null;
+  parentEventId?: string | null;
+  duration?: number | null;
   calendar?: {
-    color: string;
+    color: string | null;
     name: string;
   };
+  // Recurrence metadata
+  isRecurrenceInstance?: boolean;
+  originalEventId?: string;
 }
 
 export function groupOverlappingEvents(

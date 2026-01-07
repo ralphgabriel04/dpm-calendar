@@ -777,7 +777,7 @@ export default function CalendarPage() {
 
         {/* Main calendar area */}
         <Panel id="calendar-main" minSize="30%">
-          <div className="flex-1 flex flex-col min-w-0 h-full">
+          <div className="flex flex-col min-w-0 h-full overflow-hidden">
           {/* Calendar Header */}
           <header className="flex items-center justify-between border-b bg-card px-3 py-2 md:px-4 md:py-3">
             <div className="flex items-center gap-2 md:gap-4">
@@ -923,7 +923,7 @@ export default function CalendarPage() {
           </header>
 
           {/* Calendar Grid */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden min-h-0">
             {renderView()}
           </div>
           </div>

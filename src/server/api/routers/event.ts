@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { expandRecurringEvents, type RecurringEvent } from "@/lib/calendar/recurrence";
 
 const eventCreateSchema = z.object({
   calendarId: z.string(),
@@ -61,12 +62,12 @@ export const eventRouter = createTRPCRouter({
               startAt: { lte: endDate },
               endAt: { gte: startDate },
             },
-            // Recurring parent events
+            // Recurring parent events (fetch all to expand)
             {
               rrule: { not: null },
               parentEventId: null,
             },
-            // Recurring instances in range
+            // Recurring instances in range (pre-generated exceptions)
             {
               parentEventId: { not: null },
               startAt: { lte: endDate },
@@ -80,7 +81,49 @@ export const eventRouter = createTRPCRouter({
         orderBy: { startAt: "asc" },
       });
 
-      return events;
+      // Convert events to RecurringEvent format and expand recurrences
+      const eventsForExpansion: RecurringEvent[] = events.map((e) => ({
+        id: e.id,
+        title: e.title,
+        description: e.description,
+        location: e.location,
+        startAt: e.startAt,
+        endAt: e.endAt,
+        isAllDay: e.isAllDay,
+        color: e.color,
+        calendarId: e.calendarId,
+        rrule: e.rrule,
+        parentEventId: e.parentEventId,
+        duration: e.duration,
+        calendar: e.calendar,
+      }));
+
+      // Expand recurring events into individual instances
+      const expandedEvents = expandRecurringEvents(
+        eventsForExpansion,
+        startDate,
+        endDate
+      );
+
+      // Return expanded events with original format
+      return expandedEvents.map((e) => ({
+        id: e.id,
+        title: e.title,
+        description: e.description,
+        location: e.location,
+        startAt: e.startAt,
+        endAt: e.endAt,
+        isAllDay: e.isAllDay,
+        color: e.color,
+        calendarId: e.calendarId,
+        rrule: "rrule" in e ? e.rrule : undefined,
+        parentEventId: e.parentEventId,
+        duration: "duration" in e ? e.duration : undefined,
+        calendar: e.calendar,
+        // Add recurrence metadata for UI
+        isRecurrenceInstance: "isRecurrenceInstance" in e ? e.isRecurrenceInstance : false,
+        originalEventId: "originalEventId" in e ? e.originalEventId : undefined,
+      }));
     }),
 
   // Get single event
