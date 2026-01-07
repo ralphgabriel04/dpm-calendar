@@ -262,6 +262,7 @@ function MultiCalendarMockup() {
 
 function CustomViewsMockup() {
   const [activeView, setActiveView] = useState<"Jour" | "Semaine" | "Mois">("Semaine");
+  const [selectedDay, setSelectedDay] = useState<number>(10); // Default selected day
   const views = ["Jour", "Semaine", "Mois"] as const;
 
   return (
@@ -339,28 +340,56 @@ function CustomViewsMockup() {
             ))}
           </div>
           <div className="grid grid-cols-7 gap-1 mb-3">
-            {[6, 7, 8, 9, 10, 11, 12].map((num, i) => (
-              <div
-                key={i}
-                className={`aspect-square rounded flex items-center justify-center text-xs ${
-                  i === 2
-                    ? "bg-violet-500 text-white"
-                    : "bg-muted/50 text-muted-foreground"
+            {[6, 7, 8, 9, 10, 11, 12].map((num) => (
+              <button
+                key={num}
+                onClick={() => setSelectedDay(num)}
+                className={`aspect-square rounded flex items-center justify-center text-xs transition-all duration-200 ${
+                  selectedDay === num
+                    ? "bg-violet-500 text-white scale-110 shadow-lg shadow-violet-500/30"
+                    : "bg-muted/50 text-muted-foreground hover:bg-violet-500/20 hover:text-violet-500"
                 }`}
               >
                 {num}
-              </div>
+              </button>
             ))}
           </div>
           <div className="space-y-1">
-            <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs">
-              <div className="w-1 h-4 rounded bg-violet-500" />
-              <span>9:00 - Réunion équipe</span>
-            </div>
-            <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs">
-              <div className="w-1 h-4 rounded bg-blue-500" />
-              <span>14:00 - Appel client</span>
-            </div>
+            {selectedDay === 8 && (
+              <div className="flex items-center gap-2 p-1.5 rounded bg-green-500/20 text-xs animate-in fade-in duration-200">
+                <div className="w-1 h-4 rounded bg-green-500" />
+                <span>10:00 - Présentation projet</span>
+              </div>
+            )}
+            {selectedDay === 10 && (
+              <>
+                <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs animate-in fade-in duration-200">
+                  <div className="w-1 h-4 rounded bg-violet-500" />
+                  <span>9:00 - Réunion équipe</span>
+                </div>
+                <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs animate-in fade-in duration-200">
+                  <div className="w-1 h-4 rounded bg-blue-500" />
+                  <span>14:00 - Appel client</span>
+                </div>
+              </>
+            )}
+            {selectedDay === 9 && (
+              <div className="flex items-center gap-2 p-1.5 rounded bg-orange-500/20 text-xs animate-in fade-in duration-200">
+                <div className="w-1 h-4 rounded bg-orange-500" />
+                <span>11:30 - Déjeuner équipe</span>
+              </div>
+            )}
+            {selectedDay === 12 && (
+              <div className="flex items-center gap-2 p-1.5 rounded bg-pink-500/20 text-xs animate-in fade-in duration-200">
+                <div className="w-1 h-4 rounded bg-pink-500" />
+                <span>16:00 - Sport</span>
+              </div>
+            )}
+            {[6, 7, 11].includes(selectedDay) && (
+              <div className="text-xs text-muted-foreground text-center py-2 animate-in fade-in duration-200">
+                Aucun événement ce jour
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -382,27 +411,56 @@ function CustomViewsMockup() {
             {Array.from({ length: 35 }).map((_, i) => {
               const dayNum = i - 2; // Commence mercredi
               const isCurrentMonth = dayNum >= 1 && dayNum <= 31;
-              const isToday = dayNum === 10;
-              const hasEvent = [8, 10, 15, 22].includes(dayNum);
+              const isSelected = dayNum === selectedDay;
+              const hasEvent = [8, 9, 10, 12, 15, 22].includes(dayNum);
 
               return (
-                <div
+                <button
                   key={i}
-                  className={`aspect-square rounded flex flex-col items-center justify-center text-[10px] relative ${
-                    isToday
-                      ? "bg-violet-500 text-white"
+                  onClick={() => isCurrentMonth && setSelectedDay(dayNum)}
+                  disabled={!isCurrentMonth}
+                  className={`aspect-square rounded flex flex-col items-center justify-center text-[10px] relative transition-all duration-200 ${
+                    isSelected
+                      ? "bg-violet-500 text-white scale-110 shadow-lg shadow-violet-500/30 z-10"
                       : isCurrentMonth
-                      ? "bg-muted/50 text-muted-foreground hover:bg-muted/80"
-                      : "text-muted-foreground/30"
+                      ? "bg-muted/50 text-muted-foreground hover:bg-violet-500/20 hover:text-violet-500"
+                      : "text-muted-foreground/30 cursor-default"
                   }`}
                 >
                   {isCurrentMonth ? dayNum : ""}
-                  {hasEvent && isCurrentMonth && !isToday && (
+                  {hasEvent && isCurrentMonth && !isSelected && (
                     <div className="absolute bottom-0.5 w-1 h-1 rounded-full bg-violet-500" />
                   )}
-                </div>
+                </button>
               );
             })}
+          </div>
+          {/* Events for selected day */}
+          <div className="mt-2 space-y-1">
+            {selectedDay === 8 && (
+              <div className="flex items-center gap-2 p-1 rounded bg-green-500/20 text-[10px] animate-in fade-in duration-200">
+                <div className="w-1 h-3 rounded bg-green-500" />
+                <span>10:00 - Présentation</span>
+              </div>
+            )}
+            {selectedDay === 10 && (
+              <div className="flex items-center gap-2 p-1 rounded bg-violet-500/20 text-[10px] animate-in fade-in duration-200">
+                <div className="w-1 h-3 rounded bg-violet-500" />
+                <span>9:00 - Réunion</span>
+              </div>
+            )}
+            {selectedDay === 15 && (
+              <div className="flex items-center gap-2 p-1 rounded bg-blue-500/20 text-[10px] animate-in fade-in duration-200">
+                <div className="w-1 h-3 rounded bg-blue-500" />
+                <span>14:00 - Deadline</span>
+              </div>
+            )}
+            {selectedDay === 22 && (
+              <div className="flex items-center gap-2 p-1 rounded bg-orange-500/20 text-[10px] animate-in fade-in duration-200">
+                <div className="w-1 h-3 rounded bg-orange-500" />
+                <span>Anniversaire</span>
+              </div>
+            )}
           </div>
         </div>
       )}
