@@ -261,96 +261,237 @@ function MultiCalendarMockup() {
 }
 
 function CustomViewsMockup() {
+  const [activeView, setActiveView] = useState<"Jour" | "Semaine" | "Mois">("Semaine");
+  const views = ["Jour", "Semaine", "Mois"] as const;
+
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
       <div className="flex items-center gap-1 mb-4">
-        {["Jour", "Semaine", "Mois"].map((view, i) => (
+        {views.map((view) => (
           <button
             key={view}
-            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-              i === 1 ? "bg-violet-500 text-white" : "bg-muted hover:bg-muted/80"
+            onClick={() => setActiveView(view)}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
+              activeView === view
+                ? "bg-violet-500 text-white scale-105"
+                : "bg-muted hover:bg-muted/80"
             }`}
           >
             {view}
           </button>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1 text-xs mb-2">
-        {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
-          <div key={day} className="text-center text-muted-foreground py-1">
-            {day}
+
+      {/* Vue Jour */}
+      {activeView === "Jour" && (
+        <div className="animate-in fade-in duration-200">
+          <div className="text-center mb-3">
+            <div className="text-lg font-semibold">Mercredi 10</div>
+            <div className="text-xs text-muted-foreground">Janvier 2025</div>
           </div>
-        ))}
-      </div>
-      <div className="space-y-1">
-        {[0, 1, 2].map((row) => (
-          <div key={row} className="grid grid-cols-7 gap-1">
-            {Array.from({ length: 7 }).map((_, i) => (
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">08:00</span>
+              <div className="flex-1 border-t border-dashed border-muted h-0" />
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">09:00</span>
+              <div className="flex-1 p-1.5 rounded bg-violet-500/20 border-l-2 border-violet-500">
+                Réunion équipe
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">10:00</span>
+              <div className="flex-1 border-t border-dashed border-muted h-0" />
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">11:00</span>
+              <div className="flex-1 border-t border-dashed border-muted h-0" />
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">12:00</span>
+              <div className="flex-1 p-1.5 rounded bg-green-500/20 border-l-2 border-green-500">
+                Déjeuner
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">14:00</span>
+              <div className="flex-1 p-1.5 rounded bg-blue-500/20 border-l-2 border-blue-500">
+                Appel client
+              </div>
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <span className="w-10 text-muted-foreground">15:00</span>
+              <div className="flex-1 border-t border-dashed border-muted h-0" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Vue Semaine */}
+      {activeView === "Semaine" && (
+        <div className="animate-in fade-in duration-200">
+          <div className="grid grid-cols-7 gap-1 text-xs mb-2">
+            {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
+              <div key={day} className="text-center text-muted-foreground py-1">
+                {day}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1 mb-3">
+            {[6, 7, 8, 9, 10, 11, 12].map((num, i) => (
               <div
                 key={i}
                 className={`aspect-square rounded flex items-center justify-center text-xs ${
-                  row === 1 && i === 2
+                  i === 2
                     ? "bg-violet-500 text-white"
                     : "bg-muted/50 text-muted-foreground"
                 }`}
               >
-                {row * 7 + i + 1}
+                {num}
               </div>
             ))}
           </div>
-        ))}
-      </div>
-      <div className="mt-3 space-y-1">
-        <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs">
-          <div className="w-1 h-4 rounded bg-violet-500" />
-          <span>9:00 - Réunion équipe</span>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs">
+              <div className="w-1 h-4 rounded bg-violet-500" />
+              <span>9:00 - Réunion équipe</span>
+            </div>
+            <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs">
+              <div className="w-1 h-4 rounded bg-blue-500" />
+              <span>14:00 - Appel client</span>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs">
-          <div className="w-1 h-4 rounded bg-blue-500" />
-          <span>14:00 - Appel client</span>
+      )}
+
+      {/* Vue Mois */}
+      {activeView === "Mois" && (
+        <div className="animate-in fade-in duration-200">
+          <div className="text-center mb-3">
+            <div className="text-sm font-semibold">Janvier 2025</div>
+          </div>
+          <div className="grid grid-cols-7 gap-0.5 text-[10px] mb-1">
+            {["L", "M", "M", "J", "V", "S", "D"].map((day, i) => (
+              <div key={i} className="text-center text-muted-foreground py-0.5">
+                {day}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-0.5">
+            {Array.from({ length: 35 }).map((_, i) => {
+              const dayNum = i - 2; // Commence mercredi
+              const isCurrentMonth = dayNum >= 1 && dayNum <= 31;
+              const isToday = dayNum === 10;
+              const hasEvent = [8, 10, 15, 22].includes(dayNum);
+
+              return (
+                <div
+                  key={i}
+                  className={`aspect-square rounded flex flex-col items-center justify-center text-[10px] relative ${
+                    isToday
+                      ? "bg-violet-500 text-white"
+                      : isCurrentMonth
+                      ? "bg-muted/50 text-muted-foreground hover:bg-muted/80"
+                      : "text-muted-foreground/30"
+                  }`}
+                >
+                  {isCurrentMonth ? dayNum : ""}
+                  {hasEvent && isCurrentMonth && !isToday && (
+                    <div className="absolute bottom-0.5 w-1 h-1 rounded-full bg-violet-500" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
 function GoalsMockup() {
+  const [phases, setPhases] = useState([
+    { id: 1, name: "Phase 1 - Recherche", completed: true },
+    { id: 2, name: "Phase 2 - Design", completed: true },
+    { id: 3, name: "Phase 3 - Développement", completed: true },
+    { id: 4, name: "Phase 4 - Tests", completed: false },
+  ]);
+
+  const completedCount = phases.filter((p) => p.completed).length;
+  const progress = Math.round((completedCount / phases.length) * 100);
+
+  const togglePhase = (id: number) => {
+    setPhases((prev) =>
+      prev.map((phase) =>
+        phase.id === id ? { ...phase, completed: !phase.completed } : phase
+      )
+    );
+  };
+
+  // Find the current phase (first incomplete one)
+  const currentPhaseIndex = phases.findIndex((p) => !p.completed);
+
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
       <h4 className="font-semibold mb-4">Objectif en cours</h4>
       <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20 mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="font-medium text-sm">Finir projet client</span>
-          <span className="text-xs text-pink-500 font-semibold">75%</span>
+          <span className="text-xs text-pink-500 font-semibold transition-all duration-300">
+            {progress}%
+          </span>
         </div>
-        <div className="w-full bg-muted rounded-full h-2">
-          <div className="bg-pink-500 h-2 rounded-full" style={{ width: "75%" }} />
+        <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+          <div
+            className="bg-pink-500 h-2 rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       </div>
       <div className="space-y-2">
-        <div className="flex items-center gap-2 text-sm">
-          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-            <Check className="h-3 w-3 text-white" />
-          </div>
-          <span className="text-muted-foreground line-through">Phase 1 - Recherche</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-            <Check className="h-3 w-3 text-white" />
-          </div>
-          <span className="text-muted-foreground line-through">Phase 2 - Design</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <div className="w-5 h-5 rounded-full bg-pink-500/20 border border-pink-500 flex items-center justify-center">
-            <div className="w-2 h-2 rounded-full bg-pink-500" />
-          </div>
-          <span>Phase 3 - Développement</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <div className="w-5 h-5 rounded-full bg-muted" />
-          <span className="text-muted-foreground">Phase 4 - Tests</span>
-        </div>
+        {phases.map((phase, index) => {
+          const isCurrentPhase = index === currentPhaseIndex;
+
+          return (
+            <button
+              key={phase.id}
+              onClick={() => togglePhase(phase.id)}
+              className="flex items-center gap-2 text-sm w-full text-left hover:bg-muted/50 rounded-lg p-1 -ml-1 transition-colors group"
+            >
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                  phase.completed
+                    ? "bg-green-500 scale-100"
+                    : isCurrentPhase
+                    ? "bg-pink-500/20 border border-pink-500"
+                    : "bg-muted group-hover:bg-muted/80"
+                }`}
+              >
+                {phase.completed ? (
+                  <Check className="h-3 w-3 text-white animate-in zoom-in duration-200" />
+                ) : isCurrentPhase ? (
+                  <div className="w-2 h-2 rounded-full bg-pink-500 animate-pulse" />
+                ) : null}
+              </div>
+              <span
+                className={`transition-all duration-300 ${
+                  phase.completed
+                    ? "text-muted-foreground line-through"
+                    : isCurrentPhase
+                    ? "text-foreground font-medium"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {phase.name}
+              </span>
+            </button>
+          );
+        })}
       </div>
+      <p className="text-[10px] text-muted-foreground mt-3 text-center">
+        Cliquez sur une phase pour la cocher/décocher
+      </p>
     </div>
   );
 }
