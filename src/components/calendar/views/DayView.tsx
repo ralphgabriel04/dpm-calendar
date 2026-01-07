@@ -206,7 +206,7 @@ export function DayView({
 
         {/* Time grid */}
         <div ref={scrollRef} className="flex-1 overflow-auto">
-          <div className="flex" style={{ minHeight: totalHeight }}>
+          <div className="flex" style={{ minHeight: totalHeight + 12 }}>
             {/* Time column */}
             <TimeColumn
               startHour={startHour}
@@ -214,19 +214,22 @@ export function DayView({
               hourHeight={hourHeight}
             />
 
-            {/* Day column */}
-            <DayColumn
-              date={date}
-              events={events}
-              startHour={startHour}
-              endHour={endHour}
-              hourHeight={hourHeight}
-              onEventClick={onEventClick}
-              onSlotClick={onSlotClick}
-              onEventMove={onEventMove}
-              onEventResize={onEventResize}
-              enableDragDrop={true}
-            />
+            {/* Day column with top padding to align with TimeColumn */}
+            <div className="flex-1 flex flex-col">
+              <div className="h-3 flex-shrink-0" />
+              <DayColumn
+                date={date}
+                events={events}
+                startHour={startHour}
+                endHour={endHour}
+                hourHeight={hourHeight}
+                onEventClick={onEventClick}
+                onSlotClick={onSlotClick}
+                onEventMove={onEventMove}
+                onEventResize={onEventResize}
+                enableDragDrop={true}
+              />
+            </div>
           </div>
         </div>
       </div>

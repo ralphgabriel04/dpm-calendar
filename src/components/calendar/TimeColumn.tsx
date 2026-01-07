@@ -1,6 +1,6 @@
 "use client";
 
-import { format, setHours, setMinutes, startOfDay } from "date-fns";
+import { format, setHours, setMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +18,8 @@ export function TimeColumn({
   className,
 }: TimeColumnProps) {
   const hours = [];
-  const baseDate = startOfDay(new Date());
+  // Use a fixed date to avoid hydration mismatch - only the time formatting matters
+  const baseDate = new Date(2024, 0, 1, 0, 0, 0, 0);
 
   for (let h = startHour; h < endHour; h++) {
     hours.push(setMinutes(setHours(baseDate, h), 0));
@@ -26,6 +27,8 @@ export function TimeColumn({
 
   return (
     <div className={cn("relative w-16 flex-shrink-0 border-r", className)}>
+      {/* Top padding to ensure 00:00 label is visible */}
+      <div className="h-3" />
       {hours.map((hour, index) => (
         <div
           key={index}

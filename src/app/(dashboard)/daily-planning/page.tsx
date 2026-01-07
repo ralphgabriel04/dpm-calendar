@@ -27,12 +27,12 @@ import type { CalendarEvent } from "@/lib/calendar/utils";
 
 // Step definitions
 const STEPS = [
-  { id: "add-task", label: "Add a task" },
-  { id: "estimate", label: "Estimate timing" },
-  { id: "fill-list", label: "Fill task list" },
-  { id: "prioritize", label: "Prioritize" },
-  { id: "schedule", label: "Schedule" },
-  { id: "document", label: "Document" },
+  { id: "add-task", label: "Ajouter une tâche" },
+  { id: "estimate", label: "Estimer le temps" },
+  { id: "fill-list", label: "Remplir la liste" },
+  { id: "prioritize", label: "Prioriser" },
+  { id: "schedule", label: "Planifier" },
+  { id: "document", label: "Documenter" },
 ];
 
 // Time presets in minutes
@@ -44,9 +44,9 @@ const TIME_PRESETS = [
   { label: "25 min", value: 25 },
   { label: "30 min", value: 30 },
   { label: "45 min", value: 45 },
-  { label: "1 hr", value: 60 },
-  { label: "1.5 hr", value: 90 },
-  { label: "2 hr", value: 120 },
+  { label: "1 h", value: 60 },
+  { label: "1 h 30", value: 90 },
+  { label: "2 h", value: 120 },
 ];
 
 interface PlanningTask {
@@ -121,7 +121,7 @@ function TimePicker({
     if (minutes < 60) return `${minutes} min`;
     const hrs = Math.floor(minutes / 60);
     const mins = minutes % 60;
-    if (mins === 0) return `${hrs} hr`;
+    if (mins === 0) return `${hrs} h`;
     return `${hrs}:${mins.toString().padStart(2, "0")}`;
   };
 
@@ -142,7 +142,7 @@ function TimePicker({
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           <div className="absolute right-0 top-full mt-1 z-50 bg-card border rounded-lg shadow-lg py-2 min-w-[120px]">
-            <div className="px-3 py-1 text-xs text-muted-foreground">Planned:</div>
+            <div className="px-3 py-1 text-xs text-muted-foreground">Planifié :</div>
             <div className="px-3 py-1 font-medium text-sm">{formatTime(value)}</div>
             <div className="border-t my-1" />
             {TIME_PRESETS.map((preset) => (
@@ -169,7 +169,7 @@ function TimePicker({
               }}
               className="w-full px-3 py-1.5 text-left text-sm text-emerald-600 hover:bg-accent"
             >
-              Clear planned
+              Effacer
             </button>
           </div>
         </>
@@ -255,7 +255,7 @@ function TaskCard({
         <div className="flex items-center justify-between mt-2 pt-2 border-t">
           <Play className="h-3 w-3 text-muted-foreground" />
           <span className="text-xs text-muted-foreground">
-            PLANNED<br />
+            PLANIFIÉ<br />
             {formatTime(task.plannedDuration)}
           </span>
         </div>
@@ -272,10 +272,10 @@ function WorkloadBar({ plannedMinutes, maxMinutes = 480 }: { plannedMinutes: num
 
   return (
     <div className="space-y-2">
-      <h3 className="font-semibold text-lg">Total planned time</h3>
+      <h3 className="font-semibold text-lg">Temps total planifié</h3>
       <div className="flex items-center gap-2">
         <span className="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium">
-          {hours > 0 ? `${hours} hr` : ""} {mins > 0 ? `${mins} min` : hours === 0 ? "0 min" : ""}
+          {hours > 0 ? `${hours} h` : ""} {mins > 0 ? `${mins} min` : hours === 0 ? "0 min" : ""}
         </span>
       </div>
       <div className="relative h-2 bg-muted rounded-full overflow-hidden">
@@ -286,8 +286,8 @@ function WorkloadBar({ plannedMinutes, maxMinutes = 480 }: { plannedMinutes: num
       </div>
       <div className="flex justify-between text-xs text-muted-foreground">
         <span></span>
-        <span>6 hr</span>
-        <span>8 hr</span>
+        <span>6 h</span>
+        <span>8 h</span>
       </div>
     </div>
   );
@@ -387,11 +387,11 @@ export default function DailyPlanningPage() {
           dueAt: tomorrow,
         });
       } catch {
-        toast.error(`Failed to create task: ${task.title}`);
+        toast.error(`Échec de création de la tâche : ${task.title}`);
       }
     }
 
-    toast.success("Daily plan saved!");
+    toast.success("Plan quotidien sauvegardé !");
     window.location.href = "/planner";
   };
 
@@ -404,13 +404,13 @@ export default function DailyPlanningPage() {
             {/* Left Panel */}
             <div className="w-80 p-6 border-r">
               <h1 className="text-2xl font-bold italic mb-2">
-                Welcome to your new daily<br />planning routine
+                Bienvenue dans votre nouvelle routine de planification quotidienne
               </h1>
               <p className="text-muted-foreground mb-8">
-                Once per day, we will help you plan your day.
+                Une fois par jour, nous vous aiderons à planifier votre journée.
               </p>
               <Button onClick={handleNext} className="w-full" size="lg">
-                Plan tomorrow
+                Planifier demain
               </Button>
             </div>
             {/* Main content area - empty for welcome */}
@@ -424,19 +424,19 @@ export default function DailyPlanningPage() {
             {/* Left Panel */}
             <div className="w-80 p-6 border-r">
               <h1 className="text-xl font-bold mb-2">
-                What do you need to do tomorrow?
+                Que devez-vous faire demain ?
               </h1>
               <p className="text-muted-foreground text-sm mb-6">
-                Add the tasks you want to accomplish.
+                Ajoutez les tâches que vous souhaitez accomplir.
               </p>
               <Button onClick={handleNext} className="w-full" size="lg">
-                Next
+                Suivant
               </Button>
             </div>
 
             {/* Center - Task List */}
             <div className="flex-1 p-6 max-w-xl">
-              <h2 className="text-xl font-semibold mb-1">Tomorrow</h2>
+              <h2 className="text-xl font-semibold mb-1">Demain</h2>
               <p className="text-muted-foreground text-sm mb-4">
                 {format(tomorrow, "EEEE d MMMM", { locale: fr })}
               </p>
@@ -445,13 +445,13 @@ export default function DailyPlanningPage() {
               <div className="flex items-center gap-2 mb-4 p-3 border rounded-lg bg-card">
                 <Plus className="h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Add task"
+                  placeholder="Ajouter une tâche"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
                   className="border-0 p-0 h-auto focus-visible:ring-0"
                 />
-                <span className="text-xs text-muted-foreground">Work: 1:00</span>
+                <span className="text-xs text-muted-foreground">Travail : 1:00</span>
               </div>
 
               {/* Task list */}
@@ -475,23 +475,23 @@ export default function DailyPlanningPage() {
             <div className="w-80 p-6 border-r space-y-6">
               <div>
                 <h1 className="text-xl font-bold mb-2">
-                  How much time do you plan to spend on that?
+                  Combien de temps prévoyez-vous consacrer à cela ?
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  Set the time you plan to work on each task.
+                  Définissez le temps prévu pour chaque tâche.
                 </p>
               </div>
 
               <WorkloadBar plannedMinutes={totalPlannedMinutes} />
 
               <Button onClick={handleNext} className="w-full" size="lg">
-                Next
+                Suivant
               </Button>
             </div>
 
             {/* Center - Task List with time estimates */}
             <div className="flex-1 p-6 max-w-xl">
-              <h2 className="text-xl font-semibold mb-4">Tomorrow</h2>
+              <h2 className="text-xl font-semibold mb-4">Demain</h2>
 
               <div className="space-y-3">
                 {tasks.map((task) => (
@@ -506,7 +506,7 @@ export default function DailyPlanningPage() {
 
               {tasks.length === 0 && (
                 <p className="text-muted-foreground text-center py-8">
-                  No tasks added yet. Go back to add tasks.
+                  Aucune tâche ajoutée. Revenez en arrière pour ajouter des tâches.
                 </p>
               )}
             </div>
@@ -518,47 +518,47 @@ export default function DailyPlanningPage() {
           <div className="flex h-full">
             {/* Left Panel */}
             <div className="w-80 p-6 border-r">
-              <h1 className="text-xl font-bold mb-2">Fill in your day</h1>
+              <h1 className="text-xl font-bold mb-2">Remplissez votre journée</h1>
               <p className="text-muted-foreground text-sm mb-6">
-                Create new tasks, or pull in work from your existing tools.
+                Créez de nouvelles tâches ou importez-les depuis vos outils existants.
               </p>
 
               <div className="space-y-2 mb-6">
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <Github className="h-4 w-4" />
-                  Add tasks from GitHub
+                  Ajouter depuis GitHub
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-blue-500" />
-                  Add tasks from Google Tasks
+                  Ajouter depuis Google Tasks
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <span className="font-bold">N</span>
-                  Add tasks from Notion
+                  Ajouter depuis Notion
                 </Button>
                 <Button variant="outline" className="w-full justify-start gap-2">
                   <CalendarIcon className="h-4 w-4 text-blue-600" />
-                  Add tasks from Outlook
+                  Ajouter depuis Outlook
                 </Button>
               </div>
 
               <Button onClick={handleNext} className="w-full" size="lg">
-                Next
+                Suivant
               </Button>
             </div>
 
             {/* Center - Task List */}
             <div className="w-96 p-6 border-r">
-              <h2 className="text-xl font-semibold mb-1">Tomorrow</h2>
+              <h2 className="text-xl font-semibold mb-1">Demain</h2>
               <p className="text-muted-foreground text-sm mb-4">
-                Fill in your work for tomorrow
+                Planifiez votre travail pour demain
               </p>
 
               {/* Add task */}
               <div className="flex items-center gap-2 mb-4 p-3 border rounded-lg bg-card">
                 <Plus className="h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Add task"
+                  placeholder="Ajouter une tâche"
                   value={newTaskTitle}
                   onChange={(e) => setNewTaskTitle(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddTask()}
@@ -590,19 +590,19 @@ export default function DailyPlanningPage() {
           <div className="flex h-full">
             {/* Left Panel */}
             <div className="w-80 p-6 border-r">
-              <h1 className="text-xl font-bold mb-2">Prioritize your tasks</h1>
+              <h1 className="text-xl font-bold mb-2">Priorisez vos tâches</h1>
               <p className="text-muted-foreground text-sm mb-6">
-                Drag to reorder tasks by importance. The most important should be at the top.
+                Glissez pour réordonner les tâches par importance. Les plus importantes doivent être en haut.
               </p>
 
               <Button onClick={handleNext} className="w-full" size="lg">
-                Next
+                Suivant
               </Button>
             </div>
 
             {/* Center - Draggable Task List */}
             <div className="flex-1 p-6 max-w-xl">
-              <h2 className="text-xl font-semibold mb-4">Tomorrow</h2>
+              <h2 className="text-xl font-semibold mb-4">Demain</h2>
 
               <div className="space-y-2">
                 {tasks.map((task, index) => (
@@ -634,9 +634,9 @@ export default function DailyPlanningPage() {
           <div className="flex h-full">
             {/* Left Panel */}
             <div className="w-80 p-6 border-r">
-              <h1 className="text-xl font-bold mb-2">Schedule your tasks</h1>
+              <h1 className="text-xl font-bold mb-2">Planifiez vos tâches</h1>
               <p className="text-muted-foreground text-sm mb-6">
-                Drag tasks to the calendar to schedule them for specific times.
+                Glissez les tâches vers le calendrier pour les programmer à des heures spécifiques.
               </p>
 
               <div className="space-y-2 mb-6">
@@ -652,7 +652,7 @@ export default function DailyPlanningPage() {
               </div>
 
               <Button onClick={handleNext} className="w-full" size="lg">
-                Next
+                Suivant
               </Button>
             </div>
 
@@ -673,29 +673,29 @@ export default function DailyPlanningPage() {
           <div className="flex h-full">
             {/* Left Panel - Daily Plan Document */}
             <div className="flex-1 p-6 max-w-2xl">
-              <h1 className="text-2xl font-bold mb-1">Daily plan</h1>
+              <h1 className="text-2xl font-bold mb-1">Plan quotidien</h1>
               <p className="text-muted-foreground mb-6">
-                Document and share your plan for tomorrow.
+                Documentez et partagez votre plan pour demain.
               </p>
 
               <div className="bg-card border rounded-lg p-6 space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Planned for tomorrow</h3>
+                  <h3 className="font-semibold mb-2">Prévu pour demain</h3>
                   <ul className="list-disc list-inside text-sm space-y-1">
                     {tasks.map((task) => (
                       <li key={task.id}>
-                        {task.title} · {task.plannedDuration >= 60 ? `${Math.floor(task.plannedDuration / 60)} hr` : `${task.plannedDuration} min`}
+                        {task.title} · {task.plannedDuration >= 60 ? `${Math.floor(task.plannedDuration / 60)} h` : `${task.plannedDuration} min`}
                       </li>
                     ))}
                   </ul>
                 </div>
 
                 <div>
-                  <h3 className="font-semibold mb-2">Obstacles in my way</h3>
+                  <h3 className="font-semibold mb-2">Obstacles à surmonter</h3>
                   <ul className="list-disc list-inside text-sm">
                     <li>
                       <Input
-                        placeholder="Add an obstacle..."
+                        placeholder="Ajouter un obstacle..."
                         value={obstacles}
                         onChange={(e) => setObstacles(e.target.value)}
                         className="inline-block w-auto border-0 border-b rounded-none p-0 h-auto focus-visible:ring-0"
@@ -711,10 +711,10 @@ export default function DailyPlanningPage() {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <Button variant="outline" className="gap-2">
-                  Post
+                  Publier
                   <Sparkles className="h-4 w-4 text-purple-500" />
                 </Button>
-                <Button onClick={handleDone}>Done</Button>
+                <Button onClick={handleDone}>Terminé</Button>
               </div>
             </div>
 
@@ -740,10 +740,10 @@ export default function DailyPlanningPage() {
       <div className="flex items-center justify-between px-6 py-3 border-b bg-card">
         <div>
           <h1 className="font-semibold">
-            Planning your <span className="text-primary">first</span> day
+            Planification de votre <span className="text-primary">première</span> journée
           </h1>
           <p className="text-xs text-muted-foreground">
-            Step {currentStep} / {STEPS.length}
+            Étape {currentStep} / {STEPS.length}
           </p>
         </div>
       </div>

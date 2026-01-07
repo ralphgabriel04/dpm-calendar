@@ -16,33 +16,44 @@ export function CurrentTimeIndicator({
   hourHeight = 60,
   className,
 }: CurrentTimeIndicatorProps) {
-  const [position, setPosition] = useState(() => calculatePosition());
-
-  function calculatePosition() {
-    const now = new Date();
-    const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const startMinutes = startHour * 60;
-    const endMinutes = endHour * 60;
-
-    // Check if current time is within view
-    if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
-      return null;
-    }
-
-    const offsetMinutes = currentMinutes - startMinutes;
-    const top = (offsetMinutes / 60) * hourHeight;
-
-    return top;
-  }
+  // Initialize to null to avoid hydration mismatch - calculate only on client
+  const [position, setPosition] = useState<number | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
+    function calculatePosition() {
+      const now = new Date();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+      const startMinutes = startHour * 60;
+      const endMinutes = endHour * 60;
+
+      // Check if current time is within view
+      if (currentMinutes < startMinutes || currentMinutes > endMinutes) {
+        return null;
+      }
+
+      const offsetMinutes = currentMinutes - startMinutes;
+      const top = (offsetMinutes / 60) * hourHeight;
+
+      return top;
+    }
+
+    // Calculate immediately on mount
+    setPosition(calculatePosition());
+
     // Update every minute
     const interval = setInterval(() => {
       setPosition(calculatePosition());
     }, 60000);
 
     return () => clearInterval(interval);
-  }, [startHour, endHour, hourHeight]);
+  }, [isMounted, startHour, endHour, hourHeight]);
 
   if (position === null) {
     return null;

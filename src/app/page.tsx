@@ -40,10 +40,10 @@ const featureData = [
     icon: Clock,
     color: "violet",
     description:
-      "La fonctionnalite d'utilisation du temps vous aide a analyser votre emploi du temps en vous indiquant comment vous occupez votre temps et avec qui.",
+      "La fonctionnalité d'utilisation du temps vous aide à analyser votre emploi du temps en vous indiquant comment vous occupez votre temps et avec qui.",
     features: [
-      "Rapports de productivite detailles",
-      "Temps par projet et categorie",
+      "Rapports de productivité détaillés",
+      "Temps par projet et catégorie",
       "Graphiques et tendances visuels",
     ],
     MockupComponent: TimeInsightsMockup,
@@ -54,9 +54,9 @@ const featureData = [
     icon: Target,
     color: "emerald",
     description:
-      "Le mode Focus vous permet de vous concentrer sur une seule tache a la fois avec la technique Pomodoro integree et le blocage des notifications.",
+      "Le mode Focus vous permet de vous concentrer sur une seule tâche à la fois avec la technique Pomodoro intégrée et le blocage des notifications.",
     features: [
-      "Technique Pomodoro integree",
+      "Technique Pomodoro intégrée",
       "Blocage des notifications",
       "Suivi du temps de concentration",
     ],
@@ -64,14 +64,14 @@ const featureData = [
   },
   {
     id: "multi-calendar",
-    title: "Restez organise avec plusieurs agendas",
+    title: "Restez organisé avec plusieurs agendas",
     icon: Layers,
     color: "blue",
     description:
-      "Gerez plusieurs calendriers en un seul endroit. Synchronisez automatiquement vos agendas Google, Microsoft et Apple.",
+      "Gérez plusieurs calendriers en un seul endroit. Synchronisez automatiquement vos agendas Google, Microsoft et Apple.",
     features: [
       "Synchronisation Google Calendar",
-      "Integration Microsoft Outlook",
+      "Intégration Microsoft Outlook",
       "Calendriers personnels et professionnels",
     ],
     MockupComponent: MultiCalendarMockup,
@@ -82,7 +82,7 @@ const featureData = [
     icon: Eye,
     color: "orange",
     description:
-      "Choisissez la vue qui vous convient le mieux : jour, semaine, mois ou agenda. Personnalisez les couleurs et l'affichage selon vos preferences.",
+      "Choisissez la vue qui vous convient le mieux : jour, semaine, mois ou agenda. Personnalisez les couleurs et l'affichage selon vos préférences.",
     features: [
       "Vues jour, semaine, mois, agenda",
       "Drag & drop intuitif",
@@ -96,11 +96,11 @@ const featureData = [
     icon: BarChart3,
     color: "pink",
     description:
-      "Definissez des objectifs SMART et suivez votre progression. Liez vos taches a vos objectifs pour rester motive et organise.",
+      "Définissez des objectifs SMART et suivez votre progression. Liez vos tâches à vos objectifs pour rester motivé et organisé.",
     features: [
       "Objectifs SMART",
       "Suivi de progression visuel",
-      "Jalons et etapes cles",
+      "Jalons et étapes clés",
     ],
     MockupComponent: GoalsMockup,
   },
@@ -202,7 +202,7 @@ function FocusModeMockup() {
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm text-muted-foreground mb-2">Tache en cours</p>
+        <p className="text-sm text-muted-foreground mb-2">Tâche en cours</p>
         <p className="font-medium mb-4">Rapport trimestriel Q1</p>
         <div className="text-4xl font-mono font-bold mb-4 text-emerald-500">25:00</div>
         <div className="w-full bg-muted rounded-full h-2 mb-4">
@@ -241,7 +241,7 @@ function MultiCalendarMockup() {
           </div>
         ))}
         <div className="border-t border-border pt-3 mt-3">
-          <p className="text-xs text-muted-foreground mb-2">Connectes</p>
+          <p className="text-xs text-muted-foreground mb-2">Connectés</p>
           {[
             { name: "Google Calendar", icon: "🔗" },
             { name: "Microsoft Outlook", icon: "🔗" },
@@ -303,7 +303,7 @@ function CustomViewsMockup() {
       <div className="mt-3 space-y-1">
         <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs">
           <div className="w-1 h-4 rounded bg-violet-500" />
-          <span>9:00 - Reunion equipe</span>
+          <span>9:00 - Réunion équipe</span>
         </div>
         <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs">
           <div className="w-1 h-4 rounded bg-blue-500" />
@@ -344,7 +344,7 @@ function GoalsMockup() {
           <div className="w-5 h-5 rounded-full bg-pink-500/20 border border-pink-500 flex items-center justify-center">
             <div className="w-2 h-2 rounded-full bg-pink-500" />
           </div>
-          <span>Phase 3 - Developpement</span>
+          <span>Phase 3 - Développement</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
           <div className="w-5 h-5 rounded-full bg-muted" />
@@ -463,11 +463,11 @@ export default function Home() {
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 Votre temps,{" "}
                 <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-                  merite mieux
+                  mérite mieux
                 </span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-                Calendrier, taches, habitudes et objectifs reunis dans une seule application.
+                Calendrier, tâches, habitudes et objectifs réunis dans une seule application.
                 Synchronisez avec Google Calendar et Microsoft Outlook.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -482,7 +482,7 @@ export default function Home() {
                   href="#features"
                   className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold hover:bg-accent transition-all"
                 >
-                  Voir les fonctionnalites
+                  Voir les fonctionnalités
                 </Link>
               </div>
             </div>
@@ -494,8 +494,78 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Comment ça fonctionne - 3 Steps */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Comment ça{" "}
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                fonctionne
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Trois étapes simples pour transformer votre productivité
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+            {/* Step 1 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-500">
+                    <MousePointerClick className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-violet-500/20">01</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Connectez vos calendriers</h3>
+                <p className="text-muted-foreground">
+                  Importez vos événements Google, Microsoft ou Apple en un clic. Tout est synchronisé automatiquement.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-emerald-500/20">02</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Planifiez intelligemment</h3>
+                <p className="text-muted-foreground">
+                  Créez des tâches, définissez des objectifs et laissez l&apos;IA vous suggérer le meilleur moment pour les réaliser.
+                </p>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="relative group">
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500/10 text-pink-500">
+                    <Zap className="h-6 w-6" />
+                  </div>
+                  <span className="text-4xl font-bold text-pink-500/20">03</span>
+                </div>
+                <h3 className="text-xl font-semibold mb-3">Atteignez vos objectifs</h3>
+                <p className="text-muted-foreground">
+                  Suivez vos progrès, analysez votre productivité et célébrez vos accomplissements.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section - Accordion Style */}
-      <section id="features" className="py-16 lg:py-24 bg-muted/30">
+      <section id="features" className="py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Left: Accordion */}
@@ -584,11 +654,130 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Integrations - Simplified */}
-      <section className="py-16 lg:py-20">
+      {/* Personas Section */}
+      <section className="py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Conçu pour{" "}
+              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
+                vous
+              </span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Que vous soyez étudiant, entrepreneur ou freelance, DPM Calendar s&apos;adapte à votre mode de vie.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Etudiants */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 text-violet-500 mb-5 group-hover:scale-110 transition-transform">
+                <GraduationCap className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Étudiants</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Gérez vos cours, examens et projets. Ne manquez plus jamais une deadline.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Rappels de cours
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Suivi des examens
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Planification des révisions
+                </li>
+              </ul>
+            </div>
+
+            {/* Entrepreneurs */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 text-emerald-500 mb-5 group-hover:scale-110 transition-transform">
+                <Rocket className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Entrepreneurs</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Développez votre business en gardant le contrôle de votre emploi du temps.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Gestion de projets
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Suivi des objectifs
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Analytics de productivité
+                </li>
+              </ul>
+            </div>
+
+            {/* Freelances */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 text-blue-500 mb-5 group-hover:scale-110 transition-transform">
+                <Briefcase className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Freelances</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Jonglez avec plusieurs clients et projets sans perdre le fil.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Multi-calendriers
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Time tracking
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Facturation facilitée
+                </li>
+              </ul>
+            </div>
+
+            {/* Equipes */}
+            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5 transition-all">
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-500 mb-5 group-hover:scale-110 transition-transform">
+                <Users className="h-7 w-7" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Équipes</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Collaborez efficacement et synchronisez les agendas de toute l&apos;équipe.
+              </p>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Calendriers partagés
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Planification de réunions
+                </li>
+                <li className="flex items-center gap-2 text-muted-foreground">
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                  Coordination simplifiée
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Integrations */}
+      <section className="py-16 lg:py-20 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl mb-8">
-            Synchronisez vos calendriers preferes
+            Synchronisez vos calendriers préférés
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-6">
             {/* Google */}
@@ -624,213 +813,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Comment ca fonctionne - 3 Steps */}
-      <section className="py-16 lg:py-24 bg-muted/30">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Comment ca{" "}
-              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                fonctionne
-              </span>
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Trois etapes simples pour transformer votre productivite
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
-            {/* Step 1 */}
-            <div className="relative group">
-              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-violet-500/10 text-violet-500">
-                    <MousePointerClick className="h-6 w-6" />
-                  </div>
-                  <span className="text-4xl font-bold text-violet-500/20">01</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Connectez vos calendriers</h3>
-                <p className="text-muted-foreground">
-                  Importez vos evenements Google, Microsoft ou Apple en un clic. Tout est synchronise automatiquement.
-                </p>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="relative group">
-              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-emerald-500/20 to-green-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500">
-                    <Sparkles className="h-6 w-6" />
-                  </div>
-                  <span className="text-4xl font-bold text-emerald-500/20">02</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Planifiez intelligemment</h3>
-                <p className="text-muted-foreground">
-                  Creez des taches, definissez des objectifs et laissez l&apos;IA vous suggerer le meilleur moment pour les realiser.
-                </p>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="relative group">
-              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-pink-500/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative rounded-2xl border border-border bg-card p-8 h-full">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-pink-500/10 text-pink-500">
-                    <Zap className="h-6 w-6" />
-                  </div>
-                  <span className="text-4xl font-bold text-pink-500/20">03</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3">Atteignez vos objectifs</h3>
-                <p className="text-muted-foreground">
-                  Suivez vos progres, analysez votre productivite et celebrez vos accomplissements.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Personas Section */}
-      <section className="py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold sm:text-4xl">
-              Concu pour{" "}
-              <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                vous
-              </span>
-            </h2>
-            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Que vous soyez etudiant, entrepreneur ou freelance, DPM Calendar s&apos;adapte a votre mode de vie.
-            </p>
-          </div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Etudiants */}
-            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-violet-500/50 hover:shadow-lg hover:shadow-violet-500/5 transition-all">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 text-violet-500 mb-5 group-hover:scale-110 transition-transform">
-                <GraduationCap className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Etudiants</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Gerez vos cours, examens et projets. Ne manquez plus jamais une deadline.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Rappels de cours
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Suivi des examens
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Planification des revisions
-                </li>
-              </ul>
-            </div>
-
-            {/* Entrepreneurs */}
-            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-emerald-500/50 hover:shadow-lg hover:shadow-emerald-500/5 transition-all">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 text-emerald-500 mb-5 group-hover:scale-110 transition-transform">
-                <Rocket className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Entrepreneurs</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Developpez votre business en gardant le controle de votre emploi du temps.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Gestion de projets
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Suivi des objectifs
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Analytics de productivite
-                </li>
-              </ul>
-            </div>
-
-            {/* Freelances */}
-            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-blue-500/50 hover:shadow-lg hover:shadow-blue-500/5 transition-all">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 text-blue-500 mb-5 group-hover:scale-110 transition-transform">
-                <Briefcase className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Freelances</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Jonglez avec plusieurs clients et projets sans perdre le fil.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Multi-calendriers
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Time tracking
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Facturation facilitee
-                </li>
-              </ul>
-            </div>
-
-            {/* Equipes */}
-            <div className="group rounded-2xl border border-border bg-card p-6 hover:border-orange-500/50 hover:shadow-lg hover:shadow-orange-500/5 transition-all">
-              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-500 mb-5 group-hover:scale-110 transition-transform">
-                <Users className="h-7 w-7" />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Equipes</h3>
-              <p className="text-sm text-muted-foreground mb-4">
-                Collaborez efficacement et synchronisez les agendas de toute l&apos;equipe.
-              </p>
-              <ul className="space-y-2 text-sm">
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Calendriers partages
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Planification de reunions
-                </li>
-                <li className="flex items-center gap-2 text-muted-foreground">
-                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Coordination simplifiee
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Security Section */}
-      <section className="py-16 lg:py-24 bg-muted/30">
+      <section className="py-16 lg:py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-green-500/10 px-4 py-1.5 text-sm font-medium text-green-600 dark:text-green-400 mb-6">
                 <Shield className="h-4 w-4" />
-                Securite renforcee
+                Sécurité renforcée
               </div>
               <h2 className="text-3xl font-bold sm:text-4xl mb-6">
-                Vos donnees sont{" "}
+                Vos données sont{" "}
                 <span className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                  protegees
+                  protégées
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Nous prenons la securite de vos donnees tres au serieux. Votre vie privee est notre priorite.
+                Nous prenons la sécurité de vos données très au sérieux. Votre vie privée est notre priorité.
               </p>
 
               <div className="space-y-4">
@@ -841,7 +841,7 @@ export default function Home() {
                   <div>
                     <h3 className="font-semibold mb-1">Chiffrement de bout en bout</h3>
                     <p className="text-sm text-muted-foreground">
-                      Toutes vos donnees sont chiffrees avec les derniers standards de securite.
+                      Toutes vos données sont chiffrées avec les derniers standards de sécurité.
                     </p>
                   </div>
                 </div>
@@ -851,9 +851,9 @@ export default function Home() {
                     <Cloud className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Heberge en Europe</h3>
+                    <h3 className="font-semibold mb-1">Hébergé en Europe</h3>
                     <p className="text-sm text-muted-foreground">
-                      Vos donnees restent en Europe, en conformite avec le RGPD.
+                      Vos données restent en Europe, en conformité avec le RGPD.
                     </p>
                   </div>
                 </div>
@@ -863,7 +863,7 @@ export default function Home() {
                     <Shield className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Authentification securisee</h3>
+                    <h3 className="font-semibold mb-1">Authentification sécurisée</h3>
                     <p className="text-sm text-muted-foreground">
                       OAuth 2.0 avec Google et Microsoft, sans stockage de mots de passe.
                     </p>
@@ -875,7 +875,7 @@ export default function Home() {
             {/* Right: Trust badges */}
             <div className="lg:pl-8">
               <div className="rounded-2xl border border-border bg-card p-8">
-                <h3 className="font-semibold text-lg mb-6 text-center">Certifications & Conformite</h3>
+                <h3 className="font-semibold text-lg mb-6 text-center">Certifications & Conformité</h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
                     <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center mb-3">
@@ -903,7 +903,7 @@ export default function Home() {
                       <Shield className="h-6 w-6 text-orange-500" />
                     </div>
                     <span className="font-semibold text-sm">OAuth 2.0</span>
-                    <span className="text-xs text-muted-foreground">Securise</span>
+                    <span className="text-xs text-muted-foreground">Sécurisé</span>
                   </div>
                 </div>
               </div>
@@ -916,14 +916,14 @@ export default function Home() {
       <section className="py-16 lg:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold sm:text-4xl">
-            Pret a reprendre le controle de{" "}
+            Prêt à reprendre le contrôle de{" "}
             <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
               votre temps
             </span>
             ?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Rejoignez des milliers d&apos;utilisateurs qui ont transforme leur productivite.
+            Rejoignez des milliers d&apos;utilisateurs qui ont transformé leur productivité.
           </p>
           <div className="mt-8">
             <Link
@@ -935,7 +935,7 @@ export default function Home() {
             </Link>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Gratuit pour toujours - Pas de carte de credit requise
+            Gratuit pour toujours - Pas de carte de crédit requise
           </p>
         </div>
       </section>
@@ -954,7 +954,7 @@ export default function Home() {
                 className="h-10 w-auto mb-4 dark:brightness-100 brightness-90"
               />
               <p className="text-sm text-muted-foreground">
-                Votre assistant de productivite intelligent.
+                Votre assistant de productivité intelligent.
               </p>
             </div>
 
@@ -964,7 +964,7 @@ export default function Home() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#features" className="hover:text-foreground transition-colors">
-                    Fonctionnalites
+                    Fonctionnalités
                   </a>
                 </li>
                 <li>
@@ -993,7 +993,7 @@ export default function Home() {
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#" className="hover:text-foreground transition-colors">
-                    Confidentialite
+                    Confidentialité
                   </a>
                 </li>
                 <li>
@@ -1014,7 +1014,7 @@ export default function Home() {
           {/* Bottom */}
           <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} DPM Calendar. Tous droits reserves.
+              © {new Date().getFullYear()} DPM Calendar. Tous droits réservés.
             </div>
             <div className="flex items-center gap-4">
               <a

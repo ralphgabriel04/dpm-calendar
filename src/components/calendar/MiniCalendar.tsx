@@ -25,14 +25,30 @@ interface MiniCalendarProps {
 }
 
 export function MiniCalendar({ value, onChange, className }: MiniCalendarProps) {
-  const [viewDate, setViewDate] = useState(value || new Date());
+  // Initialize with value or null to avoid hydration mismatch
+  const [viewDate, setViewDate] = useState<Date | null>(value || null);
+  const [today, setToday] = useState<Date | null>(null);
+
+  // Set today and viewDate on client mount to avoid hydration mismatch
+  useEffect(() => {
+    const now = new Date();
+    setToday(now);
+    if (!viewDate) {
+      setViewDate(value || now);
+    }
+  }, []);
 
   // Sync viewDate when value changes from external source
   useEffect(() => {
-    if (value && !isSameMonth(value, viewDate)) {
+    if (value && viewDate && !isSameMonth(value, viewDate)) {
       setViewDate(value);
     }
   }, [value]);
+
+  // Don't render calendar grid until we have a viewDate
+  if (!viewDate) {
+    return <div className={cn("p-3 h-[280px]", className)} />;
+  }
 
   const monthStart = startOfMonth(viewDate);
   const monthEnd = endOfMonth(viewDate);

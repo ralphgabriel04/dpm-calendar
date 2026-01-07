@@ -184,7 +184,7 @@ export function WeekView({
 
         {/* Time grid */}
         <div ref={scrollRef} className="flex-1 overflow-auto">
-          <div className="flex" style={{ minHeight: totalHeight }}>
+          <div className="flex" style={{ minHeight: totalHeight + 12 }}>
             {/* Time column */}
             <TimeColumn
               startHour={startHour}
@@ -193,21 +193,25 @@ export function WeekView({
             />
 
             {/* Day columns */}
-            <div className="flex-1 flex">
-              {days.map((day) => (
-                <DayColumn
-                  key={day.toISOString()}
-                  date={day}
-                  events={events}
-                  startHour={startHour}
-                  endHour={endHour}
-                  hourHeight={hourHeight}
-                  onEventClick={onEventClick}
-                  onSlotClick={onSlotClick}
-                  onEventResize={onEventResize}
-                  enableDragDrop={true}
-                />
-              ))}
+            <div className="flex-1 flex flex-col">
+              {/* Top padding to align with TimeColumn */}
+              <div className="h-3 flex-shrink-0" />
+              <div className="flex flex-1">
+                {days.map((day) => (
+                  <DayColumn
+                    key={day.toISOString()}
+                    date={day}
+                    events={events}
+                    startHour={startHour}
+                    endHour={endHour}
+                    hourHeight={hourHeight}
+                    onEventClick={onEventClick}
+                    onSlotClick={onSlotClick}
+                    onEventResize={onEventResize}
+                    enableDragDrop={true}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
