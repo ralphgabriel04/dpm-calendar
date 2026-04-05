@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   X,
   Play,
@@ -9,14 +9,13 @@ import {
   SkipForward,
   RotateCcw,
   Clock,
-  Timer,
   Coffee,
   Zap,
-  Minus,
   Plus,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import { cn } from "@/shared/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
 
 interface Task {
   id: string;
@@ -35,7 +34,21 @@ interface FocusModeProps {
   onAddTime?: (taskId: string, minutes: number) => void;
 }
 
-type PomodoroState = "work" | "shortBreak" | "longBreak";
+type PresetKey = "pomodoro_25_5" | "pomodoro_50_10" | "deep_90" | "custom";
+type PomodoroState = "work" | "shortBreak";
+
+interface Preset {
+  key: PresetKey;
+  label: string;
+  workMins: number;
+  breakMins: number;
+}
+
+const PRESETS: Preset[] = [
+  { key: "pomodoro_25_5", label: "Pomodoro 25/5", workMins: 25, breakMins: 5 },
+  { key: "pomodoro_50_10", label: "Pomodoro 50/10", workMins: 50, breakMins: 10 },
+  { key: "deep_90", label: "Deep Work 90", workMins: 90, breakMins: 15 },
+];
 
 export function FocusMode({
   task,
@@ -45,65 +58,69 @@ export function FocusMode({
   onClose,
   onAddTime,
 }: FocusModeProps) {
+  const [presetKey, setPresetKey] = useState<PresetKey>("pomodoro_25_5");
+  const [customWorkMins, setCustomWorkMins] = useState(25);
   const [isRunning, setIsRunning] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [pomodoroState, setPomodoroState] = useState<PomodoroState>("work");
   const [pomodorosCompleted, setPomodorosCompleted] = useState(0);
   const [quickNote, setQuickNote] = useState("");
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [interruptions, setInterruptions] = useState(0);
+  const sessionIdRef = useRef<string | null>(null);
 
-  // Pomodoro settings (in minutes)
-  const WORK_DURATION = 25;
-  const SHORT_BREAK = 5;
-  const LONG_BREAK = 15;
-  const POMODOROS_BEFORE_LONG_BREAK = 4;
+  const startMutation = trpc.focusSession.start.useMutation();
+  const stopMutation = trpc.focusSession.stop.useMutation();
+  const pauseMutation = trpc.focusSession.pause.useMutation();
+
+  const activePreset: Preset =
+    presetKey === "custom"
+      ? { key: "custom", label: "Custom", workMins: customWorkMins, breakMins: 5 }
+      : PRESETS.find((p) => p.key === presetKey) ?? PRESETS[0];
 
   const getDuration = (state: PomodoroState) => {
-    switch (state) {
-      case "work":
-        return WORK_DURATION * 60;
-      case "shortBreak":
-        return SHORT_BREAK * 60;
-      case "longBreak":
-        return LONG_BREAK * 60;
-    }
+    return (state === "work" ? activePreset.workMins : activePreset.breakMins) * 60;
   };
 
   const remainingSeconds = getDuration(pomodoroState) - elapsedSeconds;
   const progress = (elapsedSeconds / getDuration(pomodoroState)) * 100;
 
-  // Timer logic
+  // Timer tick
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-
     if (isRunning && remainingSeconds > 0) {
       interval = setInterval(() => {
         setElapsedSeconds((s) => s + 1);
       }, 1000);
     } else if (remainingSeconds <= 0 && isRunning) {
-      // Pomodoro completed
       setIsRunning(false);
       if (pomodoroState === "work") {
         setPomodorosCompleted((p) => p + 1);
-        // Determine next break
-        if ((pomodorosCompleted + 1) % POMODOROS_BEFORE_LONG_BREAK === 0) {
-          setPomodoroState("longBreak");
-        } else {
-          setPomodoroState("shortBreak");
+        // Persist completed work session
+        const sid = sessionIdRef.current;
+        if (sid) {
+          stopMutation.mutate({
+            sessionId: sid,
+            completed: true,
+            interruptions,
+          });
+          sessionIdRef.current = null;
+          setSessionId(null);
+          setInterruptions(0);
         }
+        setPomodoroState("shortBreak");
       } else {
         setPomodoroState("work");
       }
       setElapsedSeconds(0);
-      // Play notification sound
-      if (typeof window !== "undefined" && "Notification" in window) {
+      if (typeof window !== "undefined") {
         new Audio("/notification.mp3").play().catch(() => {});
       }
     }
-
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isRunning, remainingSeconds, pomodoroState, pomodorosCompleted]);
+  }, [isRunning, remainingSeconds, pomodoroState, interruptions, stopMutation]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(Math.abs(seconds) / 60);
@@ -111,13 +128,48 @@ export function FocusMode({
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
+  const toggleTimer = async () => {
+    if (!isRunning) {
+      // Starting
+      if (pomodoroState === "work" && !sessionIdRef.current) {
+        try {
+          const created = await startMutation.mutateAsync({
+            taskId: task.id,
+            plannedMins: activePreset.workMins,
+            preset: activePreset.key,
+          });
+          sessionIdRef.current = created.id;
+          setSessionId(created.id);
+        } catch {
+          // proceed even if persistence fails
+        }
+      }
+      setIsRunning(true);
+    } else {
+      // Pausing
+      setIsRunning(false);
+      setInterruptions((i) => i + 1);
+      const sid = sessionIdRef.current;
+      if (sid) {
+        pauseMutation.mutate({ sessionId: sid });
+      }
+    }
   };
 
   const resetTimer = () => {
     setIsRunning(false);
     setElapsedSeconds(0);
+    const sid = sessionIdRef.current;
+    if (sid) {
+      stopMutation.mutate({
+        sessionId: sid,
+        completed: false,
+        interruptions,
+      });
+      sessionIdRef.current = null;
+      setSessionId(null);
+      setInterruptions(0);
+    }
   };
 
   const skipBreak = () => {
@@ -126,26 +178,42 @@ export function FocusMode({
     setIsRunning(false);
   };
 
-  const getStateLabel = (state: PomodoroState) => {
-    switch (state) {
-      case "work":
-        return "Focus";
-      case "shortBreak":
-        return "Pause courte";
-      case "longBreak":
-        return "Pause longue";
+  const handleClose = () => {
+    const sid = sessionIdRef.current;
+    if (sid) {
+      stopMutation.mutate({
+        sessionId: sid,
+        completed: false,
+        interruptions,
+      });
     }
+    onClose();
   };
 
-  const getStateColor = (state: PomodoroState) => {
-    switch (state) {
-      case "work":
-        return "text-violet-500";
-      case "shortBreak":
-        return "text-green-500";
-      case "longBreak":
-        return "text-blue-500";
+  const handleComplete = () => {
+    const sid = sessionIdRef.current;
+    if (sid) {
+      stopMutation.mutate({
+        sessionId: sid,
+        completed: true,
+        interruptions,
+      });
     }
+    onComplete(task.id);
+  };
+
+  const getStateLabel = (state: PomodoroState) => {
+    return state === "work" ? "Focus" : "Pause";
+  };
+  const getStateColor = (state: PomodoroState) => {
+    return state === "work" ? "text-violet-500" : "text-green-500";
+  };
+
+  const handlePresetChange = (key: PresetKey) => {
+    if (isRunning) return;
+    setPresetKey(key);
+    setElapsedSeconds(0);
+    setPomodoroState("work");
   };
 
   return (
@@ -156,21 +224,69 @@ export function FocusMode({
           <Zap className="h-5 w-5 text-primary" />
           <span className="font-semibold">Mode Focus</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={onClose}>
+        <Button variant="ghost" size="sm" onClick={handleClose}>
           <X className="h-5 w-5" />
         </Button>
       </header>
+
+      {/* Preset selector */}
+      <div className="flex flex-wrap items-center justify-center gap-2 p-4 border-b">
+        {PRESETS.map((p) => (
+          <button
+            key={p.key}
+            onClick={() => handlePresetChange(p.key)}
+            disabled={isRunning}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+              presetKey === p.key
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-background border-border hover:bg-muted",
+              isRunning && "opacity-50 cursor-not-allowed"
+            )}
+          >
+            {p.label}
+          </button>
+        ))}
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => handlePresetChange("custom")}
+            disabled={isRunning}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
+              presetKey === "custom"
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-background border-border hover:bg-muted",
+              isRunning && "opacity-50 cursor-not-allowed"
+            )}
+          >
+            Custom
+          </button>
+          {presetKey === "custom" && (
+            <input
+              type="number"
+              min={1}
+              max={240}
+              value={customWorkMins}
+              onChange={(e) =>
+                setCustomWorkMins(Math.max(1, Math.min(240, Number(e.target.value) || 1)))
+              }
+              disabled={isRunning}
+              className="w-16 px-2 py-1 rounded border bg-background text-xs"
+            />
+          )}
+        </div>
+      </div>
 
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 max-w-2xl mx-auto w-full">
         {/* Pomodoro indicator */}
         <div className="flex items-center gap-2 mb-6">
-          {Array.from({ length: POMODOROS_BEFORE_LONG_BREAK }).map((_, i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
               className={cn(
                 "h-3 w-3 rounded-full transition-colors",
-                i < pomodorosCompleted ? "bg-primary" : "bg-muted"
+                i < pomodorosCompleted % 4 ? "bg-primary" : "bg-muted"
               )}
             />
           ))}
@@ -216,10 +332,12 @@ export function FocusMode({
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={cn(
-              "text-4xl md:text-5xl font-mono font-bold",
-              isRunning && "text-primary"
-            )}>
+            <span
+              className={cn(
+                "text-4xl md:text-5xl font-mono font-bold",
+                isRunning && "text-primary"
+              )}
+            >
               {formatTime(remainingSeconds)}
             </span>
             <span className="text-sm text-muted-foreground mt-2">
@@ -280,7 +398,7 @@ export function FocusMode({
           <Button
             variant="default"
             size="lg"
-            onClick={() => onComplete(task.id)}
+            onClick={handleComplete}
             className="flex-1 bg-green-600 hover:bg-green-700"
           >
             <Check className="h-5 w-5 mr-2" />
@@ -310,6 +428,12 @@ export function FocusMode({
             )}
           />
         </div>
+
+        {sessionId && (
+          <div className="text-xs text-muted-foreground mt-3">
+            Session active · {interruptions} interruption{interruptions !== 1 ? "s" : ""}
+          </div>
+        )}
       </main>
 
       {/* Footer - Next task */}

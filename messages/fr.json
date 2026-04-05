@@ -835,5 +835,40 @@
     "updateFailed": "\u00c9chec de la mise \u00e0 jour de la limite",
     "close": "Fermer",
     "none": "Aucune priorit\u00e9 \u00e0 reporter."
+  },
+  "focusTimer": {
+    "title": "Mode Focus",
+    "presetPomodoro25": "Pomodoro 25/5",
+    "presetPomodoro50": "Pomodoro 50/10",
+    "presetDeep90": "Travail profond 90",
+    "presetCustom": "Personnalis\u00e9",
+    "work": "Focus",
+    "break": "Pause",
+    "start": "D\u00e9marrer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "reset": "R\u00e9initialiser",
+    "skip": "Passer",
+    "complete": "Terminer la t\u00e2che",
+    "remaining": "restant",
+    "breakRemaining": "de pause",
+    "sessionActive": "Session active",
+    "interruptions": "interruptions",
+    "notes": "Notes rapides..."
+  },
+  "focusPicker": {
+    "title": "Choisir une t\u00e2che",
+    "description": "S\u00e9lectionnez une t\u00e2che sur laquelle vous concentrer",
+    "empty": "Aucune t\u00e2che disponible",
+    "cancel": "Annuler",
+    "select": "S\u00e9lectionner",
+    "noTask": "Focus sans t\u00e2che"
+  },
+  "focusRing": {
+    "title": "Focus aujourd'hui",
+    "goal": "Objectif : {mins} min",
+    "progress": "{current}/{goal} min",
+    "streak": "S\u00e9rie de {days} jours",
+    "streakSingle": "S\u00e9rie de {days} jour"
   }
 }

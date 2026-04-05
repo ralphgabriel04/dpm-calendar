@@ -840,5 +840,40 @@
     "updateFailed": "Failed to update priority cap",
     "close": "Close",
     "none": "No priorities to defer."
+  },
+  "focusTimer": {
+    "title": "Focus Mode",
+    "presetPomodoro25": "Pomodoro 25/5",
+    "presetPomodoro50": "Pomodoro 50/10",
+    "presetDeep90": "Deep Work 90",
+    "presetCustom": "Custom",
+    "work": "Focus",
+    "break": "Break",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "reset": "Reset",
+    "skip": "Skip",
+    "complete": "Complete task",
+    "remaining": "remaining",
+    "breakRemaining": "of break",
+    "sessionActive": "Session active",
+    "interruptions": "interruptions",
+    "notes": "Quick notes..."
+  },
+  "focusPicker": {
+    "title": "Pick a task",
+    "description": "Choose a task to focus on",
+    "empty": "No tasks available",
+    "cancel": "Cancel",
+    "select": "Select",
+    "noTask": "Focus without a task"
+  },
+  "focusRing": {
+    "title": "Today's Focus",
+    "goal": "Goal: {mins} min",
+    "progress": "{current}/{goal} min",
+    "streak": "{days} day streak",
+    "streakSingle": "{days} day streak"
   }
 }
