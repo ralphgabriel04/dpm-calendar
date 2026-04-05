@@ -16,38 +16,44 @@ datasource db {
 // ============================================
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  timezone      String    @default("UTC")
-  onboardingCompleted Boolean @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                  String     @id @default(cuid())
+  name                String?
+  email               String     @unique
+  emailVerified       DateTime?
+  image               String?
+  timezone            String     @default("UTC")
+  chronotype          Chronotype @default(UNKNOWN)
+  onboardingCompleted Boolean    @default(false)
+  dailyPriorityCap    Int        @default(3)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
 
-  accounts         Account[]
-  sessions         Session[]
-  calendars        Calendar[]
-  calendarSections CalendarSection[]
-  events           Event[]
-  tasks            Task[]
-  rules            Rule[]
-  calendarAccounts CalendarAccount[]
-  habits           Habit[]
-  goals            Goal[]
-  recaps           Recap[]
-  journalEntries   JournalEntry[]
-  energyLogs       EnergyLog[]
-  notifications    Notification[]
-  shareLinks       ShareLink[]
-  eventComments    EventComment[]
-  meetingPolls     MeetingPoll[]
+  accounts          Account[]
+  sessions          Session[]
+  calendars         Calendar[]
+  calendarSections  CalendarSection[]
+  events            Event[]
+  tasks             Task[]
+  rules             Rule[]
+  calendarAccounts  CalendarAccount[]
+  habits            Habit[]
+  goals             Goal[]
+  recaps            Recap[]
+  journalEntries    JournalEntry[]
+  energyLogs        EnergyLog[]
+  notifications     Notification[]
+  shareLinks        ShareLink[]
+  eventComments     EventComment[]
+  meetingPolls      MeetingPoll[]
   suggestions       Suggestion[]
   preferences       UserPreferences?
   notificationPrefs NotificationPreference?
   pushSubscriptions PushSubscription[]
   dailyStats        DailyStats[]
+  focusSessions     FocusSession[]
+
+  // Focus timer daily goal (minutes)
+  dailyFocusGoalMins Int @default(120)
 }
 
 model Account {
@@ -88,29 +94,36 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+enum Chronotype {
+  LARK
+  OWL
+  THIRD_BIRD
+  UNKNOWN
+}
+
 // ============================================
 // CALENDAR ACCOUNT (External Connections)
 // ============================================
 
 model CalendarAccount {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   userId        String
   provider      Provider
   email         String
-  accessToken   String    @db.Text
-  refreshToken  String?   @db.Text
+  accessToken   String        @db.Text
+  refreshToken  String?       @db.Text
   expiresAt     DateTime?
   syncToken     String?
   webhookId     String?
   webhookExpiry DateTime?
-  isActive      Boolean   @default(true)
-  isPrimary     Boolean   @default(false)
+  isActive      Boolean       @default(true)
+  isPrimary     Boolean       @default(false)
   syncDirection SyncDirection @default(FULL)
-  syncInterval  Int       @default(15) // minutes
+  syncInterval  Int           @default(15) // minutes
   lastSyncAt    DateTime?
   lastError     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   calendars            Calendar[]
@@ -122,7 +135,7 @@ model CalendarAccount {
 }
 
 model SyncConflict {
-  id                String   @id @default(cuid())
+  id                String              @id @default(cuid())
   calendarAccountId String
   eventId           String?
   localData         Json
@@ -130,7 +143,7 @@ model SyncConflict {
   conflictType      ConflictType
   resolution        ConflictResolution?
   resolvedAt        DateTime?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime            @default(now())
 
   calendarAccount CalendarAccount @relation(fields: [calendarAccountId], references: [id], onDelete: Cascade)
 
@@ -138,13 +151,13 @@ model SyncConflict {
 }
 
 model WebhookSubscription {
-  id                String    @id @default(cuid())
+  id                String   @id @default(cuid())
   calendarAccountId String
   provider          Provider
   resourceId        String
-  channelId         String    @unique
+  channelId         String   @unique
   expiration        DateTime
-  createdAt         DateTime  @default(now())
+  createdAt         DateTime @default(now())
 
   calendarAccount CalendarAccount @relation(fields: [calendarAccountId], references: [id], onDelete: Cascade)
 
@@ -223,22 +236,22 @@ model CalendarSection {
 // ============================================
 
 model Event {
-  id          String   @id @default(cuid())
-  userId      String
-  calendarId  String
-  externalId  String?
+  id         String  @id @default(cuid())
+  userId     String
+  calendarId String
+  externalId String?
 
   // Core fields
   title       String
-  description String?  @db.Text
+  description String? @db.Text
   location    String?
 
   // Time-oriented model
-  startAt     DateTime
-  endAt       DateTime
-  duration    Int      // Duration in minutes
-  isAllDay    Boolean  @default(false)
-  timezone    String   @default("UTC")
+  startAt  DateTime
+  endAt    DateTime
+  duration Int // Duration in minutes
+  isAllDay Boolean  @default(false)
+  timezone String   @default("UTC")
 
   // Actual time tracking (for analytics)
   actualStartAt DateTime?
@@ -267,11 +280,11 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  calendar    Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
-  parentEvent Event?   @relation("RecurringEvents", fields: [parentEventId], references: [id], onDelete: Cascade)
-  childEvents Event[]  @relation("RecurringEvents")
-  tasks       Task[]   @relation("EventTasks")
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendar    Calendar       @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  parentEvent Event?         @relation("RecurringEvents", fields: [parentEventId], references: [id], onDelete: Cascade)
+  childEvents Event[]        @relation("RecurringEvents")
+  tasks       Task[]         @relation("EventTasks")
   attendees   Attendee[]
   comments    EventComment[]
 
@@ -333,20 +346,20 @@ enum SyncStatus {
 // ============================================
 
 model Task {
-  id          String   @id @default(cuid())
-  userId      String
+  id     String @id @default(cuid())
+  userId String
 
   // Core fields
   title       String
-  description String?  @db.Text
-  notes       String?  @db.Text
+  description String? @db.Text
+  notes       String? @db.Text
   url         String?
 
   // Time-oriented model
   dueAt           DateTime?
   plannedStartAt  DateTime?
-  plannedDuration Int?       // in minutes
-  actualDuration  Int?       // in minutes
+  plannedDuration Int? // in minutes
+  actualDuration  Int? // in minutes
 
   // Task properties
   priority Priority   @default(MEDIUM)
@@ -378,6 +391,7 @@ model Task {
   linkedEvent    Event?          @relation("EventTasks", fields: [linkedEventId], references: [id], onDelete: SetNull)
   checklistItems ChecklistItem[]
   timeBlocks     TimeBlock[]
+  focusSessions  FocusSession[]
 
   @@index([userId])
   @@index([parentTaskId])
@@ -414,7 +428,7 @@ model TimeBlock {
   eventId  String?
   startAt  DateTime
   endAt    DateTime
-  duration Int      // in minutes
+  duration Int // in minutes
 
   status TimeBlockStatus @default(SCHEDULED)
 
@@ -425,6 +439,29 @@ model TimeBlock {
 
   @@index([taskId])
   @@index([startAt, endAt])
+}
+
+// ============================================
+// FOCUS SESSIONS
+// ============================================
+
+model FocusSession {
+  id            String    @id @default(cuid())
+  userId        String
+  taskId        String?
+  startedAt     DateTime
+  endedAt       DateTime?
+  plannedMins   Int
+  actualMins    Int?
+  preset        String // "pomodoro_25_5", "pomodoro_50_10", "deep_90", "custom"
+  completed     Boolean   @default(false)
+  interruptions Int       @default(0)
+  createdAt     DateTime  @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task Task? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+
+  @@index([userId, startedAt])
 }
 
 enum TimeBlockStatus {
@@ -459,8 +496,8 @@ enum TaskStatus {
 // ============================================
 
 model Rule {
-  id          String @id @default(cuid())
-  userId      String
+  id     String @id @default(cuid())
+  userId String
 
   name        String
   description String?
@@ -468,9 +505,9 @@ model Rule {
   priority    Int     @default(0)
 
   // Rule type and schedule
-  ruleType    RuleType    @default(AUTO_SCHEDULE)
-  schedule    String?     // Cron expression for time-based rules
-  dayTypes    String[]    @default([]) // WEEKDAY, WEEKEND, etc.
+  ruleType RuleType @default(AUTO_SCHEDULE)
+  schedule String? // Cron expression for time-based rules
+  dayTypes String[] @default([]) // WEEKDAY, WEEKEND, etc.
 
   // JSON-based rule definition
   conditions Json
@@ -492,10 +529,10 @@ model Rule {
 }
 
 enum RuleType {
-  PROTECTION      // Protect time blocks
-  AUTO_SCHEDULE   // Auto-schedule tasks/habits
-  BREAK           // Insert breaks
-  CONDITIONAL     // If-then rules
+  PROTECTION // Protect time blocks
+  AUTO_SCHEDULE // Auto-schedule tasks/habits
+  BREAK // Insert breaks
+  CONDITIONAL // If-then rules
 }
 
 enum TriggerType {
@@ -597,25 +634,25 @@ enum SuggestionStatus {
 // ============================================
 
 model Habit {
-  id            String      @id @default(cuid())
+  id            String         @id @default(cuid())
   userId        String
   name          String
   description   String?
-  color         String      @default("#3B82F6")
+  color         String         @default("#3B82F6")
   icon          String?
-  habitType     HabitType   @default(FLEXIBLE)
+  habitType     HabitType      @default(FLEXIBLE)
   frequency     HabitFrequency @default(DAILY)
-  targetCount   Int         @default(1)
-  duration      Int?        // in minutes
-  preferredTime String?     // HH:mm format
-  preferredDays Int[]       @default([]) // 0-6 for Sun-Sat
-  isProtected   Boolean     @default(false)
-  isActive      Boolean     @default(true)
-  currentStreak Int         @default(0)
-  longestStreak Int         @default(0)
+  targetCount   Int            @default(1)
+  duration      Int? // in minutes
+  preferredTime String? // HH:mm format
+  preferredDays Int[]          @default([]) // 0-6 for Sun-Sat
+  isProtected   Boolean        @default(false)
+  isActive      Boolean        @default(true)
+  currentStreak Int            @default(0)
+  longestStreak Int            @default(0)
   goalId        String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 
   user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   goal       Goal?        @relation(fields: [goalId], references: [id], onDelete: SetNull)
@@ -627,15 +664,15 @@ model Habit {
 }
 
 model HabitLog {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   habitId   String
-  date      DateTime  @db.Date
-  completed Boolean   @default(false)
-  count     Int       @default(0)
-  duration  Int?      // actual duration in minutes
+  date      DateTime @db.Date
+  completed Boolean  @default(false)
+  count     Int      @default(0)
+  duration  Int? // actual duration in minutes
   notes     String?
-  mood      Int?      // 1-5 scale
-  createdAt DateTime  @default(now())
+  mood      Int? // 1-5 scale
+  createdAt DateTime @default(now())
 
   habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
 
@@ -645,11 +682,11 @@ model HabitLog {
 }
 
 model HabitBlock {
-  id       String   @id @default(cuid())
-  habitId  String
-  eventId  String?
-  startAt  DateTime
-  endAt    DateTime
+  id        String   @id @default(cuid())
+  habitId   String
+  eventId   String?
+  startAt   DateTime
+  endAt     DateTime
   createdAt DateTime @default(now())
 
   habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
@@ -659,24 +696,24 @@ model HabitBlock {
 }
 
 model Goal {
-  id           String     @id @default(cuid())
+  id           String         @id @default(cuid())
   userId       String
   title        String
   description  String?
   category     String?
   targetType   GoalTargetType @default(CUMULATIVE)
   targetValue  Float
-  currentValue Float      @default(0)
+  currentValue Float          @default(0)
   unit         String?
-  startDate    DateTime   @default(now())
+  startDate    DateTime       @default(now())
   endDate      DateTime?
-  status       GoalStatus @default(ACTIVE)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  status       GoalStatus     @default(ACTIVE)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
-  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  habits        Habit[]
-  progressLogs  GoalProgress[]
+  user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  habits       Habit[]
+  progressLogs GoalProgress[]
 
   @@index([userId])
   @@index([status])
@@ -697,20 +734,20 @@ model GoalProgress {
 }
 
 model DailyStats {
-  id                String   @id @default(cuid())
-  userId            String
-  date              DateTime @db.Date
-  totalScheduledMins Int     @default(0)
-  totalActualMins   Int      @default(0)
-  focusTimeMins     Int      @default(0)
-  meetingTimeMins   Int      @default(0)
-  breakTimeMins     Int      @default(0)
-  tasksPlanned      Int      @default(0)
-  tasksCompleted    Int      @default(0)
-  habitsCompleted   Int      @default(0)
-  overloadScore     Float?
-  balanceScore      Float?
-  createdAt         DateTime @default(now())
+  id                 String   @id @default(cuid())
+  userId             String
+  date               DateTime @db.Date
+  totalScheduledMins Int      @default(0)
+  totalActualMins    Int      @default(0)
+  focusTimeMins      Int      @default(0)
+  meetingTimeMins    Int      @default(0)
+  breakTimeMins      Int      @default(0)
+  tasksPlanned       Int      @default(0)
+  tasksCompleted     Int      @default(0)
+  habitsCompleted    Int      @default(0)
+  overloadScore      Float?
+  balanceScore       Float?
+  createdAt          DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -720,8 +757,8 @@ model DailyStats {
 }
 
 enum HabitType {
-  FIXED      // Same time every day
-  FLEXIBLE   // Anytime during the day
+  FIXED // Same time every day
+  FLEXIBLE // Anytime during the day
   CONDITIONAL // Based on triggers
 }
 
@@ -733,9 +770,9 @@ enum HabitFrequency {
 }
 
 enum GoalTargetType {
-  CUMULATIVE  // Sum over time
-  STREAK      // Consecutive days
-  COMPLETION  // One-time achievement
+  CUMULATIVE // Sum over time
+  STREAK // Consecutive days
+  COMPLETION // One-time achievement
 }
 
 enum GoalStatus {
@@ -760,7 +797,7 @@ model Recap {
   improvements String[]  @default([])
   insights     String[]  @default([])
   userNotes    String?
-  rating       Int?      // 1-5 scale
+  rating       Int? // 1-5 scale
   createdAt    DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -776,7 +813,7 @@ model JournalEntry {
   date      DateTime @db.Date
   prompt    String?
   content   String   @db.Text
-  mood      Int?     // 1-5 scale
+  mood      Int? // 1-5 scale
   tags      String[] @default([])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -791,10 +828,10 @@ model EnergyLog {
   id          String   @id @default(cuid())
   userId      String
   timestamp   DateTime @default(now())
-  energyLevel Int      // 1-5 scale
-  mood        Int?     // 1-5 scale
-  stress      Int?     // 1-5 scale
-  focus       Int?     // 1-5 scale
+  energyLevel Int // 1-5 scale
+  mood        Int? // 1-5 scale
+  stress      Int? // 1-5 scale
+  focus       Int? // 1-5 scale
   notes       String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -808,9 +845,9 @@ model NotificationPreference {
   userId          String   @unique
   enablePush      Boolean  @default(true)
   enableEmail     Boolean  @default(false)
-  quietHoursStart String?  // HH:mm format
-  quietHoursEnd   String?  // HH:mm format
-  typeSettings    Json?    // Per-notification-type settings
+  quietHoursStart String? // HH:mm format
+  quietHoursEnd   String? // HH:mm format
+  typeSettings    Json? // Per-notification-type settings
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -833,18 +870,18 @@ model PushSubscription {
 }
 
 model Notification {
-  id           String             @id @default(cuid())
+  id           String               @id @default(cuid())
   userId       String
   type         NotificationType
   title        String
   body         String?
   data         Json?
   priority     NotificationPriority @default(NORMAL)
-  status       NotificationStatus @default(PENDING)
+  status       NotificationStatus   @default(PENDING)
   scheduledFor DateTime?
   sentAt       DateTime?
   readAt       DateTime?
-  createdAt    DateTime           @default(now())
+  createdAt    DateTime             @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -890,22 +927,22 @@ enum NotificationStatus {
 // ============================================
 
 model UserPreferences {
-  id               String   @id @default(cuid())
-  userId           String   @unique
-  theme            String   @default("system")
-  accentColor      String   @default("#3B82F6")
-  language         String   @default("fr")
-  dateFormat       String   @default("dd/MM/yyyy")
-  timeFormat       String   @default("24h")
-  firstDayOfWeek   Int      @default(1) // 0=Sunday, 1=Monday
-  compactMode      Boolean  @default(false)
-  showWeekNumbers  Boolean  @default(false)
+  id                String  @id @default(cuid())
+  userId            String  @unique
+  theme             String  @default("system")
+  accentColor       String  @default("#3B82F6")
+  language          String  @default("fr")
+  dateFormat        String  @default("dd/MM/yyyy")
+  timeFormat        String  @default("24h")
+  firstDayOfWeek    Int     @default(1) // 0=Sunday, 1=Monday
+  compactMode       Boolean @default(false)
+  showWeekNumbers   Boolean @default(false)
   defaultCalendarId String?
   workingHoursStart String  @default("09:00")
   workingHoursEnd   String  @default("18:00")
-  weeklyWorkHours   Json?   // Per-day work schedule: { monday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] }, ... }
-  customShortcuts  Json?
-  dashboardWidgets Json?
+  weeklyWorkHours   Json? // Per-day work schedule: { monday: { enabled: true, slots: [{ start: "09:00", end: "17:00" }] }, ... }
+  customShortcuts   Json?
+  dashboardWidgets  Json?
 
   // Onboarding preferences
   connectedTaskManagers String[] @default([]) // asana, linear, clickup, etc.
@@ -913,24 +950,24 @@ model UserPreferences {
   planningTime          String   @default("morning") // morning or evening
   dailyWorkHours        Int      @default(8) // hours per day
 
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model ShareLink {
-  id           String         @id @default(cuid())
+  id           String          @id @default(cuid())
   userId       String
-  token        String         @unique @default(cuid())
+  token        String          @unique @default(cuid())
   type         ShareType
   permission   SharePermission @default(VIEW)
   resourceType String
   resourceId   String?
   expiresAt    DateTime?
-  accessCount  Int            @default(0)
-  isActive     Boolean        @default(true)
-  createdAt    DateTime       @default(now())
+  accessCount  Int             @default(0)
+  isActive     Boolean         @default(true)
+  createdAt    DateTime        @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -954,20 +991,20 @@ model EventComment {
 }
 
 model MeetingPoll {
-  id             String    @id @default(cuid())
-  userId         String
-  title          String
-  description    String?
-  proposedSlots  Json      // Array of { startAt, endAt }
-  duration       Int       // in minutes
-  deadline       DateTime?
-  finalSlot      Json?     // Selected slot
-  token          String    @unique @default(cuid())
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id            String    @id @default(cuid())
+  userId        String
+  title         String
+  description   String?
+  proposedSlots Json // Array of { startAt, endAt }
+  duration      Int // in minutes
+  deadline      DateTime?
+  finalSlot     Json? // Selected slot
+  token         String    @unique @default(cuid())
+  isActive      Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  user      User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   responses MeetingPollResponse[]
 
   @@index([userId])
@@ -979,7 +1016,7 @@ model MeetingPollResponse {
   pollId    String
   email     String
   name      String?
-  votes     Json     // Map of slotIndex -> availability
+  votes     Json // Map of slotIndex -> availability
   comment   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -991,12 +1028,12 @@ model MeetingPollResponse {
 }
 
 model PublicHoliday {
-  id       String   @id @default(cuid())
-  country  String
-  region   String?
-  name     String
-  date     DateTime @db.Date
-  type     String?  // national, regional, observance
+  id      String   @id @default(cuid())
+  country String
+  region  String?
+  name    String
+  date    DateTime @db.Date
+  type    String? // national, regional, observance
 
   @@unique([country, date, name])
   @@index([country])

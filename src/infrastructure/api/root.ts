@@ -18,7 +18,9 @@ import { suggestionRouter } from "@/features/intelligence/server/suggestion.rout
 import { aiSchedulerRouter } from "@/features/intelligence/server/aiScheduler.router";
 import { energyRouter } from "@/features/wellness/server/energy.router";
 import { emotionalMemoryRouter } from "@/features/wellness/server/emotionalMemory.router";
+import { chronotypeRouter } from "@/features/wellness/server/chronotype.router";
 import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrastination.router";
+import { focusSessionRouter } from "@/features/focus/server/focusSession.router";
 import { workloadRouter } from "@/features/analytics/server/workload.router";
 
 /**
@@ -65,7 +67,9 @@ export const appRouter = createTRPCRouter({
   // Advanced Features
   energy: energyRouter,
   emotionalMemory: emotionalMemoryRouter,
+  chronotype: chronotypeRouter,
   antiProcrastination: antiProcrastinationRouter,
+  focusSession: focusSessionRouter,
   workload: workloadRouter,
 });
 

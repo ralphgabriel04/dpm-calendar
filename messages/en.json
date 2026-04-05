@@ -770,5 +770,75 @@
     "permissionDenied": "Please allow notifications in your browser settings",
     "testSent": "Test notification sent!",
     "testFailed": "Failed to send test notification"
+  },
+  "chronotype": {
+    "quiz": {
+      "title": "Discover Your Chronotype",
+      "description": "Answer 12 quick questions so we can match your focus blocks to your natural energy peaks.",
+      "progress": "Question {current} of {total}",
+      "previous": "Back",
+      "next": "Next",
+      "submit": "See my chronotype",
+      "submitting": "Computing..."
+    },
+    "likert": {
+      "stronglyDisagree": "Strongly disagree",
+      "disagree": "Disagree",
+      "neutral": "Neutral",
+      "agree": "Agree",
+      "stronglyAgree": "Strongly agree"
+    },
+    "questions": {
+      "q1_wakeEasily": "I wake up easily before 7 AM without an alarm.",
+      "q2_morningAlert": "I feel mentally sharp within 30 minutes of waking.",
+      "q3_earlyExercise": "I prefer exercising in the early morning.",
+      "q4_breakfastHungry": "I am hungry for breakfast shortly after waking.",
+      "q5_morningProductive": "My best creative work happens before noon.",
+      "q6_earlyBed": "I feel sleepy by 10 PM on a normal day.",
+      "q7_nightEnergy": "I get a burst of energy after 8 PM.",
+      "q8_lateCreative": "My best ideas come to me late at night.",
+      "q9_afterDinnerFocus": "I can focus deeply after dinner.",
+      "q10_sleepInWeekends": "On weekends, I naturally sleep past 9 AM.",
+      "q11_eveningSocial": "I prefer social events held in the evening.",
+      "q12_hateMornings": "I dread waking up early, even when well rested."
+    },
+    "result": {
+      "yourChronotype": "Your chronotype is",
+      "retake": "Retake quiz",
+      "done": "Done"
+    },
+    "types": {
+      "LARK": {
+        "name": "Lark",
+        "description": "You peak early. We'll protect your mornings for deep work."
+      },
+      "OWL": {
+        "name": "Owl",
+        "description": "You peak late. We'll push focus blocks into the afternoon and evening."
+      },
+      "THIRD_BIRD": {
+        "name": "Third Bird",
+        "description": "You have a broad midday peak — the most common chronotype."
+      },
+      "UNKNOWN": {
+        "name": "Unknown",
+        "description": "Take the quiz so we can tailor your schedule."
+      }
+    }
+  },
+  "priorityCap": {
+    "title": "Daily priority cap reached",
+    "description": "You already have {count} priorities today \u2014 which should be deferred?",
+    "capLabel": "Cap: {cap}",
+    "settingsTitle": "Daily Priority Cap",
+    "settingsDescription": "Maximum number of priority (URGENT/HIGH) tasks per day.",
+    "current": "Current: {cap}",
+    "defer": "Defer",
+    "deferred": "Task deferred to tomorrow",
+    "deferFailed": "Failed to defer task",
+    "updated": "Daily priority cap updated",
+    "updateFailed": "Failed to update priority cap",
+    "close": "Close",
+    "none": "No priorities to defer."
   }
 }

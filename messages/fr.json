@@ -765,5 +765,75 @@
     "permissionDenied": "Veuillez autoriser les notifications dans les paramètres de votre navigateur",
     "testSent": "Notification test envoyée !",
     "testFailed": "Échec de l'envoi de la notification test"
+  },
+  "chronotype": {
+    "quiz": {
+      "title": "Découvrez votre chronotype",
+      "description": "Répondez à 12 questions rapides pour aligner vos blocs de focus sur vos pics d'énergie naturels.",
+      "progress": "Question {current} sur {total}",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "submit": "Voir mon chronotype",
+      "submitting": "Calcul..."
+    },
+    "likert": {
+      "stronglyDisagree": "Pas du tout d'accord",
+      "disagree": "Pas d'accord",
+      "neutral": "Neutre",
+      "agree": "D'accord",
+      "stronglyAgree": "Tout à fait d'accord"
+    },
+    "questions": {
+      "q1_wakeEasily": "Je me réveille facilement avant 7 h sans alarme.",
+      "q2_morningAlert": "Je me sens vif mentalement dans les 30 minutes suivant le réveil.",
+      "q3_earlyExercise": "Je préfère faire du sport tôt le matin.",
+      "q4_breakfastHungry": "J'ai faim pour le petit-déjeuner peu après le réveil.",
+      "q5_morningProductive": "Mon meilleur travail créatif se fait avant midi.",
+      "q6_earlyBed": "Je me sens somnolent vers 22 h un jour normal.",
+      "q7_nightEnergy": "J'ai un regain d'énergie après 20 h.",
+      "q8_lateCreative": "Mes meilleures idées me viennent tard le soir.",
+      "q9_afterDinnerFocus": "Je peux me concentrer profondément après le souper.",
+      "q10_sleepInWeekends": "Le week-end, je dors naturellement après 9 h.",
+      "q11_eveningSocial": "Je préfère les événements sociaux en soirée.",
+      "q12_hateMornings": "Je déteste me lever tôt, même bien reposé."
+    },
+    "result": {
+      "yourChronotype": "Votre chronotype est",
+      "retake": "Refaire le quiz",
+      "done": "Terminé"
+    },
+    "types": {
+      "LARK": {
+        "name": "Alouette",
+        "description": "Vous êtes au top le matin. Nous protégerons vos matinées pour le travail en profondeur."
+      },
+      "OWL": {
+        "name": "Hibou",
+        "description": "Vous êtes au top le soir. Nous placerons vos blocs de focus en après-midi et soirée."
+      },
+      "THIRD_BIRD": {
+        "name": "Oiseau médian",
+        "description": "Vous avez un large pic en milieu de journée — le chronotype le plus fréquent."
+      },
+      "UNKNOWN": {
+        "name": "Inconnu",
+        "description": "Faites le quiz pour personnaliser votre horaire."
+      }
+    }
+  },
+  "priorityCap": {
+    "title": "Limite quotidienne de priorit\u00e9s atteinte",
+    "description": "Vous avez d\u00e9j\u00e0 {count} priorit\u00e9s aujourd'hui \u2014 laquelle reporter ?",
+    "capLabel": "Limite : {cap}",
+    "settingsTitle": "Limite quotidienne de priorit\u00e9s",
+    "settingsDescription": "Nombre maximum de t\u00e2ches prioritaires (URGENT/HAUT) par jour.",
+    "current": "Actuel : {cap}",
+    "defer": "Reporter",
+    "deferred": "T\u00e2che report\u00e9e \u00e0 demain",
+    "deferFailed": "\u00c9chec du report de la t\u00e2che",
+    "updated": "Limite quotidienne mise \u00e0 jour",
+    "updateFailed": "\u00c9chec de la mise \u00e0 jour de la limite",
+    "close": "Fermer",
+    "none": "Aucune priorit\u00e9 \u00e0 reporter."
   }
 }
