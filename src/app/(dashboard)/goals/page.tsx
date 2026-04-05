@@ -6,7 +6,7 @@ import { trpc } from "@/infrastructure/trpc/client";
 import { cn } from "@/shared/lib/utils";
 
 // Components
-import { GoalCard, GoalModal, type GoalFormData } from "@/components/goals";
+import { GoalCard, GoalModal, type GoalFormData } from "@/features/goals/components";
 import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";
 import {

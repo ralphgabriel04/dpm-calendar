@@ -9,7 +9,7 @@ import { trpc } from "@/infrastructure/trpc/client";
 import { cn } from "@/shared/lib/utils";
 
 // Components
-import { HabitCard, HabitModal, StreakDisplay, type HabitFormData } from "@/components/habits";
+import { HabitCard, HabitModal, StreakDisplay, type HabitFormData } from "@/features/habits/components";
 import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";
 

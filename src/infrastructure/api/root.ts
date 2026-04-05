@@ -4,20 +4,20 @@ import { calendarRouter } from "@/server/api/routers/calendar";
 import { calendarSectionRouter } from "@/server/api/routers/calendarSection";
 import { taskRouter } from "@/server/api/routers/task";
 import { syncRouter } from "@/server/api/routers/sync";
-import { habitRouter } from "@/server/api/routers/habit";
-import { goalRouter } from "@/server/api/routers/goal";
+import { habitRouter } from "@/features/habits/server/habit.router";
+import { goalRouter } from "@/features/goals/server/goal.router";
 import { ruleRouter } from "@/server/api/routers/rule";
-import { notificationRouter } from "@/server/api/routers/notification";
+import { notificationRouter } from "@/features/notifications/server/notification.router";
 import { recapRouter } from "@/server/api/routers/recap";
 import { journalRouter } from "@/server/api/routers/journal";
 import { sharingRouter } from "@/server/api/routers/sharing";
-import { userRouter } from "@/server/api/routers/user";
+import { userRouter } from "@/features/auth/server/user.router";
 import { dashboardRouter } from "@/server/api/routers/dashboard";
 import { commentRouter } from "@/server/api/routers/comment";
 import { suggestionRouter } from "@/server/api/routers/suggestion";
 import { energyRouter } from "@/server/api/routers/energy";
 import { emotionalMemoryRouter } from "@/server/api/routers/emotionalMemory";
-import { antiProcrastinationRouter } from "@/server/api/routers/antiProcrastination";
+import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrastination.router";
 import { workloadRouter } from "@/server/api/routers/workload";
 
 /**
