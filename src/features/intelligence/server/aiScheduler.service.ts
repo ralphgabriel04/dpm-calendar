@@ -9,6 +9,11 @@ import {
   isAfter,
   differenceInMinutes,
 } from "date-fns";
+import { Chronotype } from "@prisma/client";
+import {
+  getEnergyCurveForChronotype,
+  FLAT_CURVE,
+} from "@/features/wellness/lib/chronotype";
 
 // Types
 export interface TimeBlockProposal {
@@ -192,6 +197,11 @@ export async function planMyDay(
   // 6. Fetch energy patterns to refine energy mapping
   const energyByHour = await getUserEnergyPatterns(userId, workStart, workEnd);
 
+  // 6b. Fetch user chronotype and derive per-hour energy curve (#93)
+  // Used to bias focus blocks toward the user's circadian peak.
+  // UNKNOWN chronotype returns a flat 1.0 curve → backward compat.
+  const chronotypeCurve = await getUserChronotypeCurve(userId);
+
   // 7. Match tasks to slots based on energy + priority
   const proposals: TimeBlockProposal[] = [];
   const unscheduled: { taskId: string; title: string; reason: string }[] = [];
@@ -209,7 +219,8 @@ export async function planMyDay(
       taskEnergy,
       energyByHour,
       task.priority || "MEDIUM",
-      task.dueAt
+      task.dueAt,
+      chronotypeCurve
     );
 
     if (bestSlot) {
@@ -560,6 +571,21 @@ async function getUserEnergyPatterns(
   return result;
 }
 
+/**
+ * Fetch the user's chronotype and return its per-hour energy curve.
+ * Ticket #93 — UNKNOWN falls back to FLAT_CURVE (no scoring change).
+ */
+async function getUserChronotypeCurve(
+  userId: string
+): Promise<Record<number, number>> {
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { chronotype: true },
+  });
+  const ct: Chronotype = user?.chronotype ?? Chronotype.UNKNOWN;
+  return getEnergyCurveForChronotype(ct);
+}
+
 function findBestSlotForTask(
   availableSlots: AvailableSlot[],
   usedSlots: { start: Date; end: Date }[],
@@ -567,7 +593,8 @@ function findBestSlotForTask(
   taskEnergy: string,
   energyByHour: Record<number, "HIGH" | "MEDIUM" | "LOW">,
   priority: string,
-  dueAt: Date | null
+  dueAt: Date | null,
+  chronotypeCurve: Record<number, number> = FLAT_CURVE
 ): { start: Date; score: number; reason: string; energyMatch: "optimal" | "good" | "acceptable" } | null {
   let bestResult: {
     start: Date;
@@ -613,6 +640,11 @@ function findBestSlotForTask(
           energyScore = 5;
           energyMatch = "acceptable";
         }
+
+        // Chronotype multiplier (Ticket #93): bias score toward circadian peak.
+        // UNKNOWN chronotype → FLAT_CURVE (1.0) → no-op, backward compatible.
+        const chronoMultiplier = chronotypeCurve[hour] ?? 1.0;
+        energyScore = energyScore * chronoMultiplier;
 
         // Priority bonus
         let priorityBonus = 0;
