@@ -821,6 +821,26 @@
       }
     }
   },
+  "experiments": {
+    "title": "Expériences N-of-1",
+    "description": "Testez des hypothèses sur vous-même. Mesurez, intervenez, notez le résultat.",
+    "newExperiment": "Nouveau",
+    "cancel": "Annuler",
+    "create": "Démarrer l'expérience",
+    "creating": "Démarrage...",
+    "loading": "Chargement...",
+    "empty": "Aucune expérience. Lancez-en une pour voir l'impact de vos ajustements.",
+    "hypothesisPlaceholder": "ex : Bloquer les courriels jusqu'à 10 h améliore ma concentration matinale",
+    "metricPlaceholder": "Métrique (ex : minutes de travail profond)",
+    "baselinePlaceholder": "Valeur de base (optionnel)",
+    "interventionValuePrompt": "Quelle était la valeur d'intervention ? (laisser vide pour ignorer)",
+    "markSuccess": "Succès",
+    "markFailure": "Échec",
+    "markInconclusive": "Non concluant",
+    "delete": "Supprimer",
+    "metricLabel": "Métrique",
+    "baselineLabel": "Base"
+  },
   "cbtReframes": {
     "title": "Recadrage",
     "microActionLabel": "Essayez ceci",

@@ -826,6 +826,26 @@
       }
     }
   },
+  "experiments": {
+    "title": "N-of-1 Experiments",
+    "description": "Test hypotheses on yourself. Log a metric, try an intervention, record the result.",
+    "newExperiment": "New",
+    "cancel": "Cancel",
+    "create": "Start experiment",
+    "creating": "Starting...",
+    "loading": "Loading...",
+    "empty": "No experiments yet. Start one to see how your tweaks perform.",
+    "hypothesisPlaceholder": "e.g. Blocking email until 10 AM improves my morning focus",
+    "metricPlaceholder": "Metric (e.g. deep work minutes)",
+    "baselinePlaceholder": "Baseline value (optional)",
+    "interventionValuePrompt": "What was the intervention value? (leave blank to skip)",
+    "markSuccess": "Success",
+    "markFailure": "Failure",
+    "markInconclusive": "Inconclusive",
+    "delete": "Delete",
+    "metricLabel": "Metric",
+    "baselineLabel": "Baseline"
+  },
   "cbtReframes": {
     "title": "Reframe",
     "microActionLabel": "Try this",

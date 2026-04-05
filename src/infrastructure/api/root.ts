@@ -16,12 +16,14 @@ import { dashboardRouter } from "@/features/analytics/server/dashboard.router";
 import { commentRouter } from "@/features/collaboration/server/comment.router";
 import { suggestionRouter } from "@/features/intelligence/server/suggestion.router";
 import { aiSchedulerRouter } from "@/features/intelligence/server/aiScheduler.router";
+import { experimentRouter } from "@/features/intelligence/server/experiment.router";
 import { energyRouter } from "@/features/wellness/server/energy.router";
 import { emotionalMemoryRouter } from "@/features/wellness/server/emotionalMemory.router";
 import { chronotypeRouter } from "@/features/wellness/server/chronotype.router";
 import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrastination.router";
 import { focusSessionRouter } from "@/features/focus/server/focusSession.router";
 import { workloadRouter } from "@/features/analytics/server/workload.router";
+import { meetingLoadRouter } from "@/features/analytics/server/meetingLoad.router";
 
 /**
  * This is the primary router for your server.
@@ -63,6 +65,7 @@ export const appRouter = createTRPCRouter({
 
   // AI Scheduling Engine
   aiScheduler: aiSchedulerRouter,
+  experiment: experimentRouter,
 
   // Advanced Features
   energy: energyRouter,
@@ -71,6 +74,7 @@ export const appRouter = createTRPCRouter({
   antiProcrastination: antiProcrastinationRouter,
   focusSession: focusSessionRouter,
   workload: workloadRouter,
+  meetingLoad: meetingLoadRouter,
 });
 
 // export type definition of API
