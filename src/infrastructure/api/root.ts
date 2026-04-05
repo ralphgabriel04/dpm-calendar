@@ -12,13 +12,13 @@ import { recapRouter } from "@/features/wellness/server/recap.router";
 import { journalRouter } from "@/features/wellness/server/journal.router";
 import { sharingRouter } from "@/server/api/routers/sharing";
 import { userRouter } from "@/features/auth/server/user.router";
-import { dashboardRouter } from "@/server/api/routers/dashboard";
+import { dashboardRouter } from "@/features/analytics/server/dashboard.router";
 import { commentRouter } from "@/server/api/routers/comment";
 import { suggestionRouter } from "@/features/intelligence/server/suggestion.router";
 import { energyRouter } from "@/features/wellness/server/energy.router";
 import { emotionalMemoryRouter } from "@/features/wellness/server/emotionalMemory.router";
 import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrastination.router";
-import { workloadRouter } from "@/server/api/routers/workload";
+import { workloadRouter } from "@/features/analytics/server/workload.router";
 
 /**
  * This is the primary router for your server.

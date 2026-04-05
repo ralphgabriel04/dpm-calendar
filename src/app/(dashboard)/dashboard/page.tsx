@@ -14,7 +14,7 @@ import {
   UpcomingDeadlinesWidget,
   WorkloadBalanceWidget,
   ProductivityScoreWidget,
-} from "@/components/dashboard-v2";
+} from "@/features/analytics/components/dashboard-v2";
 
 // Loading skeleton
 function DashboardSkeleton() {
