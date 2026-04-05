@@ -217,37 +217,3 @@ export function expandRecurringEvents(
   return result;
 }
 
-/**
- * Check if an event is a recurring parent event
- */
-export function isRecurringParent(event: RecurringEvent): boolean {
-  return !!event.rrule && !event.parentEventId;
-}
-
-/**
- * Get the next occurrence of a recurring event after a given date
- */
-export function getNextOccurrence(event: RecurringEvent, after: Date = new Date()): Date | null {
-  if (!event.rrule) return null;
-
-  try {
-    const rule = parseRRule(event.rrule, event.startAt);
-    const nextOccurrence = rule.after(after, false);
-
-    if (nextOccurrence) {
-      // Preserve the original time
-      const result = new Date(nextOccurrence);
-      result.setHours(
-        event.startAt.getHours(),
-        event.startAt.getMinutes(),
-        event.startAt.getSeconds(),
-        event.startAt.getMilliseconds()
-      );
-      return result;
-    }
-
-    return null;
-  } catch {
-    return null;
-  }
-}

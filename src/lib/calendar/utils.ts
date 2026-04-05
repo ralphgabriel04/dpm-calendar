@@ -11,7 +11,6 @@ import {
   isSameDay,
   isWithinInterval,
   differenceInMinutes,
-  addMinutes,
   setHours,
   setMinutes,
 } from "date-fns";
@@ -242,27 +241,3 @@ export function getAllDayEvents(
   );
 }
 
-// Create a time slot from click position
-export function getTimeFromPosition(
-  yPosition: number,
-  containerTop: number,
-  hourHeight: number,
-  startHour: number = 0,
-  roundToMinutes: number = 15
-): Date {
-  const offsetY = yPosition - containerTop;
-  const totalMinutes = (offsetY / hourHeight) * 60 + startHour * 60;
-  const roundedMinutes =
-    Math.round(totalMinutes / roundToMinutes) * roundToMinutes;
-
-  const hours = Math.floor(roundedMinutes / 60);
-  const minutes = roundedMinutes % 60;
-
-  const date = new Date();
-  return setMinutes(setHours(date, hours), minutes);
-}
-
-// Generate default event duration (1 hour)
-export function getDefaultEventEnd(start: Date, durationMinutes: number = 60): Date {
-  return addMinutes(start, durationMinutes);
-}
