@@ -10,11 +10,16 @@ import {
   Calendar,
   Clock,
   Sparkles,
+  Target,
+  ArrowUp,
+  ArrowDown,
+  Plus,
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import { EnergyCheck } from "@/features/home/components";
 import { cn } from "@/shared/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
 
 interface Task {
   id: string;
@@ -26,24 +31,28 @@ interface Task {
 
 interface MorningRitualProps {
   yesterdayTasks: Task[];
+  todayTasks?: Task[];
   onKeepTask: (taskId: string) => void;
   onRescheduleTask: (taskId: string, date: Date) => void;
   onDeleteTask: (taskId: string) => void;
   onSetEnergyLevel: (level: number) => void;
   onSetDayFocus: (focus: string) => void;
+  onSetTopTasks?: (taskIds: string[]) => void;
   onComplete: () => void;
   onClose: () => void;
 }
 
-type Step = "energy" | "yesterday" | "focus";
+type Step = "energy" | "yesterday" | "top3" | "focus";
 
 export function MorningRitual({
   yesterdayTasks,
+  todayTasks = [],
   onKeepTask,
   onRescheduleTask,
   onDeleteTask,
   onSetEnergyLevel,
   onSetDayFocus,
+  onSetTopTasks,
   onComplete,
   onClose,
 }: MorningRitualProps) {
@@ -51,8 +60,13 @@ export function MorningRitual({
   const [energyLevel, setEnergyLevel] = useState<number | undefined>();
   const [dayFocus, setDayFocus] = useState("");
   const [processedTasks, setProcessedTasks] = useState<Set<string>>(new Set());
+  const [topTasks, setTopTasks] = useState<string[]>([]);
 
-  const steps: Step[] = ["energy", "yesterday", "focus"];
+  // Read priority cap (owned by Agent 4 / ticket #142)
+  const { data: capData } = trpc.user.getDailyPriorityCap.useQuery();
+  const priorityCap = capData?.dailyPriorityCap ?? 3;
+
+  const steps: Step[] = ["energy", "yesterday", "top3", "focus"];
   const currentStepIndex = steps.indexOf(step);
 
   const canProceed = () => {
@@ -60,7 +74,12 @@ export function MorningRitual({
       case "energy":
         return energyLevel !== undefined;
       case "yesterday":
-        return processedTasks.size === yesterdayTasks.length || yesterdayTasks.length === 0;
+        return (
+          processedTasks.size === yesterdayTasks.length ||
+          yesterdayTasks.length === 0
+        );
+      case "top3":
+        return true;
       case "focus":
         return dayFocus.trim().length > 0;
     }
@@ -69,6 +88,9 @@ export function MorningRitual({
   const handleNext = () => {
     if (step === "energy" && energyLevel) {
       onSetEnergyLevel(energyLevel);
+    }
+    if (step === "top3" && onSetTopTasks) {
+      onSetTopTasks(topTasks);
     }
     if (step === "focus" && dayFocus) {
       onSetDayFocus(dayFocus);
@@ -88,7 +110,10 @@ export function MorningRitual({
     }
   };
 
-  const handleTaskAction = (taskId: string, action: "keep" | "reschedule" | "delete") => {
+  const handleTaskAction = (
+    taskId: string,
+    action: "keep" | "reschedule" | "delete"
+  ) => {
     setProcessedTasks((prev) => {
       const newSet = new Set(prev);
       newSet.add(taskId);
@@ -107,6 +132,28 @@ export function MorningRitual({
         onDeleteTask(taskId);
         break;
     }
+  };
+
+  const toggleTopTask = (taskId: string) => {
+    setTopTasks((prev) => {
+      if (prev.includes(taskId)) {
+        return prev.filter((id) => id !== taskId);
+      }
+      if (prev.length >= priorityCap) {
+        return prev;
+      }
+      return [...prev, taskId];
+    });
+  };
+
+  const moveTopTask = (index: number, direction: -1 | 1) => {
+    setTopTasks((prev) => {
+      const newArr = [...prev];
+      const newIndex = index + direction;
+      if (newIndex < 0 || newIndex >= newArr.length) return prev;
+      [newArr[index], newArr[newIndex]] = [newArr[newIndex], newArr[index]];
+      return newArr;
+    });
   };
 
   const renderStep = () => {
@@ -181,7 +228,9 @@ export function MorningRitual({
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={() => handleTaskAction(task.id, "reschedule")}
+                            onClick={() =>
+                              handleTaskAction(task.id, "reschedule")
+                            }
                             className="flex-1"
                           >
                             Demain
@@ -210,13 +259,113 @@ export function MorningRitual({
           </div>
         );
 
+      case "top3":
+        return (
+          <div className="space-y-6">
+            <div className="text-center">
+              <Target className="h-12 w-12 mx-auto text-violet-500 mb-4" />
+              <h2 className="text-xl md:text-2xl font-bold mb-2">
+                Top {priorityCap} priorités
+              </h2>
+              <p className="text-muted-foreground text-sm">
+                Choisis jusqu&apos;à {priorityCap} tâche{priorityCap > 1 ? "s" : ""} prioritaire{priorityCap > 1 ? "s" : ""} pour aujourd&apos;hui
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Limite quotidienne: {priorityCap}
+              </p>
+            </div>
+
+            {/* Selected top tasks with reorder */}
+            {topTasks.length > 0 && (
+              <div className="space-y-2">
+                <div className="text-xs font-medium text-muted-foreground">
+                  Sélectionnées ({topTasks.length}/{priorityCap})
+                </div>
+                {topTasks.map((taskId, idx) => {
+                  const task = todayTasks.find((t) => t.id === taskId);
+                  if (!task) return null;
+                  return (
+                    <div
+                      key={taskId}
+                      className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 border border-primary/30"
+                    >
+                      <span className="text-sm font-bold text-primary w-5">
+                        {idx + 1}
+                      </span>
+                      <span className="flex-1 text-sm font-medium truncate">
+                        {task.title}
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => moveTopTask(idx, -1)}
+                          disabled={idx === 0}
+                          className="p-1 rounded hover:bg-background disabled:opacity-30"
+                          aria-label="Move up"
+                        >
+                          <ArrowUp className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => moveTopTask(idx, 1)}
+                          disabled={idx === topTasks.length - 1}
+                          className="p-1 rounded hover:bg-background disabled:opacity-30"
+                          aria-label="Move down"
+                        >
+                          <ArrowDown className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => toggleTopTask(taskId)}
+                          className="p-1 rounded hover:bg-background text-destructive"
+                          aria-label="Remove"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Available tasks */}
+            <div className="space-y-2 max-h-[30vh] overflow-auto">
+              <div className="text-xs font-medium text-muted-foreground">
+                Tâches disponibles
+              </div>
+              {todayTasks.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Aucune tâche disponible
+                </p>
+              ) : (
+                todayTasks
+                  .filter((t) => !topTasks.includes(t.id))
+                  .map((task) => (
+                    <button
+                      key={task.id}
+                      onClick={() => toggleTopTask(task.id)}
+                      disabled={topTasks.length >= priorityCap}
+                      className={cn(
+                        "w-full flex items-center gap-2 p-3 rounded-lg border bg-card text-left transition-colors",
+                        "hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                      )}
+                    >
+                      <Plus className="h-4 w-4 text-muted-foreground" />
+                      <span className="flex-1 text-sm truncate">
+                        {task.title}
+                      </span>
+                    </button>
+                  ))
+              )}
+            </div>
+          </div>
+        );
+
       case "focus":
         return (
           <div className="space-y-6 text-center">
             <div>
               <Sparkles className="h-12 w-12 mx-auto text-violet-500 mb-4" />
               <h2 className="text-xl md:text-2xl font-bold mb-2">
-                Focus du jour
+                Intention du jour
               </h2>
               <p className="text-muted-foreground text-sm">
                 Quelle est ta priorite principale aujourd&apos;hui?

@@ -901,6 +901,25 @@
     "select": "Select",
     "noTask": "Focus without a task"
   },
+  "morningRitual": {
+    "title": "Morning Ritual",
+    "greeting": "Good morning!",
+    "energyPrompt": "How are you feeling this morning?",
+    "yesterday": "Yesterday's tasks",
+    "top3Title": "Top {cap} priorities",
+    "top3Description": "Pick up to {cap} priority tasks for today",
+    "dailyCap": "Daily limit: {cap}",
+    "selected": "Selected",
+    "available": "Available tasks",
+    "noTasks": "No tasks available",
+    "intention": "Today's intention",
+    "intentionPrompt": "What is your main priority today?",
+    "intentionPlaceholder": "E.g. Finish the client presentation",
+    "intentionHint": "Focus on one important thing",
+    "next": "Next",
+    "back": "Back",
+    "start": "Start the day"
+  },
   "focusRing": {
     "title": "Today's Focus",
     "goal": "Goal: {mins} min",

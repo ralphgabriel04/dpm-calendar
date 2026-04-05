@@ -896,6 +896,25 @@
     "select": "S\u00e9lectionner",
     "noTask": "Focus sans t\u00e2che"
   },
+  "morningRitual": {
+    "title": "Rituel du matin",
+    "greeting": "Bonjour !",
+    "energyPrompt": "Comment te sens-tu ce matin ?",
+    "yesterday": "T\u00e2ches d'hier",
+    "top3Title": "Top {cap} priorit\u00e9s",
+    "top3Description": "Choisis jusqu'\u00e0 {cap} t\u00e2ches prioritaires pour aujourd'hui",
+    "dailyCap": "Limite quotidienne : {cap}",
+    "selected": "S\u00e9lectionn\u00e9es",
+    "available": "T\u00e2ches disponibles",
+    "noTasks": "Aucune t\u00e2che disponible",
+    "intention": "Intention du jour",
+    "intentionPrompt": "Quelle est ta priorit\u00e9 principale aujourd'hui ?",
+    "intentionPlaceholder": "Ex : Finir la pr\u00e9sentation pour le client",
+    "intentionHint": "Concentre-toi sur une seule chose importante",
+    "next": "Suivant",
+    "back": "Retour",
+    "start": "Commencer la journ\u00e9e"
+  },
   "focusRing": {
     "title": "Focus aujourd'hui",
     "goal": "Objectif : {mins} min",
