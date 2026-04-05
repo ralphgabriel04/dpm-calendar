@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Command } from "cmdk";
 import {
@@ -17,9 +17,13 @@ import {
   Sun,
   Moon,
   Laptop,
+  Zap,
+  CalendarPlus,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
+import { parseQuickCapture, formatParsedDate } from "@/shared/lib/nlp-parser";
+import { trpc } from "@/infrastructure/trpc/client";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -38,7 +42,38 @@ interface CommandItem {
 export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const router = useRouter();
   const [search, setSearch] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const { openEventModal, openTaskModal } = useUIStore();
+
+  // tRPC mutation for quick task creation
+  const createTaskMutation = trpc.task.create.useMutation();
+
+  // Parse the search input for NLP date detection
+  const quickCapture = useMemo(() => {
+    if (search.length < 3) return null;
+    const result = parseQuickCapture(search);
+    return result.isActionable ? result : null;
+  }, [search]);
+
+  // Handle quick task creation
+  const handleQuickCreate = useCallback(async () => {
+    if (!quickCapture) return;
+
+    setIsCreating(true);
+    try {
+      await createTaskMutation.mutateAsync({
+        title: quickCapture.title,
+        dueAt: quickCapture.parsedDate || undefined,
+        priority: "MEDIUM",
+      });
+      onOpenChange(false);
+      setSearch("");
+    } catch (error) {
+      console.error("Failed to create task:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  }, [quickCapture, createTaskMutation, onOpenChange]);
 
   const commands: CommandItem[] = [
     // Navigation
@@ -190,6 +225,40 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             <Command.Empty className="py-6 text-center text-sm text-muted-foreground">
               Aucun résultat trouvé.
             </Command.Empty>
+
+            {/* Quick Capture - NLP detected task */}
+            {quickCapture && quickCapture.confidence > 0.3 && (
+              <Command.Group heading="Capture rapide" className="px-2 py-1.5">
+                <Command.Item
+                  value={`quick-create-${quickCapture.title}`}
+                  onSelect={handleQuickCreate}
+                  disabled={isCreating}
+                  className="flex items-center gap-3 rounded-md px-2 py-3 text-sm cursor-pointer aria-selected:bg-violet-500/10 aria-selected:text-violet-600 dark:aria-selected:text-violet-400 border border-transparent aria-selected:border-violet-500/30"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-violet-500/10 flex items-center justify-center">
+                    <Zap className="h-4 w-4 text-violet-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium truncate">{quickCapture.title}</div>
+                    {quickCapture.parsedDate && (
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                        <CalendarPlus className="h-3 w-3" />
+                        <span>{formatParsedDate(quickCapture.parsedDate, quickCapture.language)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-shrink-0">
+                    {isCreating ? (
+                      <div className="w-4 h-4 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
+                        ↵
+                      </kbd>
+                    )}
+                  </div>
+                </Command.Item>
+              </Command.Group>
+            )}
 
             {/* Group: Navigation */}
             <Command.Group heading="Navigation" className="px-2 py-1.5">

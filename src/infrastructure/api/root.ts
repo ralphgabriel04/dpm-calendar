@@ -15,6 +15,7 @@ import { userRouter } from "@/features/auth/server/user.router";
 import { dashboardRouter } from "@/features/analytics/server/dashboard.router";
 import { commentRouter } from "@/features/collaboration/server/comment.router";
 import { suggestionRouter } from "@/features/intelligence/server/suggestion.router";
+import { aiSchedulerRouter } from "@/features/intelligence/server/aiScheduler.router";
 import { energyRouter } from "@/features/wellness/server/energy.router";
 import { emotionalMemoryRouter } from "@/features/wellness/server/emotionalMemory.router";
 import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrastination.router";
@@ -57,6 +58,9 @@ export const appRouter = createTRPCRouter({
   // Comments & Suggestions
   comment: commentRouter,
   suggestion: suggestionRouter,
+
+  // AI Scheduling Engine
+  aiScheduler: aiSchedulerRouter,
 
   // Advanced Features
   energy: energyRouter,

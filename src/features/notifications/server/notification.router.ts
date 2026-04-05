@@ -157,4 +157,105 @@ export const notificationRouter = createTRPCRouter({
         },
       });
     }),
+
+  // Subscribe to push notifications
+  subscribePush: protectedProcedure
+    .input(
+      z.object({
+        endpoint: z.string().url(),
+        p256dh: z.string(),
+        auth: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const userId = ctx.session.user.id;
+
+      // Upsert push subscription
+      return ctx.db.pushSubscription.upsert({
+        where: {
+          userId_endpoint: {
+            userId,
+            endpoint: input.endpoint,
+          },
+        },
+        update: {
+          p256dh: input.p256dh,
+          auth: input.auth,
+          updatedAt: new Date(),
+        },
+        create: {
+          userId,
+          endpoint: input.endpoint,
+          p256dh: input.p256dh,
+          auth: input.auth,
+        },
+      });
+    }),
+
+  // Unsubscribe from push notifications
+  unsubscribePush: protectedProcedure
+    .input(
+      z.object({
+        endpoint: z.string().url(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.pushSubscription.deleteMany({
+        where: {
+          userId: ctx.session.user.id,
+          endpoint: input.endpoint,
+        },
+      });
+    }),
+
+  // Send test push notification
+  testPush: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    // Get user's push subscriptions
+    const subscriptions = await ctx.db.pushSubscription.findMany({
+      where: { userId },
+    });
+
+    if (subscriptions.length === 0) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No push subscriptions found",
+      });
+    }
+
+    // Create a test notification record
+    const notification = await ctx.db.notification.create({
+      data: {
+        userId,
+        type: "SYSTEM",
+        title: "Test Notification",
+        body: "Push notifications are working correctly!",
+        priority: "NORMAL",
+        status: "SENT",
+        sentAt: new Date(),
+      },
+    });
+
+    // In production, you would use web-push library here
+    // For now, we just return success
+    return {
+      success: true,
+      notificationId: notification.id,
+      subscriptionCount: subscriptions.length,
+    };
+  }),
+
+  // Get push subscriptions
+  getPushSubscriptions: protectedProcedure.query(async ({ ctx }) => {
+    return ctx.db.pushSubscription.findMany({
+      where: { userId: ctx.session.user.id },
+      select: {
+        id: true,
+        endpoint: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }),
 });

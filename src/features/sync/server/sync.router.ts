@@ -302,9 +302,10 @@ export const syncRouter = createTRPCRouter({
               refreshToken: newTokens.refreshToken
                 ? encryptToken(newTokens.refreshToken)
                 : account.refreshToken, // Keep existing if not rotated
+              // Default to 1 hour expiry if not provided (standard OAuth token lifetime)
               expiresAt: newTokens.expiryDate
                 ? new Date(newTokens.expiryDate)
-                : null,
+                : new Date(Date.now() + 3600 * 1000),
             },
           });
         }
@@ -487,9 +488,10 @@ export const syncRouter = createTRPCRouter({
             refreshToken: newTokens.refreshToken
               ? encryptToken(newTokens.refreshToken)
               : account.refreshToken, // Keep existing if not rotated
+            // Default to 1 hour expiry if not provided (standard OAuth token lifetime)
             expiresAt: newTokens.expiryDate
               ? new Date(newTokens.expiryDate)
-              : null,
+              : new Date(Date.now() + 3600 * 1000),
           },
         });
       }
@@ -595,9 +597,10 @@ export const syncRouter = createTRPCRouter({
             refreshToken: newTokens.refreshToken
               ? encryptToken(newTokens.refreshToken)
               : account.refreshToken, // Keep existing if not rotated
+            // Default to 1 hour expiry if not provided (standard OAuth token lifetime)
             expiresAt: newTokens.expiryDate
               ? new Date(newTokens.expiryDate)
-              : null,
+              : new Date(Date.now() + 3600 * 1000),
           },
         });
       }
@@ -772,12 +775,12 @@ async function pushToGoogle(
   let failed = 0;
 
   // Find events that need to be pushed
+  // Note: Don't filter by provider - calendarId already determines the target provider
   const pendingEvents = await db.event.findMany({
     where: {
       calendarId: calendar.id,
       userId,
       syncStatus: "PENDING_PUSH",
-      provider: "GOOGLE",
     },
   });
 
@@ -865,12 +868,12 @@ async function pushToMicrosoft(
   let failed = 0;
 
   // Find events that need to be pushed
+  // Note: Don't filter by provider - calendarId already determines the target provider
   const pendingEvents = await db.event.findMany({
     where: {
       calendarId: calendar.id,
       userId,
       syncStatus: "PENDING_PUSH",
-      provider: "MICROSOFT",
     },
   });
 
@@ -1045,7 +1048,13 @@ async function syncGoogleEventWithConflictDetection(
       return { conflict: true };
     }
 
-    // No conflict, update local with remote data
+    if (hasLocalChanges && !hasRemoteChanges) {
+      // Local has pending changes, remote hasn't changed - preserve local changes
+      // The PUSH phase will send local changes to remote
+      return { conflict: false };
+    }
+
+    // Remote has changes (or nothing changed) - safe to update local with remote data
     await db.event.update({
       where: { id: existingEvent.id },
       data: {
@@ -1154,6 +1163,13 @@ async function syncMicrosoftEventWithConflictDetection(
       return { conflict: true };
     }
 
+    if (hasLocalChanges && !hasRemoteChanges) {
+      // Local has pending changes, remote hasn't changed - preserve local changes
+      // The PUSH phase will send local changes to remote
+      return { conflict: false };
+    }
+
+    // Remote has changes (or nothing changed) - safe to update local with remote data
     await db.event.update({
       where: { id: existingEvent.id },
       data: {

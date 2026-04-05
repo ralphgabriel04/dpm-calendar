@@ -639,5 +639,136 @@
       "privacy": "Privacy Policy",
       "home": "Back to Home"
     }
+  },
+  "quickOnboarding": {
+    "skip": "Skip for now",
+    "next": "Continue",
+    "previous": "Back",
+    "step": "Step {current} of {total}",
+    "welcome": {
+      "title": "Welcome to DPM Calendar!",
+      "subtitle": "Let's get you set up in under 2 minutes",
+      "connectCalendar": "Connect your calendar to get started",
+      "calendarNote": "Your calendar data stays private and secure"
+    },
+    "tasks": {
+      "title": "What's on your mind?",
+      "subtitle": "Add a few tasks you want to accomplish",
+      "placeholder": "e.g., Review project proposal",
+      "addMore": "Add another task...",
+      "add": "Add",
+      "tip": "Tip: Start with your most important tasks",
+      "created": "{count} tasks created!"
+    },
+    "energy": {
+      "title": "How's your energy?",
+      "subtitle": "This helps us schedule tasks at the right time",
+      "levels": {
+        "veryLow": "Very Low - Need rest",
+        "low": "Low - Taking it easy",
+        "medium": "Medium - Steady pace",
+        "high": "High - Feeling good",
+        "veryHigh": "Very High - Ready for anything!"
+      },
+      "tip": "Tip: Be honest - we'll match tasks to your energy",
+      "logged": "Energy level logged!"
+    },
+    "plan": {
+      "title": "Your Smart Plan",
+      "subtitle": "Here's how we'd schedule your tasks",
+      "generating": "Creating your personalized plan...",
+      "noTasks": "Add some tasks to see your smart plan",
+      "tip": "Tip: You can always adjust this in the dashboard",
+      "match": {
+        "optimal": "Optimal",
+        "good": "Good",
+        "acceptable": "OK"
+      }
+    },
+    "complete": {
+      "button": "Get Started",
+      "success": "Welcome aboard! Let's make today productive."
+    },
+    "errors": {
+      "calendarConnection": "Failed to connect calendar",
+      "complete": "Something went wrong. Please try again."
+    }
+  },
+  "mcii": {
+    "header": "Morning Intention (MCII)",
+    "skip": "Skip",
+    "next": "Continue",
+    "previous": "Back",
+    "step": "Step {current} of {total}",
+    "wish": {
+      "title": "What do you wish to achieve?",
+      "subtitle": "Start with your most important goal for today",
+      "placeholder": "e.g., Complete the project proposal and send it to the client",
+      "linkGoal": "Link to a goal (optional)",
+      "tip": "Be specific and realistic - what would make today a success?"
+    },
+    "outcome": {
+      "title": "Imagine the best outcome",
+      "subtitle": "What happens when you achieve this?",
+      "yourWish": "Your wish:",
+      "placeholder": "e.g., I'll feel accomplished, the client will be impressed, and I'll be one step closer to the promotion",
+      "tip": "Visualize the positive feelings and consequences of success"
+    },
+    "obstacle": {
+      "title": "What could get in your way?",
+      "subtitle": "Identify your main inner obstacle",
+      "placeholder": "e.g., I might get distracted by emails and lose focus, or feel overwhelmed by the scope",
+      "tip": "Be honest - what typically prevents you from achieving your goals?"
+    },
+    "plan": {
+      "title": "Create your If-Then plan",
+      "subtitle": "Prepare for when the obstacle appears",
+      "yourObstacle": "Your obstacle:",
+      "if": "IF",
+      "ifLabel": "(obstacle appears)...",
+      "ifPlaceholder": "e.g., I feel the urge to check emails during focused work time",
+      "then": "THEN",
+      "thenLabel": "(I will)...",
+      "thenPlaceholder": "e.g., I will take 3 deep breaths, remind myself why this matters, and work for just 10 more minutes",
+      "tip": "This pre-planned response helps you overcome obstacles automatically"
+    },
+    "complete": {
+      "button": "Set Intention",
+      "success": "Your morning intention is set! You're ready to make today count."
+    },
+    "errors": {
+      "save": "Failed to save your intention. Please try again."
+    }
+  },
+  "notificationSettings": {
+    "title": "Notifications",
+    "description": "Control how and when you receive notifications",
+    "saved": "Preferences saved",
+    "push": {
+      "title": "Push Notifications",
+      "description": "Get instant notifications on this device",
+      "notSupported": "Push notifications are not supported on this browser",
+      "permissionDenied": "Notification permission was denied. Please enable it in your browser settings.",
+      "sendTest": "Send Test Notification"
+    },
+    "email": {
+      "title": "Email Notifications",
+      "description": "Receive daily summaries and important reminders via email"
+    },
+    "quietHours": {
+      "title": "Quiet Hours",
+      "description": "Pause notifications during these hours",
+      "from": "From",
+      "to": "To"
+    },
+    "devices": {
+      "title": "Connected Device",
+      "current": "This device is receiving push notifications"
+    },
+    "pushEnabled": "Push notifications enabled",
+    "pushDisabled": "Push notifications disabled",
+    "permissionDenied": "Please allow notifications in your browser settings",
+    "testSent": "Test notification sent!",
+    "testFailed": "Failed to send test notification"
   }
 }

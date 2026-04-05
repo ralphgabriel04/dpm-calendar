@@ -43,10 +43,11 @@ model User {
   shareLinks       ShareLink[]
   eventComments    EventComment[]
   meetingPolls     MeetingPoll[]
-  suggestions      Suggestion[]
-  preferences      UserPreferences?
+  suggestions       Suggestion[]
+  preferences       UserPreferences?
   notificationPrefs NotificationPreference?
-  dailyStats       DailyStats[]
+  pushSubscriptions PushSubscription[]
+  dailyStats        DailyStats[]
 }
 
 model Account {
@@ -814,6 +815,21 @@ model NotificationPreference {
   updatedAt       DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @db.Text
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, endpoint])
+  @@index([userId])
 }
 
 model Notification {

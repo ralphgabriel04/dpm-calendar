@@ -634,5 +634,136 @@
       "privacy": "Politique de confidentialité",
       "home": "Retour à l'accueil"
     }
+  },
+  "quickOnboarding": {
+    "skip": "Passer pour l'instant",
+    "next": "Continuer",
+    "previous": "Retour",
+    "step": "Étape {current} sur {total}",
+    "welcome": {
+      "title": "Bienvenue sur DPM Calendar !",
+      "subtitle": "Configurons tout en moins de 2 minutes",
+      "connectCalendar": "Connectez votre calendrier pour commencer",
+      "calendarNote": "Vos données restent privées et sécurisées"
+    },
+    "tasks": {
+      "title": "Qu'avez-vous en tête ?",
+      "subtitle": "Ajoutez quelques tâches à accomplir",
+      "placeholder": "ex. Revoir la proposition de projet",
+      "addMore": "Ajouter une autre tâche...",
+      "add": "Ajouter",
+      "tip": "Conseil : Commencez par vos tâches les plus importantes",
+      "created": "{count} tâches créées !"
+    },
+    "energy": {
+      "title": "Comment va votre énergie ?",
+      "subtitle": "Cela nous aide à planifier vos tâches au bon moment",
+      "levels": {
+        "veryLow": "Très basse - Besoin de repos",
+        "low": "Basse - Je prends mon temps",
+        "medium": "Moyenne - Rythme stable",
+        "high": "Haute - Je me sens bien",
+        "veryHigh": "Très haute - Prêt pour tout !"
+      },
+      "tip": "Conseil : Soyez honnête - nous adapterons les tâches à votre énergie",
+      "logged": "Niveau d'énergie enregistré !"
+    },
+    "plan": {
+      "title": "Votre Plan Intelligent",
+      "subtitle": "Voici comment nous planifierions vos tâches",
+      "generating": "Création de votre plan personnalisé...",
+      "noTasks": "Ajoutez des tâches pour voir votre plan intelligent",
+      "tip": "Conseil : Vous pouvez toujours ajuster cela dans le tableau de bord",
+      "match": {
+        "optimal": "Optimal",
+        "good": "Bon",
+        "acceptable": "OK"
+      }
+    },
+    "complete": {
+      "button": "Commencer",
+      "success": "Bienvenue ! Faisons de cette journée une journée productive."
+    },
+    "errors": {
+      "calendarConnection": "Échec de la connexion au calendrier",
+      "complete": "Une erreur s'est produite. Veuillez réessayer."
+    }
+  },
+  "mcii": {
+    "header": "Intention Matinale (MCII)",
+    "skip": "Passer",
+    "next": "Continuer",
+    "previous": "Retour",
+    "step": "Étape {current} sur {total}",
+    "wish": {
+      "title": "Que souhaitez-vous accomplir ?",
+      "subtitle": "Commencez par votre objectif le plus important pour aujourd'hui",
+      "placeholder": "ex. Terminer la proposition de projet et l'envoyer au client",
+      "linkGoal": "Lier à un objectif (optionnel)",
+      "tip": "Soyez précis et réaliste - qu'est-ce qui ferait de cette journée un succès ?"
+    },
+    "outcome": {
+      "title": "Imaginez le meilleur résultat",
+      "subtitle": "Que se passe-t-il quand vous atteignez cet objectif ?",
+      "yourWish": "Votre souhait :",
+      "placeholder": "ex. Je me sentirai accompli(e), le client sera impressionné, et je serai plus proche de la promotion",
+      "tip": "Visualisez les sentiments positifs et les conséquences du succès"
+    },
+    "obstacle": {
+      "title": "Qu'est-ce qui pourrait vous empêcher ?",
+      "subtitle": "Identifiez votre principal obstacle intérieur",
+      "placeholder": "ex. Je pourrais être distrait(e) par les emails et perdre ma concentration, ou me sentir submergé(e) par l'ampleur du travail",
+      "tip": "Soyez honnête - qu'est-ce qui vous empêche habituellement d'atteindre vos objectifs ?"
+    },
+    "plan": {
+      "title": "Créez votre plan Si-Alors",
+      "subtitle": "Préparez-vous pour quand l'obstacle apparaîtra",
+      "yourObstacle": "Votre obstacle :",
+      "if": "SI",
+      "ifLabel": "(l'obstacle apparaît)...",
+      "ifPlaceholder": "ex. Je ressens l'envie de consulter mes emails pendant mon temps de travail concentré",
+      "then": "ALORS",
+      "thenLabel": "(je vais)...",
+      "thenPlaceholder": "ex. Je prendrai 3 respirations profondes, je me rappellerai pourquoi c'est important, et je travaillerai encore 10 minutes",
+      "tip": "Cette réponse préparée vous aide à surmonter les obstacles automatiquement"
+    },
+    "complete": {
+      "button": "Définir l'intention",
+      "success": "Votre intention matinale est définie ! Vous êtes prêt(e) à faire de cette journée une réussite."
+    },
+    "errors": {
+      "save": "Échec de la sauvegarde de votre intention. Veuillez réessayer."
+    }
+  },
+  "notificationSettings": {
+    "title": "Notifications",
+    "description": "Contrôlez comment et quand vous recevez des notifications",
+    "saved": "Préférences enregistrées",
+    "push": {
+      "title": "Notifications Push",
+      "description": "Recevez des notifications instantanées sur cet appareil",
+      "notSupported": "Les notifications push ne sont pas supportées sur ce navigateur",
+      "permissionDenied": "La permission a été refusée. Veuillez l'activer dans les paramètres de votre navigateur.",
+      "sendTest": "Envoyer une notification test"
+    },
+    "email": {
+      "title": "Notifications par email",
+      "description": "Recevez des résumés quotidiens et des rappels importants par email"
+    },
+    "quietHours": {
+      "title": "Heures de silence",
+      "description": "Suspendre les notifications pendant ces heures",
+      "from": "De",
+      "to": "À"
+    },
+    "devices": {
+      "title": "Appareil connecté",
+      "current": "Cet appareil reçoit les notifications push"
+    },
+    "pushEnabled": "Notifications push activées",
+    "pushDisabled": "Notifications push désactivées",
+    "permissionDenied": "Veuillez autoriser les notifications dans les paramètres de votre navigateur",
+    "testSent": "Notification test envoyée !",
+    "testFailed": "Échec de l'envoi de la notification test"
   }
 }
