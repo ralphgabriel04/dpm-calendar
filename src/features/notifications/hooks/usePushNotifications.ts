@@ -109,8 +109,8 @@ export function usePushNotifications(): UsePushNotificationsReturn {
 
     navigator.serviceWorker
       .register("/sw.js")
-      .then((registration) => {
-        console.log("Service Worker registered:", registration.scope);
+      .then(() => {
+        // Service Worker registered successfully
       })
       .catch((error) => {
         console.error("Service Worker registration failed:", error);
