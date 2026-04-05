@@ -26,7 +26,7 @@ import { MiniCalendar } from "./MiniCalendar";
 import { UpcomingEventsWidget } from "./UpcomingEventsWidget";
 import { TimeBreakdownWidget } from "./TimeBreakdownWidget";
 import { RecapWidget } from "@/features/wellness/components/recap";
-import { SlotSuggestions } from "@/components/suggestions";
+import { SlotSuggestions } from "@/features/intelligence/components/suggestions";
 import { cn } from "@/shared/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 import {

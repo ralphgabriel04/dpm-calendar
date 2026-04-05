@@ -6,7 +6,7 @@ import { trpc } from "@/infrastructure/trpc/client";
 import { cn } from "@/shared/lib/utils";
 
 // Components
-import { RuleCard, RuleModal, type RuleFormData } from "@/components/rules";
+import { RuleCard, RuleModal, type RuleFormData } from "@/features/intelligence/components/rules";
 import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";
 import {
