@@ -23,7 +23,7 @@ import {
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
-import { DayView } from "@/components/calendar";
+import { DayView } from "@/features/calendar/components/calendar";
 import { MarkdownRenderer } from "@/shared/components/ui/MarkdownRenderer";
 import { trpc as api } from "@/infrastructure/trpc/client";
 import type { CalendarEvent } from "@/lib/calendar/utils";

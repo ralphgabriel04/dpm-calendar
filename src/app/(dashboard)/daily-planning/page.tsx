@@ -22,7 +22,7 @@ import { trpc } from "@/infrastructure/trpc/client";
 import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
-import { DayView } from "@/components/calendar";
+import { DayView } from "@/features/calendar/components/calendar";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 // Step definitions

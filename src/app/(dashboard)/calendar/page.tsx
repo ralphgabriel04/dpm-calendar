@@ -26,8 +26,8 @@ import { Button } from "@/shared/components/ui/Button";
 import { ResizableHandle } from "@/shared/components/layout/ResizableHandle";
 
 // Calendar components
-import { WeekView, DayView, MonthView, AgendaView, TimelineView, WorkloadView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
-import { EventModal, type EventFormData } from "@/components/events";
+import { WeekView, DayView, MonthView, AgendaView, TimelineView, WorkloadView, CalendarSidebar, UnscheduledTasksSidebar } from "@/features/calendar/components/calendar";
+import { EventModal, type EventFormData } from "@/features/calendar/components/events";
 import { TaskDetailModal } from "@/components/tasks";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 import { addDays, addWeeks } from "date-fns";

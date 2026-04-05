@@ -1,7 +1,7 @@
 import { createTRPCRouter } from "@/infrastructure/trpc/context";
-import { eventRouter } from "@/server/api/routers/event";
-import { calendarRouter } from "@/server/api/routers/calendar";
-import { calendarSectionRouter } from "@/server/api/routers/calendarSection";
+import { eventRouter } from "@/features/calendar/server/event.router";
+import { calendarRouter } from "@/features/calendar/server/calendar.router";
+import { calendarSectionRouter } from "@/features/calendar/server/calendarSection.router";
 import { taskRouter } from "@/server/api/routers/task";
 import { syncRouter } from "@/server/api/routers/sync";
 import { habitRouter } from "@/features/habits/server/habit.router";

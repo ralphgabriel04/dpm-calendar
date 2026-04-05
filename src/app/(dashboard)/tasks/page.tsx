@@ -23,7 +23,7 @@ import { cn } from "@/shared/lib/utils";
 
 // Components
 import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, GanttView, DashboardView, WorkloadView, type TaskFormData } from "@/components/tasks";
-import { EventModal, type EventFormData } from "@/components/events";
+import { EventModal, type EventFormData } from "@/features/calendar/components/events";
 import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";
 import { startOfDay, endOfDay, addDays as addDaysDate } from "date-fns";
