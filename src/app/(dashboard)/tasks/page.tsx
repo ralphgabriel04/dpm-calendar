@@ -22,7 +22,7 @@ import { trpc } from "@/infrastructure/trpc/client";
 import { cn } from "@/shared/lib/utils";
 
 // Components
-import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, GanttView, DashboardView, WorkloadView, type TaskFormData } from "@/components/tasks";
+import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, GanttView, DashboardView, WorkloadView, type TaskFormData } from "@/features/tasks/components/tasks";
 import { EventModal, type EventFormData } from "@/features/calendar/components/events";
 import { Input } from "@/shared/components/ui/Input";
 import { Button } from "@/shared/components/ui/Button";

@@ -44,8 +44,8 @@ import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/Button";
 import { WeekView, DayView, MonthView } from "@/features/calendar/components/calendar";
 import { EventModal, type EventFormData } from "@/features/calendar/components/events";
-import { TaskModal } from "@/components/tasks/TaskModal";
-import { type TaskFormData } from "@/components/tasks/TaskForm";
+import { TaskModal } from "@/features/tasks/components/tasks/TaskModal";
+import { type TaskFormData } from "@/features/tasks/components/tasks/TaskForm";
 import { useUIStore } from "@/stores/ui.store";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 

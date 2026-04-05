@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { trpc } from "@/infrastructure/trpc/client";
-import { EisenhowerMatrix } from "@/components/tasks/EisenhowerMatrix";
+import { EisenhowerMatrix } from "@/features/tasks/components/tasks/EisenhowerMatrix";
 import { Button } from "@/shared/components/ui/Button";
 import { Modal } from "@/shared/components/ui/Modal";
-import { TaskForm, TaskFormData } from "@/components/tasks/TaskForm";
+import { TaskForm, TaskFormData } from "@/features/tasks/components/tasks/TaskForm";
 import { Plus, Grid3X3, Info } from "lucide-react";
 import {
   Tooltip,
