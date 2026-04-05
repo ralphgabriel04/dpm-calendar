@@ -16,6 +16,7 @@ import {
 import { Button } from "@/shared/components/ui/Button";
 import { cn } from "@/shared/lib/utils";
 import { trpc } from "@/infrastructure/trpc/client";
+import { FocusTaskPicker } from "./FocusTaskPicker";
 
 interface Task {
   id: string;
@@ -67,6 +68,11 @@ export function FocusMode({
   const [quickNote, setQuickNote] = useState("");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [interruptions, setInterruptions] = useState(0);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [boundTask, setBoundTask] = useState<{ id: string; title: string }>({
+    id: task.id,
+    title: task.title,
+  });
   const sessionIdRef = useRef<string | null>(null);
 
   const startMutation = trpc.focusSession.start.useMutation();
@@ -134,7 +140,7 @@ export function FocusMode({
       if (pomodoroState === "work" && !sessionIdRef.current) {
         try {
           const created = await startMutation.mutateAsync({
-            taskId: task.id,
+            taskId: boundTask.id,
             plannedMins: activePreset.workMins,
             preset: activePreset.key,
           });
@@ -199,7 +205,14 @@ export function FocusMode({
         interruptions,
       });
     }
-    onComplete(task.id);
+    onComplete(boundTask.id);
+  };
+
+  const handleTaskPicked = (taskId: string | null, taskTitle?: string) => {
+    if (taskId && taskTitle) {
+      setBoundTask({ id: taskId, title: taskTitle });
+    }
+    setPickerOpen(false);
   };
 
   const getStateLabel = (state: PomodoroState) => {
@@ -299,9 +312,19 @@ export function FocusMode({
         </div>
 
         {/* Task title */}
-        <h1 className="text-2xl md:text-4xl font-bold text-center mb-8 px-4">
-          {task.title}
+        <h1 className="text-2xl md:text-4xl font-bold text-center mb-2 px-4">
+          {boundTask.title}
         </h1>
+        <button
+          onClick={() => !isRunning && setPickerOpen(true)}
+          disabled={isRunning}
+          className={cn(
+            "text-xs text-muted-foreground underline-offset-2 hover:underline mb-6",
+            isRunning && "opacity-50 cursor-not-allowed"
+          )}
+        >
+          Changer de tâche
+        </button>
 
         {/* Timer circle */}
         <div className="relative mb-8">
@@ -435,6 +458,12 @@ export function FocusMode({
           </div>
         )}
       </main>
+
+      <FocusTaskPicker
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={handleTaskPicked}
+      />
 
       {/* Footer - Next task */}
       {nextTask && (
