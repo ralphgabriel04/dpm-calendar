@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter } from "@/infrastructure/trpc/context";
 import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 
@@ -160,4 +161,187 @@ export const userRouter = createTRPCRouter({
       });
       return user;
     }),
+
+  // Self-serve account deletion (Loi 25 art. 43 / RGPD art. 17)
+  deleteMyAccount: protectedProcedure
+    .input(
+      z.object({
+        confirmEmail: z.string().email(),
+      })
+    )
+    .mutation(async ({ ctx, input }): Promise<{ success: true }> => {
+      const userId = ctx.session.user.id;
+
+      const user = await ctx.db.user.findUnique({
+        where: { id: userId },
+        select: { id: true, email: true },
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      if (input.confirmEmail.toLowerCase() !== user.email.toLowerCase()) {
+        throw new TRPCError({
+          code: "PRECONDITION_FAILED",
+          message: "Email confirmation does not match your account email",
+        });
+      }
+
+      const ipAddress =
+        ctx.req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        ctx.req.headers.get("x-real-ip") ??
+        null;
+      const userAgent = ctx.req.headers.get("user-agent") ?? null;
+
+      await ctx.db.$transaction([
+        ctx.db.auditLog.create({
+          data: {
+            userId: user.id,
+            userEmail: user.email,
+            action: "ACCOUNT_DELETED",
+            ipAddress,
+            userAgent,
+          },
+        }),
+        ctx.db.user.delete({
+          where: { id: user.id },
+        }),
+      ]);
+
+      return { success: true };
+    }),
+
+  // Self-serve data export (Loi 25 art. 27 / RGPD art. 20)
+  exportMyData: protectedProcedure.mutation(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+
+    const user = await ctx.db.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        emailVerified: true,
+        image: true,
+        timezone: true,
+        chronotype: true,
+        onboardingCompleted: true,
+        dailyPriorityCap: true,
+        dailyFocusGoalMins: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+    }
+
+    const [
+      preferences,
+      notificationPrefs,
+      calendars,
+      calendarSections,
+      events,
+      tasks,
+      rules,
+      habits,
+      goals,
+      recaps,
+      journalEntries,
+      energyLogs,
+      notifications,
+      shareLinks,
+      eventComments,
+      meetingPolls,
+      suggestions,
+      dailyStats,
+      focusSessions,
+      experiments,
+      pushSubscriptions,
+      calendarAccounts,
+    ] = await Promise.all([
+      ctx.db.userPreferences.findUnique({ where: { userId } }),
+      ctx.db.notificationPreference.findUnique({ where: { userId } }),
+      ctx.db.calendar.findMany({ where: { userId } }),
+      ctx.db.calendarSection.findMany({ where: { userId } }),
+      ctx.db.event.findMany({ where: { userId } }),
+      ctx.db.task.findMany({ where: { userId } }),
+      ctx.db.rule.findMany({ where: { userId } }),
+      ctx.db.habit.findMany({ where: { userId } }),
+      ctx.db.goal.findMany({ where: { userId } }),
+      ctx.db.recap.findMany({ where: { userId } }),
+      ctx.db.journalEntry.findMany({ where: { userId } }),
+      ctx.db.energyLog.findMany({ where: { userId } }),
+      ctx.db.notification.findMany({ where: { userId } }),
+      ctx.db.shareLink.findMany({ where: { userId } }),
+      ctx.db.eventComment.findMany({ where: { userId } }),
+      ctx.db.meetingPoll.findMany({ where: { userId } }),
+      ctx.db.suggestion.findMany({ where: { userId } }),
+      ctx.db.dailyStats.findMany({ where: { userId } }),
+      ctx.db.focusSession.findMany({ where: { userId } }),
+      ctx.db.experiment.findMany({ where: { userId } }),
+      ctx.db.pushSubscription.findMany({
+        where: { userId },
+        select: { id: true, endpoint: true, createdAt: true, updatedAt: true },
+      }),
+      ctx.db.calendarAccount.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          provider: true,
+          email: true,
+          isActive: true,
+          isPrimary: true,
+          syncDirection: true,
+          syncInterval: true,
+          lastSyncAt: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+    ]);
+
+    await ctx.db.auditLog.create({
+      data: {
+        userId: user.id,
+        userEmail: user.email,
+        action: "DATA_EXPORTED",
+      },
+    });
+
+    return {
+      exportedAt: new Date().toISOString(),
+      version: "1.0",
+      data: {
+        user,
+        preferences,
+        notificationPrefs,
+        calendars,
+        calendarSections,
+        events,
+        tasks,
+        rules,
+        habits,
+        goals,
+        recaps,
+        journalEntries,
+        energyLogs,
+        notifications,
+        shareLinks,
+        eventComments,
+        meetingPolls,
+        suggestions,
+        dailyStats,
+        focusSessions,
+        experiments,
+        pushSubscriptions,
+        calendarAccounts,
+      },
+    };
+  }),
 });

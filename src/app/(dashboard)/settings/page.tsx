@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle, AlertTriangle, Flag } from "lucide-react";
+import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle, AlertTriangle, Flag, Trash2, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/infrastructure/trpc/client";
 import { Button } from "@/shared/components/ui/Button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { SyncConflictList } from "@/features/sync";
+import { DeleteAccountDialog } from "@/features/auth/components/DeleteAccountDialog";
+import { ExportDataButton } from "@/features/auth/components/ExportDataButton";
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Current user (for danger zone email confirmation)
+  const { data: currentUser } = trpc.user.me.useQuery();
 
   // Fetch calendar accounts
   const { data: accounts, refetch: refetchAccounts } = trpc.sync.listAccounts.useQuery();
@@ -454,8 +460,59 @@ export default function SettingsPage() {
               </div>
             </div>
           </div>
+
+          {/* Vos données (Loi 25 art. 27 / RGPD art. 20) */}
+          <div className="rounded-lg border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <FileDown className="h-5 w-5 text-muted-foreground" />
+              <h2 className="font-medium">Vos données</h2>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Téléchargez une copie complète de vos données au format JSON :
+                profil, événements, tâches, habitudes, objectifs, journaux,
+                préférences et connexions calendrier.
+              </p>
+              <ExportDataButton />
+            </div>
+          </div>
+
+          {/* Danger zone (Loi 25 art. 43 / RGPD art. 17) */}
+          <div className="rounded-lg border border-red-500/50 bg-card">
+            <div className="flex items-center gap-3 border-b border-red-500/30 bg-red-500/5 px-4 py-3">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <h2 className="font-medium text-red-700 dark:text-red-400">
+                Zone de danger
+              </h2>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                La suppression de votre compte est{" "}
+                <strong>définitive et irréversible</strong>. Toutes vos données
+                (événements, tâches, habitudes, objectifs, journaux, préférences)
+                seront supprimées immédiatement et ne pourront pas être restaurées.
+              </p>
+              <Button
+                variant="destructive"
+                onClick={() => setDeleteDialogOpen(true)}
+                disabled={!currentUser?.email}
+                className="gap-2"
+              >
+                <Trash2 className="h-4 w-4" />
+                Supprimer mon compte
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+
+      {currentUser?.email && (
+        <DeleteAccountDialog
+          userEmail={currentUser.email}
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+        />
+      )}
     </div>
   );
 }

@@ -1084,3 +1084,17 @@ enum ExperimentResult {
   FAILURE
   INCONCLUSIVE
 }
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  userEmail String
+  action    String
+  metadata  Json?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action, createdAt])
+}
