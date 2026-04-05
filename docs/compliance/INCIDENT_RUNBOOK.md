@@ -1,94 +1,80 @@
-# Procédure de réponse aux incidents de confidentialité
+# Runbook — Gestion d'un incident de confidentialité
 
-> **Loi 25 du Québec** — Ce runbook décrit la procédure à suivre en cas d'incident de confidentialité impliquant des renseignements personnels.
+> **Objectif** : fournir une procédure étape par étape pour répondre à un incident de confidentialité conformément à la Loi 25 (Québec) et au RGPD.
+> **Déclencheur** : suspicion ou confirmation qu'un renseignement personnel a été consulté, utilisé, communiqué, perdu, ou qu'il y a eu accès non autorisé.
+> **Horloge** : le délai de 72h pour notifier le CAI commence à la **prise de conscience** de l'incident, pas à la détection technique.
 
----
+## Étape 1 — Containment immédiat (0-2h)
 
-## Étape 1 — Détection et confinement (0-2 heures)
+1. **Identifier le vecteur** : quelle composante a failli ? (DB, API tRPC, token OAuth, sync worker, session, etc.)
+2. **Isoler** :
+   - Révoquer les sessions actives si compromission de session suspectée : `DELETE FROM "Session" WHERE "userId" IN (...)`.
+   - Révoquer les tokens OAuth : forcer reconnexion Google/Microsoft pour les users touchés.
+   - Si fuite côté code : rollback Vercel immédiat vers le dernier déploiement sain.
+3. **Préserver les preuves** : snapshot DB, logs Vercel (derniers 7 jours exportés), logs Supabase, git log.
+4. **Créer un canal dédié** : branche Git `incident/YYYY-MM-DD-<slug>`, répertoire `docs/incidents/YYYY-MM-DD-<slug>/` pour centraliser les artefacts.
 
-- [ ] Identifier la nature de l'incident (accès non autorisé, fuite, perte, erreur humaine)
-- [ ] Confiner l'incident immédiatement :
-  - Révoquer les accès compromis
-  - Désactiver les comptes affectés si nécessaire
-  - Isoler les systèmes touchés
-- [ ] Documenter l'heure de découverte et les premières observations
-- [ ] Préserver les preuves (logs, captures, communications)
+## Étape 2 — Évaluation du risque de préjudice sérieux (2-24h)
 
-## Étape 2 — Évaluation (2-24 heures)
+Appliquer les 3 critères Loi 25 art. 3.7 (voir `INCIDENT_REGISTER.md`) :
 
-- [ ] Déterminer les renseignements personnels touchés
-- [ ] Estimer le nombre de personnes affectées
-- [ ] Identifier la cause (technique, humaine, tiers)
-- [ ] **Évaluer le risque de préjudice sérieux** selon les 3 critères de la Loi 25 :
-  1. Sensibilité des renseignements
-  2. Conséquences anticipées de l'utilisation
-  3. Probabilité d'utilisation malveillante
-- [ ] Consigner l'évaluation dans le registre (docs/compliance/INCIDENT_REGISTER.md)
+- Sensibilité des RP
+- Conséquences appréhendées
+- Probabilité d'utilisation malveillante
 
-## Étape 3 — Notification (si risque de préjudice sérieux)
+**Décision** :
+- Risque sérieux confirmé → **passer à l'étape 3** (notifications obligatoires).
+- Risque sérieux écarté → passer directement à l'étape 5 (enregistrement uniquement).
 
-### 3a. Notification à la CAI
-- [ ] Remplir le formulaire de déclaration : https://www.cai.gouv.qc.ca/
-- [ ] Inclure : description, renseignements concernés, nombre de personnes, mesures prises
-- [ ] Envoyer dans les meilleurs délais
+Documenter la décision et le raisonnement dans l'artefact d'incident.
 
-### 3b. Notification aux personnes touchées
-- [ ] Rédiger l'avis de notification (template ci-dessous)
-- [ ] Envoyer par email à chaque personne touchée
-- [ ] Documenter la date et la méthode d'envoi
+## Étape 3 — Notification au CAI (dans les 72h si risque sérieux)
 
-### Template de notification
+**Canal** : formulaire en ligne sur le site de la Commission d'accès à l'information du Québec (<https://www.cai.gouv.qc.ca>).
 
-```
-Objet : Avis d'incident de confidentialité — DPM Calendar
+**Contenu obligatoire** :
+- Description de l'incident
+- Date ou période de l'incident
+- Nature des RP concernés
+- Nombre de personnes touchées (ou estimation)
+- Mesures prises ou envisagées pour diminuer les risques
+- Coordonnées du responsable de la protection des RP
 
-Bonjour [Nom],
+Conserver l'accusé de réception CAI dans le dossier d'incident.
 
-Nous vous informons qu'un incident de confidentialité a été détecté le [DATE] 
-concernant vos renseignements personnels suivants : [TYPES DE DONNÉES].
+## Étape 4 — Notification aux personnes touchées (dans le même délai)
 
-[DESCRIPTION DE L'INCIDENT]
+**Canal** : email direct aux adresses des comptes touchés.
 
-Mesures prises :
-- [MESURE 1]
-- [MESURE 2]
+**Contenu obligatoire** :
+- Description de l'incident (en termes accessibles)
+- Nature des RP touchés
+- Mesures prises
+- Mesures que la personne peut prendre pour se protéger (changement de mot de passe, surveillance de compte, etc.)
+- Coordonnées pour obtenir plus d'info
 
-Nous vous recommandons de :
-- Modifier votre mot de passe si applicable
-- Surveiller toute activité suspecte sur vos comptes
+**Template** : voir `docs/compliance/templates/notification-email.md` (à créer lors du premier incident).
 
-Pour toute question : privacy@dpmcalendar.com
+## Étape 5 — Enregistrement au registre + clôture
 
-Responsable de la protection des renseignements personnels :
-Ralph Christian Gabriel
-privacy@dpmcalendar.com
-```
+1. Ajouter une ligne dans `docs/compliance/INCIDENT_REGISTER.md` avec les 10 champs requis.
+2. Rédiger un post-mortem dans `docs/incidents/YYYY-MM-DD-<slug>/POSTMORTEM.md` :
+   - Timeline détaillée
+   - Cause racine
+   - Actions correctives (court, moyen, long terme)
+   - Leçons apprises
+3. **Conserver le dossier complet au minimum 5 ans** après clôture.
+4. Créer les tickets GitHub pour les actions correctives long terme.
 
-## Étape 4 — Résolution et clôture
+## Contacts
 
-- [ ] Implémenter les correctifs techniques
-- [ ] Tester que la vulnérabilité est corrigée
-- [ ] Mettre à jour le registre d'incidents avec le statut FERMÉ
-- [ ] Documenter les leçons apprises
-- [ ] Planifier les améliorations préventives
+- **Responsable de la protection des RP** : Ralph Christian Gabriel
+- **CAI (Québec)** : <https://www.cai.gouv.qc.ca> / 1-888-528-7741
+- **Supabase support** (si incident côté DB managée) : via dashboard
+- **Vercel support** (si incident côté hébergement) : via dashboard
 
-## Étape 5 — Revue post-incident (7-14 jours après)
+## Références
 
-- [ ] Revue post-mortem : qu'est-ce qui a fonctionné, qu'est-ce qui n'a pas fonctionné
-- [ ] Mise à jour des procédures si nécessaire
-- [ ] Communication interne des leçons apprises
-
----
-
-## Contacts d'urgence
-
-| Rôle | Contact |
-|------|--------|
-| Responsable vie privée | Ralph Christian Gabriel — privacy@dpmcalendar.com |
-| CAI (Commission d'accès à l'information) | https://www.cai.gouv.qc.ca/ |
-| Supabase support | https://supabase.com/support |
-| Vercel support | https://vercel.com/support |
-
----
-
-**Dernière révision :** 2026-04-05
+- Loi 25 : articles 3.5 à 3.8 (obligations en cas d'incident de confidentialité)
+- RGPD : articles 33 et 34 (notification aux autorités et aux personnes concernées)
+- CAI — Guide sur les incidents de confidentialité : <https://www.cai.gouv.qc.ca>
