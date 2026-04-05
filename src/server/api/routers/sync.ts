@@ -13,6 +13,7 @@ import {
   listCalendars as listMicrosoftCalendars,
   type MicrosoftEvent,
 } from "@/lib/microsoft/calendar";
+import { encryptToken, decryptToken } from "@/lib/crypto";
 
 export const syncRouter = createTRPCRouter({
   // List calendar accounts
@@ -185,21 +186,22 @@ export const syncRouter = createTRPCRouter({
 
       try {
         // Check if token needs refresh
-        let accessToken = account.accessToken;
+        let accessToken = decryptToken(account.accessToken);
         if (account.expiresAt && account.expiresAt < new Date()) {
           if (!account.refreshToken) {
             throw new Error("No refresh token available");
           }
 
+          const refreshToken = decryptToken(account.refreshToken);
           const newTokens = account.provider === "GOOGLE"
-            ? await refreshGoogleToken(account.refreshToken)
-            : await refreshMicrosoftToken(account.refreshToken);
+            ? await refreshGoogleToken(refreshToken)
+            : await refreshMicrosoftToken(refreshToken);
           accessToken = newTokens.accessToken;
 
           await ctx.db.calendarAccount.update({
             where: { id: account.id },
             data: {
-              accessToken: newTokens.accessToken,
+              accessToken: encryptToken(newTokens.accessToken),
               expiresAt: newTokens.expiryDate
                 ? new Date(newTokens.expiryDate)
                 : null,
@@ -372,7 +374,7 @@ export const syncRouter = createTRPCRouter({
       }
 
       // Refresh token if needed
-      let accessToken = account.accessToken;
+      let accessToken = decryptToken(account.accessToken);
       if (account.expiresAt && account.expiresAt < new Date()) {
         if (!account.refreshToken) {
           throw new TRPCError({
@@ -380,13 +382,13 @@ export const syncRouter = createTRPCRouter({
             message: "Token expired and no refresh token available",
           });
         }
-        const newTokens = await refreshGoogleToken(account.refreshToken);
+        const newTokens = await refreshGoogleToken(decryptToken(account.refreshToken));
         accessToken = newTokens.accessToken;
 
         await ctx.db.calendarAccount.update({
           where: { id: account.id },
           data: {
-            accessToken: newTokens.accessToken,
+            accessToken: encryptToken(newTokens.accessToken),
             expiresAt: newTokens.expiryDate
               ? new Date(newTokens.expiryDate)
               : null,
@@ -475,7 +477,7 @@ export const syncRouter = createTRPCRouter({
       }
 
       // Refresh token if needed
-      let accessToken = account.accessToken;
+      let accessToken = decryptToken(account.accessToken);
       if (account.expiresAt && account.expiresAt < new Date()) {
         if (!account.refreshToken) {
           throw new TRPCError({
@@ -483,13 +485,13 @@ export const syncRouter = createTRPCRouter({
             message: "Token expired and no refresh token available",
           });
         }
-        const newTokens = await refreshMicrosoftToken(account.refreshToken);
+        const newTokens = await refreshMicrosoftToken(decryptToken(account.refreshToken));
         accessToken = newTokens.accessToken;
 
         await ctx.db.calendarAccount.update({
           where: { id: account.id },
           data: {
-            accessToken: newTokens.accessToken,
+            accessToken: encryptToken(newTokens.accessToken),
             expiresAt: newTokens.expiryDate
               ? new Date(newTokens.expiryDate)
               : null,

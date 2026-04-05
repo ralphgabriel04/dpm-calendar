@@ -8,8 +8,8 @@
     "close": "Fermer",
     "loading": "Chargement...",
     "search": "Rechercher",
-    "settings": "Paramètres",
-    "logout": "Se déconnecter",
+    "settings": "Param\u00e8tres",
+    "logout": "Se d\u00e9connecter",
     "next": "Suivant",
     "previous": "Retour",
     "skip": "Passer"
@@ -18,12 +18,12 @@
     "home": "Accueil",
     "today": "Aujourd'hui",
     "calendar": "Calendrier",
-    "tasks": "Tâches",
+    "tasks": "T\u00e2ches",
     "habits": "Habitudes",
     "goals": "Objectifs",
     "analytics": "Analytics",
-    "settings": "Paramètres",
-    "rules": "Règles",
+    "settings": "Param\u00e8tres",
+    "rules": "R\u00e8gles",
     "matrix": "Matrice",
     "dashboard": "Dashboard",
     "dailyPlanning": "Planification du jour",
@@ -33,7 +33,7 @@
     "sections": {
       "dailyRituals": "ROUTINES QUOTIDIENNES",
       "weeklyRituals": "ROUTINES HEBDOMADAIRES",
-      "productivity": "PRODUCTIVITÉ",
+      "productivity": "PRODUCTIVIT\u00c9",
       "automation": "AUTOMATISATION",
       "insights": "ANALYSES"
     },
@@ -44,14 +44,14 @@
   "theme": {
     "light": "Clair",
     "dark": "Sombre",
-    "system": "Système"
+    "system": "Syst\u00e8me"
   },
   "language": {
     "label": "Langue",
-    "french": "Français",
+    "french": "Fran\u00e7ais",
     "english": "English",
     "switchToEnglish": "Switch to English",
-    "switchToFrench": "Passer en Français"
+    "switchToFrench": "Passer en Fran\u00e7ais"
   },
   "calendar": {
     "today": "Aujourd'hui",
@@ -59,28 +59,28 @@
     "week": "Semaine",
     "month": "Mois",
     "agenda": "Agenda",
-    "newEvent": "Nouvel événement",
-    "noEvents": "Aucun événement",
-    "allDay": "Toute la journée"
+    "newEvent": "Nouvel \u00e9v\u00e9nement",
+    "noEvents": "Aucun \u00e9v\u00e9nement",
+    "allDay": "Toute la journ\u00e9e"
   },
   "tasks": {
-    "title": "Tâches",
-    "newTask": "Nouvelle tâche",
-    "completed": "Terminée",
+    "title": "T\u00e2ches",
+    "newTask": "Nouvelle t\u00e2che",
+    "completed": "Termin\u00e9e",
     "pending": "En attente",
     "inProgress": "En cours",
-    "priority": "Priorité",
-    "dueDate": "Date d'échéance",
-    "noTask": "Aucune tâche",
-    "currentTask": "Tâche actuelle",
+    "priority": "Priorit\u00e9",
+    "dueDate": "Date d'\u00e9ch\u00e9ance",
+    "noTask": "Aucune t\u00e2che",
+    "currentTask": "T\u00e2che actuelle",
     "finish": "Terminer",
-    "start": "Démarrer",
+    "start": "D\u00e9marrer",
     "resume": "Reprendre"
   },
   "habits": {
     "title": "Habitudes",
-    "streak": "Série",
-    "completed": "Complétée"
+    "streak": "S\u00e9rie",
+    "completed": "Compl\u00e9t\u00e9e"
   },
   "goals": {
     "title": "Objectifs",
@@ -88,30 +88,224 @@
     "target": "Objectif"
   },
   "landing": {
+    "nav": {
+      "login": "Se connecter",
+      "tryIt": "Essayer"
+    },
     "hero": {
-      "title": "Planifiez. Organisez. Réussissez.",
-      "subtitle": "La solution tout-en-un pour gérer votre temps, vos tâches et vos objectifs.",
-      "cta": "Commencer"
+      "title1": "Votre temps,",
+      "title2": "m\u00e9rite mieux",
+      "subtitle": "Calendrier, t\u00e2ches, habitudes et objectifs r\u00e9unis dans une seule application. Synchronisez avec Google Calendar et Microsoft Outlook.",
+      "cta": "Commencer gratuitement",
+      "seeFeatures": "Voir les fonctionnalit\u00e9s"
+    },
+    "howItWorks": {
+      "title1": "Comment \u00e7a",
+      "title2": "fonctionne",
+      "subtitle": "Trois \u00e9tapes simples pour transformer votre productivit\u00e9",
+      "step1": {
+        "title": "Connectez vos calendriers",
+        "description": "Importez vos \u00e9v\u00e9nements Google, Microsoft ou Apple en un clic. Tout est synchronis\u00e9 automatiquement."
+      },
+      "step2": {
+        "title": "Planifiez intelligemment",
+        "description": "Cr\u00e9ez des t\u00e2ches, d\u00e9finissez des objectifs et laissez l'IA vous sugg\u00e9rer le meilleur moment pour les r\u00e9aliser."
+      },
+      "step3": {
+        "title": "Atteignez vos objectifs",
+        "description": "Suivez vos progr\u00e8s, analysez votre productivit\u00e9 et c\u00e9l\u00e9brez vos accomplissements."
+      }
     },
     "features": {
-      "title": "Fonctionnalités innovantes",
-      "subtitle": "Découvrez les outils qui transformeront votre productivité"
+      "timeTracking": {
+        "title": "Suivez comment vous utilisez votre temps",
+        "description": "La fonctionnalit\u00e9 d'utilisation du temps vous aide \u00e0 analyser votre emploi du temps en vous indiquant comment vous occupez votre temps et avec qui.",
+        "feature1": "Rapports de productivit\u00e9 d\u00e9taill\u00e9s",
+        "feature2": "Temps par projet et cat\u00e9gorie",
+        "feature3": "Graphiques et tendances visuels"
+      },
+      "focusMode": {
+        "title": "Bloquez les distractions",
+        "description": "Le mode Focus vous permet de vous concentrer sur une seule t\u00e2che \u00e0 la fois avec la technique Pomodoro int\u00e9gr\u00e9e et le blocage des notifications.",
+        "feature1": "Technique Pomodoro int\u00e9gr\u00e9e",
+        "feature2": "Blocage des notifications",
+        "feature3": "Suivi du temps de concentration"
+      },
+      "multiCalendar": {
+        "title": "Restez organis\u00e9 avec plusieurs agendas",
+        "description": "G\u00e9rez plusieurs calendriers en un seul endroit. Synchronisez automatiquement vos agendas Google, Microsoft et Apple.",
+        "feature1": "Synchronisation Google Calendar",
+        "feature2": "Int\u00e9gration Microsoft Outlook",
+        "feature3": "Calendriers personnels et professionnels"
+      },
+      "customViews": {
+        "title": "Personnalisez votre vue",
+        "description": "Choisissez la vue qui vous convient le mieux : jour, semaine, mois ou agenda. Personnalisez les couleurs et l'affichage selon vos pr\u00e9f\u00e9rences.",
+        "feature1": "Vues jour, semaine, mois, agenda",
+        "feature2": "Drag & drop intuitif",
+        "feature3": "Personnalisation des couleurs"
+      },
+      "goals": {
+        "title": "Atteignez vos objectifs",
+        "description": "D\u00e9finissez des objectifs SMART et suivez votre progression. Liez vos t\u00e2ches \u00e0 vos objectifs pour rester motiv\u00e9 et organis\u00e9.",
+        "feature1": "Objectifs SMART",
+        "feature2": "Suivi de progression visuel",
+        "feature3": "Jalons et \u00e9tapes cl\u00e9s"
+      }
+    },
+    "mockups": {
+      "timeInsights": {
+        "title": "Time Insights",
+        "breakdown": "R\u00e9partition du temps",
+        "important": "Important",
+        "personal": "Personnel",
+        "accounting": "Comptabilit\u00e9"
+      },
+      "focusMode": {
+        "title": "Mode Focus",
+        "currentTask": "T\u00e2che en cours",
+        "taskName": "Rapport trimestriel Q1",
+        "session": "Session",
+        "pause": "Pause",
+        "resume": "Reprendre",
+        "start": "D\u00e9marrer",
+        "nextSession": "Session suivante",
+        "finish": "Terminer",
+        "reset": "R\u00e9initialiser",
+        "congrats": "F\u00e9licitations !",
+        "completedSessions": "Vous avez termin\u00e9 vos {count} sessions de focus !",
+        "restart": "Recommencer"
+      },
+      "calendars": {
+        "title": "Mes Calendriers",
+        "work": "Travail",
+        "personal": "Personnel",
+        "sport": "Sport",
+        "connected": "Connect\u00e9s",
+        "synced": "Synchro"
+      },
+      "views": {
+        "day": "Jour",
+        "week": "Semaine",
+        "month": "Mois",
+        "teamMeeting": "R\u00e9union \u00e9quipe",
+        "lunch": "D\u00e9jeuner",
+        "clientCall": "Appel client",
+        "presentation": "Pr\u00e9sentation projet",
+        "teamLunch": "D\u00e9jeuner \u00e9quipe",
+        "sports": "Sport",
+        "meeting": "R\u00e9union",
+        "deadline": "Deadline",
+        "birthday": "Anniversaire",
+        "noEvent": "Aucun \u00e9v\u00e9nement ce jour",
+        "january": "Janvier",
+        "wednesday": "Mercredi"
+      },
+      "goals": {
+        "title": "Objectif en cours",
+        "projectName": "Finir projet client",
+        "phase1": "Phase 1 - Recherche",
+        "phase2": "Phase 2 - Design",
+        "phase3": "Phase 3 - D\u00e9veloppement",
+        "phase4": "Phase 4 - Tests",
+        "clickToToggle": "Cliquez sur une phase pour la cocher/d\u00e9cocher"
+      }
+    },
+    "personas": {
+      "title1": "Con\u00e7u pour",
+      "title2": "vous",
+      "subtitle": "Que vous soyez \u00e9tudiant, entrepreneur ou freelance, DPM Calendar s'adapte \u00e0 votre mode de vie.",
+      "students": {
+        "title": "\u00c9tudiants",
+        "description": "G\u00e9rez vos cours, examens et projets. Ne manquez plus jamais une deadline.",
+        "feature1": "Rappels de cours",
+        "feature2": "Suivi des examens",
+        "feature3": "Planification des r\u00e9visions"
+      },
+      "entrepreneurs": {
+        "title": "Entrepreneurs",
+        "description": "D\u00e9veloppez votre business en gardant le contr\u00f4le de votre emploi du temps.",
+        "feature1": "Gestion de projets",
+        "feature2": "Suivi des objectifs",
+        "feature3": "Analytics de productivit\u00e9"
+      },
+      "freelancers": {
+        "title": "Freelances",
+        "description": "Jonglez avec plusieurs clients et projets sans perdre le fil.",
+        "feature1": "Multi-calendriers",
+        "feature2": "Time tracking",
+        "feature3": "Facturation facilit\u00e9e"
+      },
+      "teams": {
+        "title": "\u00c9quipes",
+        "description": "Collaborez efficacement et synchronisez les agendas de toute l'\u00e9quipe.",
+        "feature1": "Calendriers partag\u00e9s",
+        "feature2": "Planification de r\u00e9unions",
+        "feature3": "Coordination simplifi\u00e9e"
+      }
+    },
+    "integrations": {
+      "title": "Synchronisez vos calendriers pr\u00e9f\u00e9r\u00e9s"
+    },
+    "security": {
+      "badge": "S\u00e9curit\u00e9 renforc\u00e9e",
+      "title1": "Vos donn\u00e9es sont",
+      "title2": "prot\u00e9g\u00e9es",
+      "subtitle": "Nous prenons la s\u00e9curit\u00e9 de vos donn\u00e9es tr\u00e8s au s\u00e9rieux. Votre vie priv\u00e9e est notre priorit\u00e9.",
+      "encryption": {
+        "title": "Chiffrement de bout en bout",
+        "description": "Toutes vos donn\u00e9es sont chiffr\u00e9es avec les derniers standards de s\u00e9curit\u00e9."
+      },
+      "hosting": {
+        "title": "H\u00e9berg\u00e9 en Europe",
+        "description": "Vos donn\u00e9es restent en Europe, en conformit\u00e9 avec le RGPD."
+      },
+      "auth": {
+        "title": "Authentification s\u00e9curis\u00e9e",
+        "description": "OAuth 2.0 avec Google et Microsoft, sans stockage de mots de passe."
+      },
+      "certifications": "Certifications & Conformit\u00e9",
+      "rgpd": "RGPD",
+      "compliant": "Conforme",
+      "backup": "Backup",
+      "daily": "Quotidien",
+      "secure": "S\u00e9curis\u00e9"
+    },
+    "cta": {
+      "title1": "Pr\u00eat \u00e0 reprendre le contr\u00f4le de",
+      "title2": "votre temps",
+      "subtitle": "Rejoignez des milliers d'utilisateurs qui ont transform\u00e9 leur productivit\u00e9.",
+      "button": "Commencer gratuitement",
+      "noCreditCard": "Gratuit pour toujours - Pas de carte de cr\u00e9dit requise"
+    },
+    "footer": {
+      "tagline": "Votre assistant de productivit\u00e9 intelligent.",
+      "product": "Produit",
+      "features": "Fonctionnalit\u00e9s",
+      "pricing": "Tarifs",
+      "resources": "Ressources",
+      "support": "Support",
+      "legal": "L\u00e9gal",
+      "privacy": "Confidentialit\u00e9",
+      "terms": "CGU",
+      "rgpdCompliant": "Conforme RGPD",
+      "copyright": "\u00a9 {year} DPM Calendar. Tous droits r\u00e9serv\u00e9s."
     }
   },
   "home": {
     "greeting": {
       "morning": "Bonjour",
-      "afternoon": "Bon après-midi",
+      "afternoon": "Bon apr\u00e8s-midi",
       "evening": "Bonsoir"
     },
     "workload": "Charge de travail aujourd'hui",
     "quickActions": "Actions rapides",
-    "upcoming": "À venir",
+    "upcoming": "\u00c0 venir",
     "viewAll": "Voir tout",
-    "tasksOfDay": "Tâches du jour",
-    "manage": "Gérer",
+    "tasksOfDay": "T\u00e2ches du jour",
+    "manage": "G\u00e9rer",
     "tipOfDay": "Conseil du jour",
-    "alreadyCompleted": "Super! Tu as déjà complété {count} tâche(s). Continue comme ça!",
-    "startImportant": "Commence par ta tâche la plus importante. Une fois terminée, le reste sera plus facile!"
+    "alreadyCompleted": "Super! Tu as d\u00e9j\u00e0 compl\u00e9t\u00e9 {count} t\u00e2che(s). Continue comme \u00e7a!",
+    "startImportant": "Commence par ta t\u00e2che la plus importante. Une fois termin\u00e9e, le reste sera plus facile!"
   }
 }

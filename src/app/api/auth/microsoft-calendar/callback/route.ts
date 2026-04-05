@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth/config";
 import { db } from "@/server/db/client";
 import { exchangeCodeForTokens, listCalendars, getUserEmail } from "@/lib/microsoft/calendar";
+import { encryptToken, encryptOptionalToken } from "@/lib/crypto";
 
 export async function GET(request: NextRequest) {
   try {
@@ -59,8 +60,10 @@ export async function GET(request: NextRequest) {
       await db.calendarAccount.update({
         where: { id: existingAccount.id },
         data: {
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken || existingAccount.refreshToken,
+          accessToken: encryptToken(tokens.accessToken),
+          refreshToken: tokens.refreshToken
+            ? encryptToken(tokens.refreshToken)
+            : existingAccount.refreshToken,
           expiresAt: tokens.expiryDate
             ? new Date(tokens.expiryDate)
             : null,
@@ -75,8 +78,8 @@ export async function GET(request: NextRequest) {
           userId: session.user.id,
           provider: "MICROSOFT",
           email,
-          accessToken: tokens.accessToken,
-          refreshToken: tokens.refreshToken,
+          accessToken: encryptToken(tokens.accessToken),
+          refreshToken: encryptOptionalToken(tokens.refreshToken),
           expiresAt: tokens.expiryDate
             ? new Date(tokens.expiryDate)
             : null,

@@ -48,10 +48,10 @@
   },
   "language": {
     "label": "Language",
-    "french": "Français",
+    "french": "Fran\u00e7ais",
     "english": "English",
     "switchToEnglish": "Switch to English",
-    "switchToFrench": "Passer en Français"
+    "switchToFrench": "Passer en Fran\u00e7ais"
   },
   "calendar": {
     "today": "Today",
@@ -88,14 +88,208 @@
     "target": "Target"
   },
   "landing": {
+    "nav": {
+      "login": "Sign in",
+      "tryIt": "Try it"
+    },
     "hero": {
-      "title": "Plan. Organize. Succeed.",
-      "subtitle": "The all-in-one solution to manage your time, tasks, and goals.",
-      "cta": "Start for free"
+      "title1": "Your time,",
+      "title2": "deserves better",
+      "subtitle": "Calendar, tasks, habits, and goals all in one app. Sync with Google Calendar and Microsoft Outlook.",
+      "cta": "Start for free",
+      "seeFeatures": "See features"
+    },
+    "howItWorks": {
+      "title1": "How it",
+      "title2": "works",
+      "subtitle": "Three simple steps to transform your productivity",
+      "step1": {
+        "title": "Connect your calendars",
+        "description": "Import your Google, Microsoft, or Apple events in one click. Everything syncs automatically."
+      },
+      "step2": {
+        "title": "Plan intelligently",
+        "description": "Create tasks, set goals, and let AI suggest the best time to complete them."
+      },
+      "step3": {
+        "title": "Achieve your goals",
+        "description": "Track your progress, analyze your productivity, and celebrate your achievements."
+      }
     },
     "features": {
-      "title": "Innovative features",
-      "subtitle": "Discover the tools that will transform your productivity"
+      "timeTracking": {
+        "title": "Track how you use your time",
+        "description": "The time usage feature helps you analyze your schedule by showing how you spend your time and with whom.",
+        "feature1": "Detailed productivity reports",
+        "feature2": "Time by project and category",
+        "feature3": "Visual charts and trends"
+      },
+      "focusMode": {
+        "title": "Block distractions",
+        "description": "Focus mode lets you concentrate on one task at a time with built-in Pomodoro technique and notification blocking.",
+        "feature1": "Built-in Pomodoro technique",
+        "feature2": "Notification blocking",
+        "feature3": "Focus time tracking"
+      },
+      "multiCalendar": {
+        "title": "Stay organized with multiple calendars",
+        "description": "Manage multiple calendars in one place. Automatically sync your Google, Microsoft, and Apple calendars.",
+        "feature1": "Google Calendar sync",
+        "feature2": "Microsoft Outlook integration",
+        "feature3": "Personal and work calendars"
+      },
+      "customViews": {
+        "title": "Customize your view",
+        "description": "Choose the view that works best for you: day, week, month, or agenda. Customize colors and display according to your preferences.",
+        "feature1": "Day, week, month, agenda views",
+        "feature2": "Intuitive drag & drop",
+        "feature3": "Color customization"
+      },
+      "goals": {
+        "title": "Achieve your goals",
+        "description": "Set SMART goals and track your progress. Link your tasks to your goals to stay motivated and organized.",
+        "feature1": "SMART goals",
+        "feature2": "Visual progress tracking",
+        "feature3": "Milestones and key steps"
+      }
+    },
+    "mockups": {
+      "timeInsights": {
+        "title": "Time Insights",
+        "breakdown": "Time breakdown",
+        "important": "Important",
+        "personal": "Personal",
+        "accounting": "Accounting"
+      },
+      "focusMode": {
+        "title": "Focus Mode",
+        "currentTask": "Current task",
+        "taskName": "Q1 Quarterly Report",
+        "session": "Session",
+        "pause": "Pause",
+        "resume": "Resume",
+        "start": "Start",
+        "nextSession": "Next session",
+        "finish": "Finish",
+        "reset": "Reset",
+        "congrats": "Congratulations!",
+        "completedSessions": "You completed your {count} focus sessions!",
+        "restart": "Start over"
+      },
+      "calendars": {
+        "title": "My Calendars",
+        "work": "Work",
+        "personal": "Personal",
+        "sport": "Sport",
+        "connected": "Connected",
+        "synced": "Synced"
+      },
+      "views": {
+        "day": "Day",
+        "week": "Week",
+        "month": "Month",
+        "teamMeeting": "Team meeting",
+        "lunch": "Lunch",
+        "clientCall": "Client call",
+        "presentation": "Project presentation",
+        "teamLunch": "Team lunch",
+        "sports": "Sports",
+        "meeting": "Meeting",
+        "deadline": "Deadline",
+        "birthday": "Birthday",
+        "noEvent": "No events this day",
+        "january": "January",
+        "wednesday": "Wednesday"
+      },
+      "goals": {
+        "title": "Current goal",
+        "projectName": "Finish client project",
+        "phase1": "Phase 1 - Research",
+        "phase2": "Phase 2 - Design",
+        "phase3": "Phase 3 - Development",
+        "phase4": "Phase 4 - Testing",
+        "clickToToggle": "Click on a phase to check/uncheck it"
+      }
+    },
+    "personas": {
+      "title1": "Designed for",
+      "title2": "you",
+      "subtitle": "Whether you're a student, entrepreneur, or freelancer, DPM Calendar adapts to your lifestyle.",
+      "students": {
+        "title": "Students",
+        "description": "Manage your classes, exams, and projects. Never miss a deadline again.",
+        "feature1": "Class reminders",
+        "feature2": "Exam tracking",
+        "feature3": "Study planning"
+      },
+      "entrepreneurs": {
+        "title": "Entrepreneurs",
+        "description": "Grow your business while staying in control of your schedule.",
+        "feature1": "Project management",
+        "feature2": "Goal tracking",
+        "feature3": "Productivity analytics"
+      },
+      "freelancers": {
+        "title": "Freelancers",
+        "description": "Juggle multiple clients and projects without losing track.",
+        "feature1": "Multi-calendars",
+        "feature2": "Time tracking",
+        "feature3": "Easy invoicing"
+      },
+      "teams": {
+        "title": "Teams",
+        "description": "Collaborate effectively and sync everyone's calendars.",
+        "feature1": "Shared calendars",
+        "feature2": "Meeting scheduling",
+        "feature3": "Simplified coordination"
+      }
+    },
+    "integrations": {
+      "title": "Sync your favorite calendars"
+    },
+    "security": {
+      "badge": "Enhanced security",
+      "title1": "Your data is",
+      "title2": "protected",
+      "subtitle": "We take data security very seriously. Your privacy is our priority.",
+      "encryption": {
+        "title": "Encrypted transport (TLS 1.3)",
+        "description": "All connections to the service go through HTTPS/TLS 1.3 via Vercel Edge Network."
+      },
+      "hosting": {
+        "title": "Modern infrastructure",
+        "description": "Hosted on Vercel (global edge network) with a managed PostgreSQL database on Supabase."
+      },
+      "auth": {
+        "title": "OAuth 2.0 authentication",
+        "description": "Sign in with Google or Microsoft — no passwords stored by DPM Calendar."
+      },
+      "certifications": "Certifications & Compliance",
+      "rgpd": "GDPR",
+      "compliant": "Compliant",
+      "backup": "Backup",
+      "daily": "Daily",
+      "secure": "Secure"
+    },
+    "cta": {
+      "title1": "Ready to take control of",
+      "title2": "your time",
+      "subtitle": "Join thousands of users who have transformed their productivity.",
+      "button": "Start for free",
+      "noCreditCard": "Free forever - No credit card required"
+    },
+    "footer": {
+      "tagline": "Your intelligent productivity assistant.",
+      "product": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "resources": "Resources",
+      "support": "Support",
+      "legal": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "rgpdCompliant": "GDPR Compliant",
+      "copyright": "\u00a9 {year} DPM Calendar. All rights reserved."
     }
   },
   "home": {

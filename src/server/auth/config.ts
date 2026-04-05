@@ -100,7 +100,8 @@ if (hasSSOOIDC) {
 const hasAnyOAuth = hasGoogleOAuth || hasMicrosoftOAuth || hasAppleOAuth || hasGitHubOAuth || hasSSOOIDC;
 
 // Demo credentials provider for testing (when no OAuth is configured)
-if (!hasAnyOAuth) {
+// SECURITY: Disabled in production to prevent auth bypass (creates users without password verification)
+if (!hasAnyOAuth && process.env.NODE_ENV !== "production") {
   providers.push(
     Credentials({
       name: "Demo Account",

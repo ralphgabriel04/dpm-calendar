@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import {
   Calendar,
   CheckSquare,
@@ -31,80 +32,6 @@ import {
 } from "lucide-react";
 import { ThemeToggle } from "@/components/theme";
 import { LanguageToggle } from "@/components/language";
-
-// Feature accordion data with descriptions and mockup components
-const featureData = [
-  {
-    id: "time-tracking",
-    title: "Suivez comment vous utilisez votre temps",
-    icon: Clock,
-    color: "violet",
-    description:
-      "La fonctionnalité d'utilisation du temps vous aide à analyser votre emploi du temps en vous indiquant comment vous occupez votre temps et avec qui.",
-    features: [
-      "Rapports de productivité détaillés",
-      "Temps par projet et catégorie",
-      "Graphiques et tendances visuels",
-    ],
-    MockupComponent: TimeInsightsMockup,
-  },
-  {
-    id: "focus-mode",
-    title: "Bloquez les distractions",
-    icon: Target,
-    color: "emerald",
-    description:
-      "Le mode Focus vous permet de vous concentrer sur une seule tâche à la fois avec la technique Pomodoro intégrée et le blocage des notifications.",
-    features: [
-      "Technique Pomodoro intégrée",
-      "Blocage des notifications",
-      "Suivi du temps de concentration",
-    ],
-    MockupComponent: FocusModeMockup,
-  },
-  {
-    id: "multi-calendar",
-    title: "Restez organisé avec plusieurs agendas",
-    icon: Layers,
-    color: "blue",
-    description:
-      "Gérez plusieurs calendriers en un seul endroit. Synchronisez automatiquement vos agendas Google, Microsoft et Apple.",
-    features: [
-      "Synchronisation Google Calendar",
-      "Intégration Microsoft Outlook",
-      "Calendriers personnels et professionnels",
-    ],
-    MockupComponent: MultiCalendarMockup,
-  },
-  {
-    id: "custom-views",
-    title: "Personnalisez votre vue",
-    icon: Eye,
-    color: "orange",
-    description:
-      "Choisissez la vue qui vous convient le mieux : jour, semaine, mois ou agenda. Personnalisez les couleurs et l'affichage selon vos préférences.",
-    features: [
-      "Vues jour, semaine, mois, agenda",
-      "Drag & drop intuitif",
-      "Personnalisation des couleurs",
-    ],
-    MockupComponent: CustomViewsMockup,
-  },
-  {
-    id: "goals",
-    title: "Atteignez vos objectifs",
-    icon: BarChart3,
-    color: "pink",
-    description:
-      "Définissez des objectifs SMART et suivez votre progression. Liez vos tâches à vos objectifs pour rester motivé et organisé.",
-    features: [
-      "Objectifs SMART",
-      "Suivi de progression visuel",
-      "Jalons et étapes clés",
-    ],
-    MockupComponent: GoalsMockup,
-  },
-];
 
 // Color mapping
 const colorStyles: Record<string, { bg: string; border: string; text: string; accent: string }> = {
@@ -142,6 +69,7 @@ const colorStyles: Record<string, { bg: string; border: string; text: string; ac
 
 // Mockup Components
 function TimeInsightsMockup() {
+  const t = useTranslations("landing.mockups.timeInsights");
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
       <div className="flex items-center justify-between mb-4">
@@ -150,10 +78,12 @@ function TimeInsightsMockup() {
           <X className="h-4 w-4" />
         </button>
       </div>
-      <h4 className="font-semibold mb-4">Time Insights</h4>
+      <h4 className="font-semibold mb-4">{t("title")}</h4>
       <div className="flex items-center gap-6">
         <div className="text-sm text-muted-foreground">
-          Time<br />breakdown
+          {t("breakdown").split(" ").map((word, i) => (
+            <span key={i}>{word}<br /></span>
+          ))}
         </div>
         {/* Donut Chart */}
         <div className="relative w-24 h-24">
@@ -169,21 +99,21 @@ function TimeInsightsMockup() {
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-red-500" />
-            <span>Important</span>
+            <span>{t("important")}</span>
           </div>
           <span className="text-muted-foreground">1.8 hr</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span>Personal</span>
+            <span>{t("personal")}</span>
           </div>
           <span className="text-muted-foreground">4.2 hr</span>
         </div>
         <div className="flex items-center justify-between text-sm">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-blue-500" />
-            <span>Accounting</span>
+            <span>{t("accounting")}</span>
           </div>
           <span className="text-muted-foreground">3 hr</span>
         </div>
@@ -193,6 +123,7 @@ function TimeInsightsMockup() {
 }
 
 function FocusModeMockup() {
+  const t = useTranslations("landing.mockups.focusMode");
   const TOTAL_TIME = 25 * 60; // 25 minutes in seconds
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [isRunning, setIsRunning] = useState(false);
@@ -260,22 +191,22 @@ function FocusModeMockup() {
     return (
       <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
         <div className="flex items-center justify-between mb-6">
-          <h4 className="font-semibold">Focus Mode</h4>
+          <h4 className="font-semibold">{t("title")}</h4>
           <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center">
             <Check className="h-4 w-4 text-emerald-500" />
           </div>
         </div>
         <div className="text-center">
           <div className="text-4xl mb-4">🎉</div>
-          <p className="font-medium text-emerald-500 mb-2">Félicitations !</p>
+          <p className="font-medium text-emerald-500 mb-2">{t("congrats")}</p>
           <p className="text-sm text-muted-foreground mb-4">
-            Vous avez terminé vos {totalSessions} sessions de focus !
+            {t("completedSessions", { count: totalSessions })}
           </p>
           <button
             onClick={handleReset}
             className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition-colors"
           >
-            Recommencer
+            {t("restart")}
           </button>
         </div>
       </div>
@@ -285,7 +216,7 @@ function FocusModeMockup() {
   return (
     <div className="rounded-2xl border border-border bg-card p-6 shadow-lg">
       <div className="flex items-center justify-between mb-6">
-        <h4 className="font-semibold">Focus Mode</h4>
+        <h4 className="font-semibold">{t("title")}</h4>
         <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
           isRunning ? "bg-emerald-500/20 animate-pulse" : "bg-muted"
         }`}>
@@ -293,8 +224,8 @@ function FocusModeMockup() {
         </div>
       </div>
       <div className="text-center">
-        <p className="text-sm text-muted-foreground mb-2">Tâche en cours</p>
-        <p className="font-medium mb-4">Rapport trimestriel Q1</p>
+        <p className="text-sm text-muted-foreground mb-2">{t("currentTask")}</p>
+        <p className="font-medium mb-4">{t("taskName")}</p>
         <div className={`text-4xl font-mono font-bold mb-4 transition-colors ${
           isRunning ? "text-emerald-500" : timeLeft < TOTAL_TIME ? "text-orange-500" : "text-muted-foreground"
         }`}>
@@ -307,7 +238,7 @@ function FocusModeMockup() {
           />
         </div>
         <p className="text-xs text-muted-foreground mb-4">
-          Session {currentSession}/{totalSessions}
+          {t("session")} {currentSession}/{totalSessions}
         </p>
         <div className="flex gap-2 justify-center">
           <button
@@ -318,13 +249,13 @@ function FocusModeMockup() {
                 : "bg-emerald-500/20 text-emerald-500 hover:bg-emerald-500/30"
             }`}
           >
-            {isRunning ? "Pause" : timeLeft < TOTAL_TIME ? "Reprendre" : "Démarrer"}
+            {isRunning ? t("pause") : timeLeft < TOTAL_TIME ? t("resume") : t("start")}
           </button>
           <button
             onClick={handleComplete}
             className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-sm font-medium hover:bg-emerald-600 transition-colors"
           >
-            {currentSession < totalSessions ? "Session suivante" : "Terminer"}
+            {currentSession < totalSessions ? t("nextSession") : t("finish")}
           </button>
         </div>
         {timeLeft < TOTAL_TIME && (
@@ -332,7 +263,7 @@ function FocusModeMockup() {
             onClick={handleReset}
             className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
-            Réinitialiser
+            {t("reset")}
           </button>
         )}
       </div>
@@ -341,14 +272,15 @@ function FocusModeMockup() {
 }
 
 function MultiCalendarMockup() {
+  const t = useTranslations("landing.mockups.calendars");
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
-      <h4 className="font-semibold mb-4">Mes Calendriers</h4>
+      <h4 className="font-semibold mb-4">{t("title")}</h4>
       <div className="space-y-3">
         {[
-          { name: "Travail", color: "bg-violet-500", connected: true },
-          { name: "Personnel", color: "bg-green-500", connected: true },
-          { name: "Sport", color: "bg-orange-500", connected: true },
+          { name: t("work"), color: "bg-violet-500", connected: true },
+          { name: t("personal"), color: "bg-green-500", connected: true },
+          { name: t("sport"), color: "bg-orange-500", connected: true },
         ].map((cal) => (
           <div key={cal.name} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
             <div className="flex items-center gap-3">
@@ -359,7 +291,7 @@ function MultiCalendarMockup() {
           </div>
         ))}
         <div className="border-t border-border pt-3 mt-3">
-          <p className="text-xs text-muted-foreground mb-2">Connectés</p>
+          <p className="text-xs text-muted-foreground mb-2">{t("connected")}</p>
           {[
             { name: "Google Calendar", icon: "🔗" },
             { name: "Microsoft Outlook", icon: "🔗" },
@@ -369,7 +301,7 @@ function MultiCalendarMockup() {
                 <span>{provider.icon}</span>
                 <span className="text-sm">{provider.name}</span>
               </div>
-              <span className="text-xs text-green-500">Synced</span>
+              <span className="text-xs text-green-500">{t("synced")}</span>
             </div>
           ))}
         </div>
@@ -379,34 +311,39 @@ function MultiCalendarMockup() {
 }
 
 function CustomViewsMockup() {
-  const [activeView, setActiveView] = useState<"Jour" | "Semaine" | "Mois">("Semaine");
+  const t = useTranslations("landing.mockups.views");
+  const [activeView, setActiveView] = useState<"day" | "week" | "month">("week");
   const [selectedDay, setSelectedDay] = useState<number>(10); // Default selected day
-  const views = ["Jour", "Semaine", "Mois"] as const;
+  const views = [
+    { key: "day" as const, label: t("day") },
+    { key: "week" as const, label: t("week") },
+    { key: "month" as const, label: t("month") },
+  ];
 
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
       <div className="flex items-center gap-1 mb-4">
         {views.map((view) => (
           <button
-            key={view}
-            onClick={() => setActiveView(view)}
+            key={view.key}
+            onClick={() => setActiveView(view.key)}
             className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-200 ${
-              activeView === view
+              activeView === view.key
                 ? "bg-violet-500 text-white scale-105"
                 : "bg-muted hover:bg-muted/80"
             }`}
           >
-            {view}
+            {view.label}
           </button>
         ))}
       </div>
 
       {/* Vue Jour */}
-      {activeView === "Jour" && (
+      {activeView === "day" && (
         <div className="animate-in fade-in duration-200">
           <div className="text-center mb-3">
-            <div className="text-lg font-semibold">Mercredi 10</div>
-            <div className="text-xs text-muted-foreground">Janvier 2025</div>
+            <div className="text-lg font-semibold">{t("wednesday")} 10</div>
+            <div className="text-xs text-muted-foreground">{t("january")} 2025</div>
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-xs">
@@ -416,7 +353,7 @@ function CustomViewsMockup() {
             <div className="flex items-center gap-2 text-xs">
               <span className="w-10 text-muted-foreground">09:00</span>
               <div className="flex-1 p-1.5 rounded bg-violet-500/20 border-l-2 border-violet-500">
-                Réunion équipe
+                {t("teamMeeting")}
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs">
@@ -430,13 +367,13 @@ function CustomViewsMockup() {
             <div className="flex items-center gap-2 text-xs">
               <span className="w-10 text-muted-foreground">12:00</span>
               <div className="flex-1 p-1.5 rounded bg-green-500/20 border-l-2 border-green-500">
-                Déjeuner
+                {t("lunch")}
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs">
               <span className="w-10 text-muted-foreground">14:00</span>
               <div className="flex-1 p-1.5 rounded bg-blue-500/20 border-l-2 border-blue-500">
-                Appel client
+                {t("clientCall")}
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs">
@@ -448,7 +385,7 @@ function CustomViewsMockup() {
       )}
 
       {/* Vue Semaine */}
-      {activeView === "Semaine" && (
+      {activeView === "week" && (
         <div className="animate-in fade-in duration-200">
           <div className="grid grid-cols-7 gap-1 text-xs mb-2">
             {["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"].map((day) => (
@@ -476,36 +413,36 @@ function CustomViewsMockup() {
             {selectedDay === 8 && (
               <div className="flex items-center gap-2 p-1.5 rounded bg-green-500/20 text-xs animate-in fade-in duration-200">
                 <div className="w-1 h-4 rounded bg-green-500" />
-                <span>10:00 - Présentation projet</span>
+                <span>10:00 - {t("presentation")}</span>
               </div>
             )}
             {selectedDay === 10 && (
               <>
                 <div className="flex items-center gap-2 p-1.5 rounded bg-violet-500/20 text-xs animate-in fade-in duration-200">
                   <div className="w-1 h-4 rounded bg-violet-500" />
-                  <span>9:00 - Réunion équipe</span>
+                  <span>9:00 - {t("teamMeeting")}</span>
                 </div>
                 <div className="flex items-center gap-2 p-1.5 rounded bg-blue-500/20 text-xs animate-in fade-in duration-200">
                   <div className="w-1 h-4 rounded bg-blue-500" />
-                  <span>14:00 - Appel client</span>
+                  <span>14:00 - {t("clientCall")}</span>
                 </div>
               </>
             )}
             {selectedDay === 9 && (
               <div className="flex items-center gap-2 p-1.5 rounded bg-orange-500/20 text-xs animate-in fade-in duration-200">
                 <div className="w-1 h-4 rounded bg-orange-500" />
-                <span>11:30 - Déjeuner équipe</span>
+                <span>11:30 - {t("teamLunch")}</span>
               </div>
             )}
             {selectedDay === 12 && (
               <div className="flex items-center gap-2 p-1.5 rounded bg-pink-500/20 text-xs animate-in fade-in duration-200">
                 <div className="w-1 h-4 rounded bg-pink-500" />
-                <span>16:00 - Sport</span>
+                <span>16:00 - {t("sports")}</span>
               </div>
             )}
             {[6, 7, 11].includes(selectedDay) && (
               <div className="text-xs text-muted-foreground text-center py-2 animate-in fade-in duration-200">
-                Aucun événement ce jour
+                {t("noEvent")}
               </div>
             )}
           </div>
@@ -513,10 +450,10 @@ function CustomViewsMockup() {
       )}
 
       {/* Vue Mois */}
-      {activeView === "Mois" && (
+      {activeView === "month" && (
         <div className="animate-in fade-in duration-200">
           <div className="text-center mb-3">
-            <div className="text-sm font-semibold">Janvier 2025</div>
+            <div className="text-sm font-semibold">{t("january")} 2025</div>
           </div>
           <div className="grid grid-cols-7 gap-0.5 text-[10px] mb-1">
             {["L", "M", "M", "J", "V", "S", "D"].map((day, i) => (
@@ -558,25 +495,25 @@ function CustomViewsMockup() {
             {selectedDay === 8 && (
               <div className="flex items-center gap-2 p-1 rounded bg-green-500/20 text-[10px] animate-in fade-in duration-200">
                 <div className="w-1 h-3 rounded bg-green-500" />
-                <span>10:00 - Présentation</span>
+                <span>10:00 - {t("presentation")}</span>
               </div>
             )}
             {selectedDay === 10 && (
               <div className="flex items-center gap-2 p-1 rounded bg-violet-500/20 text-[10px] animate-in fade-in duration-200">
                 <div className="w-1 h-3 rounded bg-violet-500" />
-                <span>9:00 - Réunion</span>
+                <span>9:00 - {t("meeting")}</span>
               </div>
             )}
             {selectedDay === 15 && (
               <div className="flex items-center gap-2 p-1 rounded bg-blue-500/20 text-[10px] animate-in fade-in duration-200">
                 <div className="w-1 h-3 rounded bg-blue-500" />
-                <span>14:00 - Deadline</span>
+                <span>14:00 - {t("deadline")}</span>
               </div>
             )}
             {selectedDay === 22 && (
               <div className="flex items-center gap-2 p-1 rounded bg-orange-500/20 text-[10px] animate-in fade-in duration-200">
                 <div className="w-1 h-3 rounded bg-orange-500" />
-                <span>Anniversaire</span>
+                <span>{t("birthday")}</span>
               </div>
             )}
           </div>
@@ -587,11 +524,12 @@ function CustomViewsMockup() {
 }
 
 function GoalsMockup() {
+  const t = useTranslations("landing.mockups.goals");
   const [phases, setPhases] = useState([
-    { id: 1, name: "Phase 1 - Recherche", completed: true },
-    { id: 2, name: "Phase 2 - Design", completed: true },
-    { id: 3, name: "Phase 3 - Développement", completed: true },
-    { id: 4, name: "Phase 4 - Tests", completed: false },
+    { id: 1, name: t("phase1"), completed: true },
+    { id: 2, name: t("phase2"), completed: true },
+    { id: 3, name: t("phase3"), completed: true },
+    { id: 4, name: t("phase4"), completed: false },
   ]);
 
   const completedCount = phases.filter((p) => p.completed).length;
@@ -610,10 +548,10 @@ function GoalsMockup() {
 
   return (
     <div className="rounded-2xl border border-border bg-card p-4 shadow-lg">
-      <h4 className="font-semibold mb-4">Objectif en cours</h4>
+      <h4 className="font-semibold mb-4">{t("title")}</h4>
       <div className="p-3 rounded-lg bg-pink-500/10 border border-pink-500/20 mb-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="font-medium text-sm">Finir projet client</span>
+          <span className="font-medium text-sm">{t("projectName")}</span>
           <span className="text-xs text-pink-500 font-semibold transition-all duration-300">
             {progress}%
           </span>
@@ -666,7 +604,7 @@ function GoalsMockup() {
         })}
       </div>
       <p className="text-[10px] text-muted-foreground mt-3 text-center">
-        Cliquez sur une phase pour la cocher/décocher
+        {t("clickToToggle")}
       </p>
     </div>
   );
@@ -731,21 +669,92 @@ function HeroMockup() {
 }
 
 export default function Home() {
+  const t = useTranslations("landing");
+  const tFeatures = useTranslations("landing.features");
   const [activeFeature, setActiveFeature] = useState<string>("time-tracking");
+
+  // Feature accordion data with descriptions and mockup components
+  const featureData = [
+    {
+      id: "time-tracking",
+      title: tFeatures("timeTracking.title"),
+      icon: Clock,
+      color: "violet",
+      description: tFeatures("timeTracking.description"),
+      features: [
+        tFeatures("timeTracking.feature1"),
+        tFeatures("timeTracking.feature2"),
+        tFeatures("timeTracking.feature3"),
+      ],
+      MockupComponent: TimeInsightsMockup,
+    },
+    {
+      id: "focus-mode",
+      title: tFeatures("focusMode.title"),
+      icon: Target,
+      color: "emerald",
+      description: tFeatures("focusMode.description"),
+      features: [
+        tFeatures("focusMode.feature1"),
+        tFeatures("focusMode.feature2"),
+        tFeatures("focusMode.feature3"),
+      ],
+      MockupComponent: FocusModeMockup,
+    },
+    {
+      id: "multi-calendar",
+      title: tFeatures("multiCalendar.title"),
+      icon: Layers,
+      color: "blue",
+      description: tFeatures("multiCalendar.description"),
+      features: [
+        tFeatures("multiCalendar.feature1"),
+        tFeatures("multiCalendar.feature2"),
+        tFeatures("multiCalendar.feature3"),
+      ],
+      MockupComponent: MultiCalendarMockup,
+    },
+    {
+      id: "custom-views",
+      title: tFeatures("customViews.title"),
+      icon: Eye,
+      color: "orange",
+      description: tFeatures("customViews.description"),
+      features: [
+        tFeatures("customViews.feature1"),
+        tFeatures("customViews.feature2"),
+        tFeatures("customViews.feature3"),
+      ],
+      MockupComponent: CustomViewsMockup,
+    },
+    {
+      id: "goals",
+      title: tFeatures("goals.title"),
+      icon: BarChart3,
+      color: "pink",
+      description: tFeatures("goals.description"),
+      features: [
+        tFeatures("goals.feature1"),
+        tFeatures("goals.feature2"),
+        tFeatures("goals.feature3"),
+      ],
+      MockupComponent: GoalsMockup,
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
+          <div className="flex h-24 sm:h-28 md:h-32 items-center justify-between">
             <div className="flex items-center">
               <Image
-                src="/logo-full.png"
+                src="/lightLogoFinal.png"
                 alt="DPM Calendar"
-                width={200}
-                height={50}
-                className="h-10 sm:h-12 w-auto dark:brightness-100 brightness-90"
+                width={500}
+                height={125}
+                className="h-16 sm:h-20 md:h-24 w-auto"
                 priority
               />
             </div>
@@ -758,13 +767,13 @@ export default function Home() {
                 href="/login"
                 className="hidden sm:block text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
-                Se connecter
+                {t("nav.login")}
               </Link>
               <Link
                 href="/login"
                 className="rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
               >
-                Essayer
+                {t("nav.tryIt")}
               </Link>
             </div>
           </div>
@@ -772,34 +781,33 @@ export default function Home() {
       </nav>
 
       {/* Hero Section - Simplified 2 columns */}
-      <section className="pt-28 pb-16 lg:pt-32 lg:pb-24">
+      <section className="pt-36 pb-16 sm:pt-40 md:pt-44 lg:pb-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
             <div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-                Votre temps,{" "}
+                {t("hero.title1")}{" "}
                 <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-                  mérite mieux
+                  {t("hero.title2")}
                 </span>
               </h1>
               <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
-                Calendrier, tâches, habitudes et objectifs réunis dans une seule application.
-                Synchronisez avec Google Calendar et Microsoft Outlook.
+                {t("hero.subtitle")}
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link
                   href="/login"
                   className="group flex items-center justify-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-base font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
                 >
-                  Commencer gratuitement
+                  {t("hero.cta")}
                   <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link
                   href="#features"
                   className="flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold hover:bg-accent transition-all"
                 >
-                  Voir les fonctionnalités
+                  {t("hero.seeFeatures")}
                 </Link>
               </div>
             </div>
@@ -811,18 +819,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Comment ça fonctionne - 3 Steps */}
+      {/* Comment ca fonctionne - 3 Steps */}
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              Comment ça{" "}
+              {t("howItWorks.title1")}{" "}
               <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                fonctionne
+                {t("howItWorks.title2")}
               </span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Trois étapes simples pour transformer votre productivité
+              {t("howItWorks.subtitle")}
             </p>
           </div>
 
@@ -837,9 +845,9 @@ export default function Home() {
                   </div>
                   <span className="text-4xl font-bold text-violet-500/20">01</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Connectez vos calendriers</h3>
+                <h3 className="text-xl font-semibold mb-3">{t("howItWorks.step1.title")}</h3>
                 <p className="text-muted-foreground">
-                  Importez vos événements Google, Microsoft ou Apple en un clic. Tout est synchronisé automatiquement.
+                  {t("howItWorks.step1.description")}
                 </p>
               </div>
             </div>
@@ -854,9 +862,9 @@ export default function Home() {
                   </div>
                   <span className="text-4xl font-bold text-emerald-500/20">02</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Planifiez intelligemment</h3>
+                <h3 className="text-xl font-semibold mb-3">{t("howItWorks.step2.title")}</h3>
                 <p className="text-muted-foreground">
-                  Créez des tâches, définissez des objectifs et laissez l&apos;IA vous suggérer le meilleur moment pour les réaliser.
+                  {t("howItWorks.step2.description")}
                 </p>
               </div>
             </div>
@@ -871,9 +879,9 @@ export default function Home() {
                   </div>
                   <span className="text-4xl font-bold text-pink-500/20">03</span>
                 </div>
-                <h3 className="text-xl font-semibold mb-3">Atteignez vos objectifs</h3>
+                <h3 className="text-xl font-semibold mb-3">{t("howItWorks.step3.title")}</h3>
                 <p className="text-muted-foreground">
-                  Suivez vos progrès, analysez votre productivité et célébrez vos accomplissements.
+                  {t("howItWorks.step3.description")}
                 </p>
               </div>
             </div>
@@ -976,13 +984,13 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold sm:text-4xl">
-              Conçu pour{" "}
+              {t("personas.title1")}{" "}
               <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-                vous
+                {t("personas.title2")}
               </span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Que vous soyez étudiant, entrepreneur ou freelance, DPM Calendar s&apos;adapte à votre mode de vie.
+              {t("personas.subtitle")}
             </p>
           </div>
 
@@ -992,22 +1000,22 @@ export default function Home() {
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-500/10 text-violet-500 mb-5 group-hover:scale-110 transition-transform">
                 <GraduationCap className="h-7 w-7" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Étudiants</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("personas.students.title")}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Gérez vos cours, examens et projets. Ne manquez plus jamais une deadline.
+                {t("personas.students.description")}
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Rappels de cours
+                  {t("personas.students.feature1")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Suivi des examens
+                  {t("personas.students.feature2")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Planification des révisions
+                  {t("personas.students.feature3")}
                 </li>
               </ul>
             </div>
@@ -1017,22 +1025,22 @@ export default function Home() {
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-500/10 text-emerald-500 mb-5 group-hover:scale-110 transition-transform">
                 <Rocket className="h-7 w-7" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Entrepreneurs</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("personas.entrepreneurs.title")}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Développez votre business en gardant le contrôle de votre emploi du temps.
+                {t("personas.entrepreneurs.description")}
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Gestion de projets
+                  {t("personas.entrepreneurs.feature1")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Suivi des objectifs
+                  {t("personas.entrepreneurs.feature2")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Analytics de productivité
+                  {t("personas.entrepreneurs.feature3")}
                 </li>
               </ul>
             </div>
@@ -1042,22 +1050,22 @@ export default function Home() {
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500/10 to-cyan-500/10 text-blue-500 mb-5 group-hover:scale-110 transition-transform">
                 <Briefcase className="h-7 w-7" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Freelances</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("personas.freelancers.title")}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Jonglez avec plusieurs clients et projets sans perdre le fil.
+                {t("personas.freelancers.description")}
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Multi-calendriers
+                  {t("personas.freelancers.feature1")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Time tracking
+                  {t("personas.freelancers.feature2")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Facturation facilitée
+                  {t("personas.freelancers.feature3")}
                 </li>
               </ul>
             </div>
@@ -1067,22 +1075,22 @@ export default function Home() {
               <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500/10 to-amber-500/10 text-orange-500 mb-5 group-hover:scale-110 transition-transform">
                 <Users className="h-7 w-7" />
               </div>
-              <h3 className="text-lg font-semibold mb-2">Équipes</h3>
+              <h3 className="text-lg font-semibold mb-2">{t("personas.teams.title")}</h3>
               <p className="text-sm text-muted-foreground mb-4">
-                Collaborez efficacement et synchronisez les agendas de toute l&apos;équipe.
+                {t("personas.teams.description")}
               </p>
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Calendriers partagés
+                  {t("personas.teams.feature1")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Planification de réunions
+                  {t("personas.teams.feature2")}
                 </li>
                 <li className="flex items-center gap-2 text-muted-foreground">
                   <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
-                  Coordination simplifiée
+                  {t("personas.teams.feature3")}
                 </li>
               </ul>
             </div>
@@ -1094,7 +1102,7 @@ export default function Home() {
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-2xl font-bold sm:text-3xl mb-8">
-            Synchronisez vos calendriers préférés
+            {t("integrations.title")}
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-6">
             {/* Google */}
@@ -1138,16 +1146,16 @@ export default function Home() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-green-500/10 px-4 py-1.5 text-sm font-medium text-green-600 dark:text-green-400 mb-6">
                 <Shield className="h-4 w-4" />
-                Sécurité renforcée
+                {t("security.badge")}
               </div>
               <h2 className="text-3xl font-bold sm:text-4xl mb-6">
-                Vos données sont{" "}
+                {t("security.title1")}{" "}
                 <span className="bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
-                  protégées
+                  {t("security.title2")}
                 </span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Nous prenons la sécurité de vos données très au sérieux. Votre vie privée est notre priorité.
+                {t("security.subtitle")}
               </p>
 
               <div className="space-y-4">
@@ -1156,9 +1164,9 @@ export default function Home() {
                     <Lock className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Chiffrement de bout en bout</h3>
+                    <h3 className="font-semibold mb-1">{t("security.encryption.title")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Toutes vos données sont chiffrées avec les derniers standards de sécurité.
+                      {t("security.encryption.description")}
                     </p>
                   </div>
                 </div>
@@ -1168,9 +1176,9 @@ export default function Home() {
                     <Cloud className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Hébergé en Europe</h3>
+                    <h3 className="font-semibold mb-1">{t("security.hosting.title")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Vos données restent en Europe, en conformité avec le RGPD.
+                      {t("security.hosting.description")}
                     </p>
                   </div>
                 </div>
@@ -1180,47 +1188,33 @@ export default function Home() {
                     <Shield className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold mb-1">Authentification sécurisée</h3>
+                    <h3 className="font-semibold mb-1">{t("security.auth.title")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      OAuth 2.0 avec Google et Microsoft, sans stockage de mots de passe.
+                      {t("security.auth.description")}
                     </p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Right: Trust badges */}
+            {/* Right: Honest technical claims (verifiable) */}
             <div className="lg:pl-8">
               <div className="rounded-2xl border border-border bg-card p-8">
-                <h3 className="font-semibold text-lg mb-6 text-center">Certifications & Conformité</h3>
+                <h3 className="font-semibold text-lg mb-6 text-center">{t("security.certifications")}</h3>
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
-                    <div className="h-12 w-12 rounded-full bg-green-500/10 flex items-center justify-center mb-3">
-                      <Check className="h-6 w-6 text-green-500" />
-                    </div>
-                    <span className="font-semibold text-sm">RGPD</span>
-                    <span className="text-xs text-muted-foreground">Conforme</span>
-                  </div>
                   <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
                     <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
                       <Lock className="h-6 w-6 text-blue-500" />
                     </div>
-                    <span className="font-semibold text-sm">SSL/TLS</span>
-                    <span className="text-xs text-muted-foreground">256-bit</span>
-                  </div>
-                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
-                    <div className="h-12 w-12 rounded-full bg-violet-500/10 flex items-center justify-center mb-3">
-                      <Cloud className="h-6 w-6 text-violet-500" />
-                    </div>
-                    <span className="font-semibold text-sm">Backup</span>
-                    <span className="text-xs text-muted-foreground">Quotidien</span>
+                    <span className="font-semibold text-sm">TLS 1.3</span>
+                    <span className="text-xs text-muted-foreground">Vercel Edge</span>
                   </div>
                   <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
                     <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center mb-3">
                       <Shield className="h-6 w-6 text-orange-500" />
                     </div>
                     <span className="font-semibold text-sm">OAuth 2.0</span>
-                    <span className="text-xs text-muted-foreground">Sécurisé</span>
+                    <span className="text-xs text-muted-foreground">Google / Microsoft</span>
                   </div>
                 </div>
               </div>
@@ -1233,26 +1227,26 @@ export default function Home() {
       <section className="py-16 lg:py-24">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold sm:text-4xl">
-            Prêt à reprendre le contrôle de{" "}
+            {t("cta.title1")}{" "}
             <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-              votre temps
+              {t("cta.title2")}
             </span>
             ?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Rejoignez des milliers d&apos;utilisateurs qui ont transformé leur productivité.
+            {t("cta.subtitle")}
           </p>
           <div className="mt-8">
             <Link
               href="/login"
               className="group inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
             >
-              Commencer gratuitement
+              {t("cta.button")}
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
           <p className="mt-4 text-sm text-muted-foreground">
-            Gratuit pour toujours - Pas de carte de crédit requise
+            {t("cta.noCreditCard")}
           </p>
         </div>
       </section>
@@ -1264,29 +1258,29 @@ export default function Home() {
             {/* Logo */}
             <div className="col-span-2 md:col-span-1">
               <Image
-                src="/logo-full.png"
+                src="/lightLogoFinal.png"
                 alt="DPM Calendar"
-                width={160}
-                height={40}
-                className="h-10 w-auto mb-4 dark:brightness-100 brightness-90"
+                width={200}
+                height={50}
+                className="h-12 w-auto mb-4"
               />
               <p className="text-sm text-muted-foreground">
-                Votre assistant de productivité intelligent.
+                {t("footer.tagline")}
               </p>
             </div>
 
             {/* Produit */}
             <div>
-              <h4 className="font-semibold mb-3 text-sm">Produit</h4>
+              <h4 className="font-semibold mb-3 text-sm">{t("footer.product")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="#features" className="hover:text-foreground transition-colors">
-                    Fonctionnalités
+                    {t("footer.features")}
                   </a>
                 </li>
                 <li>
                   <Link href="/login" className="hover:text-foreground transition-colors">
-                    Tarifs
+                    {t("footer.pricing")}
                   </Link>
                 </li>
               </ul>
@@ -1294,11 +1288,11 @@ export default function Home() {
 
             {/* Ressources */}
             <div>
-              <h4 className="font-semibold mb-3 text-sm">Ressources</h4>
+              <h4 className="font-semibold mb-3 text-sm">{t("footer.resources")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
                   <a href="mailto:support@dpmcalendar.com" className="hover:text-foreground transition-colors">
-                    Support
+                    {t("footer.support")}
                   </a>
                 </li>
               </ul>
@@ -1306,23 +1300,23 @@ export default function Home() {
 
             {/* Legal */}
             <div>
-              <h4 className="font-semibold mb-3 text-sm">Legal</h4>
+              <h4 className="font-semibold mb-3 text-sm">{t("footer.legal")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a href="#" className="hover:text-foreground transition-colors">
-                    Confidentialité
+                  <a
+                    href="mailto:support@dpmcalendar.com?subject=Privacy%20Policy%20Request"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {t("footer.privacy")}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-foreground transition-colors">
-                    CGU
+                  <a
+                    href="mailto:support@dpmcalendar.com?subject=Terms%20of%20Service%20Request"
+                    className="hover:text-foreground transition-colors"
+                  >
+                    {t("footer.terms")}
                   </a>
-                </li>
-                <li>
-                  <span className="flex items-center gap-1">
-                    <Check className="h-3 w-3 text-green-500" />
-                    Conforme RGPD
-                  </span>
                 </li>
               </ul>
             </div>
@@ -1331,7 +1325,7 @@ export default function Home() {
           {/* Bottom */}
           <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} DPM Calendar. Tous droits réservés.
+              {t("footer.copyright", { year: new Date().getFullYear() })}
             </div>
             <div className="flex items-center gap-4">
               <a
