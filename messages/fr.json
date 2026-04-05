@@ -934,5 +934,27 @@
     "addBuffersFailed": "\u00c9chec de l'ajout des tampons",
     "noBackToBack": "Aucune r\u00e9union cons\u00e9cutive d\u00e9tect\u00e9e. Bon espacement.",
     "hoursSuffix": "h"
+  },
+  "shutdownRoutine": {
+    "title": "Routine de fermeture",
+    "review": "Revue de la journ\u00e9e",
+    "reviewDescription": "{count} t\u00e2che(s) termin\u00e9e(s) aujourd'hui",
+    "tomorrow": "Aper\u00e7u de demain",
+    "tomorrowDescription": "{count} priorit\u00e9(s) planifi\u00e9e(s)",
+    "tomorrowEmpty": "Rien n'est encore planifi\u00e9. Demain matin fera l'affaire.",
+    "gratitude": "Gratitude & victoires",
+    "gratitudePrompt": "Trois choses pour lesquelles tu es reconnaissant(e)",
+    "gratitudeLabel": "Gratitude",
+    "gratitudePlaceholder": "Reconnaissant(e) pour... ({n})",
+    "winsLabel": "Victoires",
+    "winsPlaceholder": "Victoire du jour... ({n})",
+    "closeLoop": "Boucler la journ\u00e9e",
+    "closeLoopDescription": "Quelques derni\u00e8res v\u00e9rifications avant de d\u00e9connecter",
+    "emails": "Emails trait\u00e9s",
+    "looseEnds": "Notes/fichiers rang\u00e9s",
+    "calendarChecked": "Calendrier v\u00e9rifi\u00e9",
+    "finish": "Terminer",
+    "next": "Suivant",
+    "back": "Retour"
   }
 }

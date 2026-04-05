@@ -939,5 +939,27 @@
     "addBuffersFailed": "Failed to add buffers",
     "noBackToBack": "No back-to-back meetings detected. Good spacing.",
     "hoursSuffix": "h"
+  },
+  "shutdownRoutine": {
+    "title": "Shutdown Routine",
+    "review": "Day review",
+    "reviewDescription": "{count} task(s) completed today",
+    "tomorrow": "Tomorrow preview",
+    "tomorrowDescription": "{count} priority(ies) planned",
+    "tomorrowEmpty": "Nothing planned yet. Tomorrow morning will do.",
+    "gratitude": "Gratitude & wins",
+    "gratitudePrompt": "Three things you are grateful for",
+    "gratitudeLabel": "Gratitude",
+    "gratitudePlaceholder": "Grateful for... ({n})",
+    "winsLabel": "Wins",
+    "winsPlaceholder": "Today's win... ({n})",
+    "closeLoop": "Close the loop",
+    "closeLoopDescription": "A few final checks before disconnecting",
+    "emails": "Emails handled",
+    "looseEnds": "Notes/files filed",
+    "calendarChecked": "Calendar checked",
+    "finish": "Finish",
+    "next": "Next",
+    "back": "Back"
   }
 }
