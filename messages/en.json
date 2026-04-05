@@ -826,6 +826,18 @@
       }
     }
   },
+  "cbtReframes": {
+    "title": "Reframe",
+    "microActionLabel": "Try this",
+    "dismiss": "Dismiss",
+    "detectionTypes": {
+      "perfectionism": "Perfectionism",
+      "overwhelm": "Overwhelm",
+      "avoidance": "Avoidance",
+      "fear_of_failure": "Fear of failure",
+      "generic": "Stuck"
+    }
+  },
   "priorityCap": {
     "title": "Daily priority cap reached",
     "description": "You already have {count} priorities today \u2014 which should be deferred?",
@@ -875,5 +887,18 @@
     "progress": "{current}/{goal} min",
     "streak": "{days} day streak",
     "streakSingle": "{days} day streak"
+  },
+  "meetingLoad": {
+    "title": "Meeting load (next 7 days)",
+    "loading": "Loading...",
+    "highLoadTitle": "High meeting load",
+    "highLoadMessage": "You have {hours}h of meetings this week (threshold: {threshold}h). Consider declining or rescheduling.",
+    "backToBackCount": "{count} back-to-back meetings",
+    "backToBackHint": "Add 30-min buffers to recover between them.",
+    "addBuffers": "Add buffers",
+    "buffersAdded": "Added {count} buffers",
+    "addBuffersFailed": "Failed to add buffers",
+    "noBackToBack": "No back-to-back meetings detected. Good spacing.",
+    "hoursSuffix": "h"
   }
 }

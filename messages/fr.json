@@ -821,6 +821,18 @@
       }
     }
   },
+  "cbtReframes": {
+    "title": "Recadrage",
+    "microActionLabel": "Essayez ceci",
+    "dismiss": "Fermer",
+    "detectionTypes": {
+      "perfectionism": "Perfectionnisme",
+      "overwhelm": "Débordement",
+      "avoidance": "Évitement",
+      "fear_of_failure": "Peur de l'échec",
+      "generic": "Blocage"
+    }
+  },
   "priorityCap": {
     "title": "Limite quotidienne de priorit\u00e9s atteinte",
     "description": "Vous avez d\u00e9j\u00e0 {count} priorit\u00e9s aujourd'hui \u2014 laquelle reporter ?",
@@ -870,5 +882,18 @@
     "progress": "{current}/{goal} min",
     "streak": "S\u00e9rie de {days} jours",
     "streakSingle": "S\u00e9rie de {days} jour"
+  },
+  "meetingLoad": {
+    "title": "Charge de r\u00e9unions (7 prochains jours)",
+    "loading": "Chargement...",
+    "highLoadTitle": "Charge de r\u00e9unions \u00e9lev\u00e9e",
+    "highLoadMessage": "Vous avez {hours}h de r\u00e9unions cette semaine (seuil : {threshold}h). Envisagez de d\u00e9cliner ou de reporter.",
+    "backToBackCount": "{count} r\u00e9unions cons\u00e9cutives",
+    "backToBackHint": "Ajoutez des tampons de 30 min pour r\u00e9cup\u00e9rer.",
+    "addBuffers": "Ajouter des tampons",
+    "buffersAdded": "{count} tampons ajout\u00e9s",
+    "addBuffersFailed": "\u00c9chec de l'ajout des tampons",
+    "noBackToBack": "Aucune r\u00e9union cons\u00e9cutive d\u00e9tect\u00e9e. Bon espacement.",
+    "hoursSuffix": "h"
   }
 }

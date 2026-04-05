@@ -3,6 +3,19 @@ import { createTRPCRouter } from "@/infrastructure/trpc/context";
 import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 import { startOfDay, endOfDay, subDays, differenceInMinutes } from "date-fns";
+import {
+  pickReframe,
+  inferDetectionType,
+  type CbtDetectionType,
+} from "@/features/focus/lib/cbtReframes";
+
+const DETECTION_TYPE_VALUES = [
+  "perfectionism",
+  "overwhelm",
+  "avoidance",
+  "fear_of_failure",
+  "generic",
+] as const satisfies readonly CbtDetectionType[];
 
 export const antiProcrastinationRouter = createTRPCRouter({
   // Get quick start suggestions (micro-commitments)
@@ -153,6 +166,7 @@ export const antiProcrastinationRouter = createTRPCRouter({
       z.object({
         taskId: z.string(),
         reason: z.string().max(200).optional(),
+        detectionType: z.enum(DETECTION_TYPE_VALUES).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -175,10 +189,33 @@ export const antiProcrastinationRouter = createTRPCRouter({
         },
       });
 
-      // Generate a helpful response
+      // Surface a CBT reframe based on detection type (Ticket #140).
+      const detectionType: CbtDetectionType =
+        input.detectionType ?? inferDetectionType(input.reason);
+      const reframe = pickReframe(detectionType);
+
       return {
         message: "C'est normal d'éviter parfois. Voulez-vous essayer juste 5 minutes?",
         suggestedMicroDuration: 5,
+        detectionType,
+        reframe,
+      };
+    }),
+
+  // Fetch a CBT reframe prompt on demand (Ticket #140).
+  getReframe: protectedProcedure
+    .input(
+      z.object({
+        detectionType: z.enum(DETECTION_TYPE_VALUES).optional(),
+        reason: z.string().max(200).optional(),
+      })
+    )
+    .query(({ input }) => {
+      const detectionType: CbtDetectionType =
+        input.detectionType ?? inferDetectionType(input.reason);
+      return {
+        detectionType,
+        reframe: pickReframe(detectionType),
       };
     }),
 
