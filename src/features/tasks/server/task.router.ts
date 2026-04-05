@@ -3,6 +3,83 @@ import { createTRPCRouter } from "@/infrastructure/trpc/context";
 import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 
+// Helpers for daily priority cap enforcement
+function isSameLocalDay(a: Date, b: Date): boolean {
+  return (
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate()
+  );
+}
+
+function isPriorityToday(
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT" | undefined,
+  dueAt: Date | null | undefined,
+  plannedStartAt: Date | null | undefined,
+  now: Date = new Date()
+): boolean {
+  if (priority !== "URGENT" && priority !== "HIGH") return false;
+  const due = dueAt ? new Date(dueAt) : null;
+  const planned = plannedStartAt ? new Date(plannedStartAt) : null;
+  if (due && isSameLocalDay(due, now)) return true;
+  if (planned && isSameLocalDay(planned, now)) return true;
+  return false;
+}
+
+async function enforcePriorityCap(
+  ctx: {
+    db: import("@prisma/client").PrismaClient;
+    session: { user: { id: string } };
+  },
+  excludeTaskId?: string
+): Promise<void> {
+  const userId = ctx.session.user.id;
+  const user = await ctx.db.user.findUnique({
+    where: { id: userId },
+    select: { dailyPriorityCap: true },
+  });
+  const cap = user?.dailyPriorityCap ?? 3;
+
+  const now = new Date();
+  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayEnd = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    23,
+    59,
+    59,
+    999
+  );
+
+  const existing = await ctx.db.task.findMany({
+    where: {
+      userId,
+      status: { notIn: ["DONE", "CANCELLED"] },
+      priority: { in: ["URGENT", "HIGH"] },
+      OR: [
+        { dueAt: { gte: dayStart, lte: dayEnd } },
+        { plannedStartAt: { gte: dayStart, lte: dayEnd } },
+      ],
+      ...(excludeTaskId ? { id: { not: excludeTaskId } } : {}),
+    },
+    select: { id: true, title: true, priority: true, dueAt: true, plannedStartAt: true },
+  });
+
+  if (existing.length >= cap) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message: `Daily priority cap reached (${cap})`,
+      cause: {
+        cap,
+        count: existing.length,
+        conflictingTaskIds: existing.map((t) => t.id),
+        conflictingTasks: existing,
+      },
+    });
+  }
+}
+
 const taskCreateSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),
@@ -121,6 +198,13 @@ export const taskRouter = createTRPCRouter({
   create: protectedProcedure
     .input(taskCreateSchema)
     .mutation(async ({ ctx, input }) => {
+      // Enforce daily priority cap if task is a priority for today
+      if (
+        isPriorityToday(input.priority, input.dueAt, input.plannedStartAt)
+      ) {
+        await enforcePriorityCap(ctx);
+      }
+
       // Get max position for ordering
       const maxPosition = await ctx.db.task.aggregate({
         where: {
@@ -156,6 +240,34 @@ export const taskRouter = createTRPCRouter({
 
       if (!task) {
         throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Determine effective priority and dates after update
+      const nextPriority = (data.priority ?? task.priority) as
+        | "LOW"
+        | "MEDIUM"
+        | "HIGH"
+        | "URGENT";
+      const nextDueAt = data.dueAt !== undefined ? data.dueAt : task.dueAt;
+      const nextPlannedStartAt =
+        data.plannedStartAt !== undefined
+          ? data.plannedStartAt
+          : task.plannedStartAt;
+
+      const wasPriorityToday = isPriorityToday(
+        task.priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT",
+        task.dueAt,
+        task.plannedStartAt
+      );
+      const willBePriorityToday = isPriorityToday(
+        nextPriority,
+        nextDueAt,
+        nextPlannedStartAt
+      );
+
+      // Enforce daily priority cap if task is becoming a priority for today
+      if (willBePriorityToday && !wasPriorityToday) {
+        await enforcePriorityCap(ctx, id);
       }
 
       // Handle status change to DONE
@@ -467,6 +579,85 @@ export const taskRouter = createTRPCRouter({
     const allTags = tasks.flatMap((t) => t.tags);
     return Array.from(new Set(allTags)).sort();
   }),
+
+  // ============================================
+  // PRIORITY CAP
+  // ============================================
+
+  // Get today's priorities (for cap modal)
+  getTodayPriorities: protectedProcedure.query(async ({ ctx }) => {
+    const userId = ctx.session.user.id;
+    const now = new Date();
+    const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const dayEnd = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+
+    const user = await ctx.db.user.findUnique({
+      where: { id: userId },
+      select: { dailyPriorityCap: true },
+    });
+
+    const tasks = await ctx.db.task.findMany({
+      where: {
+        userId,
+        status: { notIn: ["DONE", "CANCELLED"] },
+        priority: { in: ["URGENT", "HIGH"] },
+        OR: [
+          { dueAt: { gte: dayStart, lte: dayEnd } },
+          { plannedStartAt: { gte: dayStart, lte: dayEnd } },
+        ],
+      },
+      select: {
+        id: true,
+        title: true,
+        priority: true,
+        dueAt: true,
+        plannedStartAt: true,
+      },
+      orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
+    });
+
+    return {
+      cap: user?.dailyPriorityCap ?? 3,
+      tasks,
+    };
+  }),
+
+  // Defer a task off today (bumps dueAt/plannedStartAt by 1 day and lowers priority)
+  deferTask: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const task = await ctx.db.task.findFirst({
+        where: { id: input.id, userId: ctx.session.user.id },
+      });
+
+      if (!task) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      const addOneDay = (d: Date | null) => {
+        if (!d) return d;
+        const next = new Date(d);
+        next.setDate(next.getDate() + 1);
+        return next;
+      };
+
+      return ctx.db.task.update({
+        where: { id: input.id },
+        data: {
+          dueAt: addOneDay(task.dueAt),
+          plannedStartAt: addOneDay(task.plannedStartAt),
+          priority: task.priority === "URGENT" ? "HIGH" : "MEDIUM",
+        },
+      });
+    }),
 
   // ============================================
   // CHECKLIST ITEMS

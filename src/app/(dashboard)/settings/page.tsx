@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
+import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle, AlertTriangle, Flag } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/infrastructure/trpc/client";
 import { Button } from "@/shared/components/ui/Button";
@@ -15,6 +15,18 @@ export default function SettingsPage() {
 
   // Fetch calendar accounts
   const { data: accounts, refetch: refetchAccounts } = trpc.sync.listAccounts.useQuery();
+
+  // Priority cap
+  const { data: priorityCapData, refetch: refetchCap } = trpc.user.getDailyPriorityCap.useQuery();
+  const updateCapMutation = trpc.user.updateDailyPriorityCap.useMutation({
+    onSuccess: () => {
+      refetchCap();
+      toast.success("Daily priority cap updated");
+    },
+    onError: (error) => {
+      toast.error("Failed to update priority cap", { description: error.message });
+    },
+  });
 
   // Mutations
   const triggerSyncMutation = trpc.sync.triggerSync.useMutation({
@@ -334,6 +346,39 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
+
+          {/* Daily Priority Cap */}
+          <div className="rounded-lg border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <Flag className="h-5 w-5 text-muted-foreground" />
+              <h2 className="font-medium">Daily Priority Cap</h2>
+            </div>
+            <div className="p-4 space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Maximum number of priority (URGENT/HIGH) tasks per day.
+              </p>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((n) => {
+                  const current = priorityCapData?.dailyPriorityCap ?? 3;
+                  const active = current === n;
+                  return (
+                    <Button
+                      key={n}
+                      size="sm"
+                      variant={active ? "default" : "outline"}
+                      onClick={() => updateCapMutation.mutate({ dailyPriorityCap: n })}
+                      disabled={updateCapMutation.isPending}
+                    >
+                      {n}
+                    </Button>
+                  );
+                })}
+                <span className="text-sm text-muted-foreground ml-2">
+                  Current: {priorityCapData?.dailyPriorityCap ?? 3}
+                </span>
+              </div>
+            </div>
+          </div>
 
           {/* Rules */}
           <div className="rounded-lg border bg-card">

@@ -139,4 +139,25 @@ export const userRouter = createTRPCRouter({
 
     return preferences;
   }),
+
+  // Get daily priority cap
+  getDailyPriorityCap: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.db.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { dailyPriorityCap: true },
+    });
+    return { dailyPriorityCap: user?.dailyPriorityCap ?? 3 };
+  }),
+
+  // Update daily priority cap (1-5)
+  updateDailyPriorityCap: protectedProcedure
+    .input(z.object({ dailyPriorityCap: z.number().int().min(1).max(5) }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await ctx.db.user.update({
+        where: { id: ctx.session.user.id },
+        data: { dailyPriorityCap: input.dailyPriorityCap },
+        select: { dailyPriorityCap: true },
+      });
+      return user;
+    }),
 });
