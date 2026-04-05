@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
-import { Button } from "@/components/ui/Button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/components/ui/Popover";
+import { Button } from "@/shared/components/ui/Button";
 import { Clock, MapPin, Calendar, Trash2, Pencil, X, MessageSquare, ChevronDown, ChevronUp, Repeat } from "lucide-react";
 import { EventComments } from "./EventComments";
 import type { CalendarEvent } from "@/lib/calendar/utils";

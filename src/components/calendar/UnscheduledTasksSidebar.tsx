@@ -1,9 +1,9 @@
 "use client";
 
 import { ListTodo } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { DraggableTaskMini } from "./DraggableTaskMini";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@/infrastructure/trpc/client";
 
 interface UnscheduledTasksSidebarProps {
   className?: string;

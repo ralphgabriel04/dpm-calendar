@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter } from "@/infrastructure/trpc/context";
+import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 import { expandRecurringEvents, type RecurringEvent } from "@/lib/calendar/recurrence";
 

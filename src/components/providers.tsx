@@ -6,9 +6,9 @@ import { useState } from "react";
 import superjson from "superjson";
 import { Toaster } from "sonner";
 import { SessionProvider } from "next-auth/react";
-import { trpc } from "@/lib/trpc";
-import { ThemeProvider } from "@/components/theme";
-import { CommandPalette } from "@/components/command";
+import { trpc } from "@/infrastructure/trpc/client";
+import { ThemeProvider } from "@/shared/components/theme";
+import { CommandPalette } from "@/shared/components/command";
 import { useUIStore } from "@/stores/ui.store";
 
 function getBaseUrl() {

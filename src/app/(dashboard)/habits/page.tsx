@@ -5,13 +5,13 @@ import { Plus, Search, X, Flame, Target, Calendar } from "lucide-react";
 import { format, startOfWeek, eachDayOfInterval, endOfWeek, subDays } from "date-fns";
 import { fr } from "date-fns/locale";
 import { useHabitStore } from "@/stores/habit.store";
-import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
+import { cn } from "@/shared/lib/utils";
 
 // Components
 import { HabitCard, HabitModal, StreakDisplay, type HabitFormData } from "@/components/habits";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Button } from "@/shared/components/ui/Button";
 
 export default function HabitsPage() {
   const { filters, setFilter, habitModalOpen, editingHabitId, openHabitModal, closeHabitModal } =

@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@/infrastructure/trpc/client";
 import { EisenhowerMatrix } from "@/components/tasks/EisenhowerMatrix";
-import { Button } from "@/components/ui/Button";
-import { Modal } from "@/components/ui/Modal";
+import { Button } from "@/shared/components/ui/Button";
+import { Modal } from "@/shared/components/ui/Modal";
 import { TaskForm, TaskFormData } from "@/components/tasks/TaskForm";
 import { Plus, Grid3X3, Info } from "lucide-react";
 import {
@@ -12,7 +12,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/Tooltip";
+} from "@/shared/components/ui/Tooltip";
 
 // Loading skeleton
 function MatrixSkeleton() {

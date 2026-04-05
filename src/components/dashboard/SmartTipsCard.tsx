@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useEffect } from "react";
 import { Sparkles, Lightbulb, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface SmartTipsCardProps {
   completedTasks: number;

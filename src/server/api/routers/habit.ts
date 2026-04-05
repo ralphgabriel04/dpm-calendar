@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter } from "@/infrastructure/trpc/context";
+import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 import { startOfDay, subDays, eachDayOfInterval, format } from "date-fns";
 import type { PrismaClient } from "@prisma/client";

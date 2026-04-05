@@ -20,12 +20,12 @@ import {
   Trash2,
   Edit2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { DayView } from "@/components/calendar";
-import { MarkdownRenderer } from "@/components/ui/MarkdownRenderer";
-import { trpc as api } from "@/lib/trpc";
+import { MarkdownRenderer } from "@/shared/components/ui/MarkdownRenderer";
+import { trpc as api } from "@/infrastructure/trpc/client";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 interface TaskDetailModalProps {

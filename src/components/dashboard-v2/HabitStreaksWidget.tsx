@@ -1,7 +1,7 @@
 "use client";
 
 import { Flame, Check, Trophy } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface HabitStreak {
   id: string;

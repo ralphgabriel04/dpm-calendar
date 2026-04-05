@@ -1,15 +1,15 @@
 "use client";
 
 import { Target, MoreVertical, Pencil, Trash2, Link2, TrendingUp, Pause, Play } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/Badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 interface GoalCardProps {
   goal: {

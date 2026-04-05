@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, differenceInMinutes, format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronRight, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 type ViewType = "day" | "week" | "month" | "agenda" | "timeline" | "workload";

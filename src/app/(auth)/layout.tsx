@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/server/auth/config";
+import { auth } from "@/infrastructure/auth/config";
 
 export default async function AuthLayout({
   children,

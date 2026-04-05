@@ -10,7 +10,7 @@ import {
   startOfDay,
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import {
   CheckCircle2,
   Clock,

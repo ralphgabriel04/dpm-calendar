@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/server/auth/config";
+import { auth } from "@/infrastructure/auth/config";
 import { getAuthUrl } from "@/lib/microsoft/calendar";
 
 export async function GET() {

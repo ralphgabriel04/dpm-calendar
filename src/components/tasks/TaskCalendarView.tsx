@@ -22,8 +22,8 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, CalendarDays, CalendarRange } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
 
 interface Task {
   id: string;

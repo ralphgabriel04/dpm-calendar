@@ -3,7 +3,7 @@
 import { Plus } from "lucide-react";
 import { useDroppable } from "@dnd-kit/core";
 import { DraggableTaskCard } from "./DraggableTaskCard";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface Task {
   id: string;

@@ -21,9 +21,9 @@ import { Panel, Group } from "react-resizable-panels";
 import { useCalendarStore } from "@/stores/calendar.store";
 import { useUIStore } from "@/stores/ui.store";
 import { useLayoutStore } from "@/stores/layout.store";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { ResizableHandle } from "@/components/layout/ResizableHandle";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { ResizableHandle } from "@/shared/components/layout/ResizableHandle";
 
 // Calendar components
 import { WeekView, DayView, MonthView, AgendaView, TimelineView, WorkloadView, CalendarSidebar, UnscheduledTasksSidebar } from "@/components/calendar";
@@ -33,7 +33,7 @@ import type { CalendarEvent } from "@/lib/calendar/utils";
 import { addDays, addWeeks } from "date-fns";
 
 // tRPC hooks
-import { trpc } from "@/lib/trpc";
+import { trpc } from "@/infrastructure/trpc/client";
 
 interface CalendarSection {
   id: string;

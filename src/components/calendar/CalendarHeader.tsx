@@ -2,7 +2,7 @@
 
 import { format, isSameDay } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { isToday } from "@/lib/calendar/utils";
 
 interface CalendarHeaderProps {

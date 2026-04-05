@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import { startOfYear, subMonths } from "date-fns";
-import { trpc } from "@/lib/trpc";
-import { useDateRange } from "@/hooks/useDateRange";
+import { trpc } from "@/infrastructure/trpc/client";
+import { useDateRange } from "@/shared/hooks/useDateRange";
 import {
   DashboardHeader,
   StatisticsCards,

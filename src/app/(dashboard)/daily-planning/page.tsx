@@ -18,10 +18,10 @@ import {
   Play,
   Sparkles,
 } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { trpc } from "@/infrastructure/trpc/client";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { DayView } from "@/components/calendar";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 

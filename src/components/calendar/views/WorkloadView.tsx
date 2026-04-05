@@ -20,8 +20,8 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight, AlertTriangle, Clock, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 interface WorkloadViewProps {

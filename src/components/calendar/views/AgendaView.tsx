@@ -10,7 +10,7 @@ import {
   isSameDay,
 } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { isToday, isEventOnDay, type CalendarEvent } from "@/lib/calendar/utils";
 import { Calendar, Clock, MapPin } from "lucide-react";
 

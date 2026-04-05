@@ -15,9 +15,9 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
-import { trpc } from "@/lib/trpc";
+import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
 import { toast } from "sonner";
 
 // Task manager logos as inline SVGs

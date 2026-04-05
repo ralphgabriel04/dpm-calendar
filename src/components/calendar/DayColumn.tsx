@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { startOfDay, endOfDay, addMinutes, differenceInMinutes } from "date-fns";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { DraggableEventBlock } from "./DraggableEventBlock";
 import { CurrentTimeIndicator } from "./CurrentTimeIndicator";
 import {

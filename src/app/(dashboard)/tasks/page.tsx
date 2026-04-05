@@ -18,14 +18,14 @@ import {
 } from "lucide-react";
 import { useUIStore } from "@/stores/ui.store";
 import { useTaskStore } from "@/stores/task.store";
-import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
+import { cn } from "@/shared/lib/utils";
 
 // Components
 import { TaskListView, KanbanBoard, TaskModal, TaskCalendarView, TaskDetailModal, GanttView, DashboardView, WorkloadView, type TaskFormData } from "@/components/tasks";
 import { EventModal, type EventFormData } from "@/components/events";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Button } from "@/shared/components/ui/Button";
 import { startOfDay, endOfDay, addDays as addDaysDate } from "date-fns";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 import {
@@ -35,12 +35,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   DropdownMenuCheckboxItem,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover";
+} from "@/shared/components/ui/Popover";
 
 export default function TasksPage() {
   const { taskModalOpen, openTaskModal, closeTaskModal } = useUIStore();

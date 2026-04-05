@@ -1,14 +1,14 @@
 "use client";
 
 import { Check, Flame, MoreVertical, Pencil, Trash2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/Badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 interface HabitCardProps {
   habit: {

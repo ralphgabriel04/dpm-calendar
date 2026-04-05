@@ -3,16 +3,16 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { trpc as api } from "@/lib/trpc";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { trpc as api } from "@/infrastructure/trpc/client";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/shared/components/ui/Select";
 import {
   Sparkles,
   Clock,
@@ -24,7 +24,7 @@ import {
   Loader2,
   Zap,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface SlotSuggestionsProps {
   onSelectSlot?: (slot: { startAt: Date; endAt: Date }) => void;

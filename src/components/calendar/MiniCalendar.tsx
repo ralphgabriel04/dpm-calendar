@@ -15,8 +15,8 @@ import {
 } from "date-fns";
 import { fr } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { cn } from "@/shared/lib/utils";
 
 interface MiniCalendarProps {
   value?: Date;

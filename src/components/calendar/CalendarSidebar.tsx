@@ -20,14 +20,14 @@ import {
   PanelLeftClose,
   PanelLeft,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
 import { MiniCalendar } from "./MiniCalendar";
 import { UpcomingEventsWidget } from "./UpcomingEventsWidget";
 import { TimeBreakdownWidget } from "./TimeBreakdownWidget";
 import { RecapWidget } from "@/components/recap";
 import { SlotSuggestions } from "@/components/suggestions";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 import {
   DropdownMenu,
@@ -35,7 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 interface Calendar {
   id: string;

@@ -5,7 +5,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { GripVertical } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import type { CalendarEvent } from "@/lib/calendar/utils";
 
 interface DraggableEventBlockProps {

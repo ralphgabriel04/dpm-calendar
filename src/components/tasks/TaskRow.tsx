@@ -11,16 +11,16 @@ import {
   Clock,
   ChevronRight,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
-import { Checkbox } from "@/components/ui/Checkbox";
+import { cn } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/Badge";
+import { Checkbox } from "@/shared/components/ui/Checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 interface Task {
   id: string;

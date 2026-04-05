@@ -12,7 +12,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from "@dnd-kit/core";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { TimeColumn } from "../TimeColumn";
 import { DayColumn } from "../DayColumn";
 import { CalendarHeader } from "../CalendarHeader";

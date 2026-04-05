@@ -1,6 +1,6 @@
 "use client";
 
-import { SidePanel } from "@/components/ui/SidePanel";
+import { SidePanel } from "@/shared/components/ui/SidePanel";
 import { EventForm, type EventFormData } from "./EventForm";
 
 interface EventModalProps {

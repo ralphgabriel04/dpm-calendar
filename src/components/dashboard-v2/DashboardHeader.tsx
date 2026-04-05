@@ -4,8 +4,8 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar } from "lucide-react";
 import { TimeRangeSelector } from "./TimeRangeSelector";
-import type { TimeRange } from "@/hooks/useDateRange";
-import { cn } from "@/lib/utils";
+import type { TimeRange } from "@/shared/hooks/useDateRange";
+import { cn } from "@/shared/lib/utils";
 
 interface DashboardHeaderProps {
   range: TimeRange;

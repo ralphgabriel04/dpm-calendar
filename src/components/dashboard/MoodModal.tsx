@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { X, Sparkles, Heart, Lightbulb, Coffee, Dumbbell, Moon, MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
 
 interface MoodModalProps {
   isOpen: boolean;

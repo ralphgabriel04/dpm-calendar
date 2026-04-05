@@ -2,20 +2,20 @@
 
 import { useState, useEffect } from "react";
 import { format, addDays, setHours, setMinutes } from "date-fns";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { RichTextEditor } from "@/components/ui/RichTextEditor";
-import { VoiceInput } from "@/components/ui/VoiceInput";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { TimePicker } from "@/components/ui/TimePicker";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { RichTextEditor } from "@/shared/components/ui/RichTextEditor";
+import { VoiceInput } from "@/shared/components/ui/VoiceInput";
+import { DatePicker } from "@/shared/components/ui/DatePicker";
+import { TimePicker } from "@/shared/components/ui/TimePicker";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
-import { Switch } from "@/components/ui/Switch";
+} from "@/shared/components/ui/Select";
+import { Switch } from "@/shared/components/ui/Switch";
 import {
   Calendar,
   CalendarClock,
@@ -30,8 +30,8 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/Badge";
 
 export interface TaskFormData {
   title: string;

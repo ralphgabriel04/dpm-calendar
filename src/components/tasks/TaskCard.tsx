@@ -11,15 +11,15 @@ import {
   Circle,
   AlertCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/Badge";
+import { cn } from "@/shared/lib/utils";
+import { Badge } from "@/shared/components/ui/Badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 interface Task {
   id: string;

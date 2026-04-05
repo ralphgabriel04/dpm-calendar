@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/Select";
-import { DatePicker } from "@/components/ui/DatePicker";
+import { Modal } from "@/shared/components/ui/Modal";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Textarea } from "@/shared/components/ui/Textarea";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/shared/components/ui/Select";
+import { DatePicker } from "@/shared/components/ui/DatePicker";
 
 export interface GoalFormData {
   title: string;

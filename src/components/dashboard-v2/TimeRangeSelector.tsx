@@ -1,7 +1,7 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import type { TimeRange } from "@/hooks/useDateRange";
+import { cn } from "@/shared/lib/utils";
+import type { TimeRange } from "@/shared/hooks/useDateRange";
 
 interface TimeRangeSelectorProps {
   value: TimeRange;

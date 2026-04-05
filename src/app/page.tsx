@@ -30,8 +30,8 @@ import {
   MousePointerClick,
   Sparkles,
 } from "lucide-react";
-import { ThemeToggle } from "@/components/theme";
-import { LanguageToggle } from "@/components/language";
+import { ThemeToggle } from "@/shared/components/theme";
+import { LanguageToggle } from "@/shared/components/language";
 
 // Color mapping
 const colorStyles: Record<string, { bg: string; border: string; text: string; accent: string }> = {

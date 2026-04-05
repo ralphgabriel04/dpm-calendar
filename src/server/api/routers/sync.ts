@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter } from "@/infrastructure/trpc/context";
+import { protectedProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 import {
   listEvents as listGoogleEvents,
@@ -533,7 +534,7 @@ export const syncRouter = createTRPCRouter({
 
 // Helper function to sync a single Google event to local database
 async function syncGoogleEvent(
-  db: typeof import("@/server/db/client").db,
+  db: typeof import("@/infrastructure/db/client").db,
   calendarId: string,
   userId: string,
   googleEvent: GoogleEvent
@@ -604,7 +605,7 @@ async function syncGoogleEvent(
 
 // Helper function to sync a single Microsoft event to local database
 async function syncMicrosoftEvent(
-  db: typeof import("@/server/db/client").db,
+  db: typeof import("@/infrastructure/db/client").db,
   calendarId: string,
   userId: string,
   msEvent: MicrosoftEvent

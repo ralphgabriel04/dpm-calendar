@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { TrendingUp, TrendingDown, Minus, Target, Clock, CheckCircle2, Zap } from "lucide-react";
 
 interface ProductivityScoreWidgetProps {

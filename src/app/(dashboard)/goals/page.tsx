@@ -2,19 +2,19 @@
 
 import { useState, useMemo } from "react";
 import { Plus, Search, X, Target, TrendingUp, CheckCircle2, Filter } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
+import { trpc } from "@/infrastructure/trpc/client";
+import { cn } from "@/shared/lib/utils";
 
 // Components
 import { GoalCard, GoalModal, type GoalFormData } from "@/components/goals";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Button } from "@/shared/components/ui/Button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/DropdownMenu";
+} from "@/shared/components/ui/DropdownMenu";
 
 type StatusFilter = "ALL" | "ACTIVE" | "COMPLETED" | "PAUSED";
 

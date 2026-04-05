@@ -13,9 +13,9 @@ import {
   Star,
   PartyPopper,
 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { cn } from "@/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { cn } from "@/shared/lib/utils";
 
 interface Task {
   id: string;

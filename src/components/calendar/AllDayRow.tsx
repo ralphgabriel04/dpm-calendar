@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { AllDayEventBlock } from "./EventBlock";
 import { getAllDayEvents, type CalendarEvent } from "@/lib/calendar/utils";
 

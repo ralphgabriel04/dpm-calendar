@@ -3,26 +3,26 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { format, setHours, setMinutes, addHours, differenceInMinutes } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { ColorPicker } from "@/components/ui/ColorPicker";
-import { Switch } from "@/components/ui/Switch";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { Textarea } from "@/shared/components/ui/Textarea";
+import { DatePicker } from "@/shared/components/ui/DatePicker";
+import { ColorPicker } from "@/shared/components/ui/ColorPicker";
+import { Switch } from "@/shared/components/ui/Switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/shared/components/ui/Select";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/Popover";
+} from "@/shared/components/ui/Popover";
 import { Calendar, Clock, MapPin, AlignLeft, Bell, Palette, Mic, MicOff, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { RecurrenceSelector } from "./RecurrenceSelector";
 
 export interface EventFormData {

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { format, isToday, isTomorrow, isThisWeek, isPast, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
 import { TaskRow } from "./TaskRow";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface Task {
   id: string;

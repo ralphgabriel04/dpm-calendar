@@ -1,6 +1,6 @@
 "use client";
 
-import { Modal } from "@/components/ui/Modal";
+import { Modal } from "@/shared/components/ui/Modal";
 import { TaskForm, type TaskFormData } from "./TaskForm";
 
 interface TaskModalProps {

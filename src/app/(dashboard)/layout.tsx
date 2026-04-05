@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/server/auth/config";
-import { db } from "@/server/db/client";
-import { DashboardClient } from "@/components/layout";
+import { auth } from "@/infrastructure/auth/config";
+import { db } from "@/infrastructure/db/client";
+import { DashboardClient } from "@/shared/components/layout";
 
 export default async function DashboardLayout({
   children,

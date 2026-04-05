@@ -3,26 +3,26 @@
 import { useState, useMemo } from "react";
 import { format, addDays, addWeeks, addMonths, addYears, getDay } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { DatePicker } from "@/components/ui/DatePicker";
-import { Switch } from "@/components/ui/Switch";
+import { Button } from "@/shared/components/ui/Button";
+import { Input } from "@/shared/components/ui/Input";
+import { DatePicker } from "@/shared/components/ui/DatePicker";
+import { Switch } from "@/shared/components/ui/Switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/Select";
+} from "@/shared/components/ui/Select";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/Dialog";
+} from "@/shared/components/ui/Dialog";
 import { Repeat } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface RecurrenceSelectorProps {
   value?: string;

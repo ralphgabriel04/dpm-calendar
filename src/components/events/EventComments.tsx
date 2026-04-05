@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { trpc as api } from "@/lib/trpc";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Avatar } from "@/components/ui/Avatar";
+import { trpc as api } from "@/infrastructure/trpc/client";
+import { Button } from "@/shared/components/ui/Button";
+import { Textarea } from "@/shared/components/ui/Textarea";
+import { Avatar } from "@/shared/components/ui/Avatar";
 import { MessageSquare, Send, Trash2, Edit2, X, Check } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface EventCommentsProps {
   eventId: string;

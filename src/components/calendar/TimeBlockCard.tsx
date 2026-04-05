@@ -2,7 +2,7 @@
 
 import { format } from "date-fns";
 import { CheckSquare, Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface Task {
   id: string;

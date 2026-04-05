@@ -3,7 +3,7 @@
 import { useMemo, useRef } from "react";
 import { format, startOfWeek, addDays, differenceInDays, isSameDay, isWithinInterval, startOfDay, endOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 

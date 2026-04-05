@@ -14,9 +14,9 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
-import { trpc } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
+import { trpc } from "@/infrastructure/trpc/client";
+import { cn } from "@/shared/lib/utils";
+import { Button } from "@/shared/components/ui/Button";
 
 type TimeRange = "week" | "month" | "quarter";
 

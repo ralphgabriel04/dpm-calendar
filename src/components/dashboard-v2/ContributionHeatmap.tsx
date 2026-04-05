@@ -3,13 +3,13 @@
 import { useMemo } from "react";
 import { format, startOfWeek, addDays, getDay, differenceInWeeks } from "date-fns";
 import { fr } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/Tooltip";
+} from "@/shared/components/ui/Tooltip";
 
 interface DayDetails {
   focusMins: number;

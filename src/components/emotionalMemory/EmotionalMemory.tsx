@@ -3,10 +3,10 @@
 import { useState, useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
-import { trpc as api } from "@/lib/trpc";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
-import { Input } from "@/components/ui/Input";
+import { trpc as api } from "@/infrastructure/trpc/client";
+import { Button } from "@/shared/components/ui/Button";
+import { Textarea } from "@/shared/components/ui/Textarea";
+import { Input } from "@/shared/components/ui/Input";
 import {
   Heart,
   MessageCircle,
@@ -19,7 +19,7 @@ import {
   Calendar,
   Search,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface EmotionalMemoryProps {
   className?: string;

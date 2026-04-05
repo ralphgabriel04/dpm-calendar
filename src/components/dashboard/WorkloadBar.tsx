@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 import { AlertTriangle, Clock, CheckCircle2, Calendar, Edit2, Check, X } from "lucide-react";
 
 interface WorkloadBarProps {

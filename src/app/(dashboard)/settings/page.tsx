@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle } from "lucide-react";
 import { toast } from "sonner";
-import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/Button";
+import { trpc } from "@/infrastructure/trpc/client";
+import { Button } from "@/shared/components/ui/Button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 

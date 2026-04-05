@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/server/auth/config";
-import { db } from "@/server/db/client";
+import { auth } from "@/infrastructure/auth/config";
+import { db } from "@/infrastructure/db/client";
 import { exchangeCodeForTokens, listCalendars, getUserEmail } from "@/lib/microsoft/calendar";
 import { encryptToken, encryptOptionalToken } from "@/lib/crypto";
 

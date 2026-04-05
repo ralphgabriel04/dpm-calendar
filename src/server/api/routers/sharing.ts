@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter } from "@/infrastructure/trpc/context";
+import { protectedProcedure, publicProcedure } from "@/infrastructure/trpc/procedures";
 import { TRPCError } from "@trpc/server";
 
 export const sharingRouter = createTRPCRouter({

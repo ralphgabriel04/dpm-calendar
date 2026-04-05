@@ -3,9 +3,9 @@
 import { useState, useMemo } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { trpc as api } from "@/lib/trpc";
-import { Button } from "@/components/ui/Button";
-import { Textarea } from "@/components/ui/Textarea";
+import { trpc as api } from "@/infrastructure/trpc/client";
+import { Button } from "@/shared/components/ui/Button";
+import { Textarea } from "@/shared/components/ui/Textarea";
 import {
   Battery,
   BatteryFull,
@@ -26,7 +26,7 @@ import {
   Moon,
   Sunset,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/lib/utils";
 
 interface EnergyTrackerProps {
   className?: string;
