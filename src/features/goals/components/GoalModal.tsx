@@ -7,17 +7,10 @@ import { Input } from "@/shared/components/ui/Input";
 import { Textarea } from "@/shared/components/ui/Textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/shared/components/ui/Select";
 import { DatePicker } from "@/shared/components/ui/DatePicker";
+import type { GoalFormData } from "@/features/goals/types";
 
-export interface GoalFormData {
-  title: string;
-  description?: string;
-  category?: string;
-  targetType: "CUMULATIVE" | "STREAK" | "COMPLETION";
-  targetValue: number;
-  unit?: string;
-  startDate?: Date;
-  endDate?: Date;
-}
+// Re-export for backwards compatibility
+export type { GoalFormData } from "@/features/goals/types";
 
 interface GoalModalProps {
   open: boolean;

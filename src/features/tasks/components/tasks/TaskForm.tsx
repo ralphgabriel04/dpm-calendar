@@ -32,21 +32,10 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/components/ui/Badge";
+import type { TaskFormData } from "@/features/tasks/types";
 
-export interface TaskFormData {
-  title: string;
-  description?: string;
-  notes?: string;
-  url?: string;
-  dueAt?: Date;
-  plannedStartAt?: Date;
-  plannedDuration?: number;
-  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
-  status: "TODO" | "IN_PROGRESS" | "DONE";
-  tags: string[];
-  estimatedEnergy?: "LOW" | "MEDIUM" | "HIGH";
-  checklistItems: Array<{ id?: string; title: string; isCompleted: boolean }>;
-}
+// Re-export for backwards compatibility
+export type { TaskFormData } from "@/features/tasks/types";
 
 interface TaskFormProps {
   initialData?: Partial<TaskFormData>;

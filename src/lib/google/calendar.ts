@@ -45,6 +45,7 @@ export async function exchangeCodeForTokens(code: string): Promise<{
 
 export async function refreshAccessToken(refreshToken: string): Promise<{
   accessToken: string;
+  refreshToken: string | null; // Google may also rotate refresh tokens
   expiryDate: number | null;
 }> {
   const oauth2Client = getOAuth2Client();
@@ -54,6 +55,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<{
 
   return {
     accessToken: credentials.access_token || "",
+    refreshToken: credentials.refresh_token || null, // May be rotated
     expiryDate: credentials.expiry_date || null,
   };
 }

@@ -6,6 +6,7 @@ import { ResizableLayout } from "./ResizableLayout";
 import { Sidebar, SidebarTrigger } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
 import { RightSidebarMenu } from "./RightSidebarMenu";
+import { SyncStatus, useAutoSync } from "@/features/sync";
 
 interface DashboardClientProps {
   children: React.ReactNode;
@@ -14,6 +15,9 @@ interface DashboardClientProps {
 export function DashboardClient({ children }: DashboardClientProps) {
   const [mounted, setMounted] = useState(false);
   const isMobile = useIsMobile();
+
+  // Initialize auto-sync for calendar accounts
+  useAutoSync({ enabled: mounted, showToasts: false });
 
   // Wait for client-side hydration to complete before rendering
   // This prevents hydration mismatch errors
@@ -38,9 +42,12 @@ export function DashboardClient({ children }: DashboardClientProps) {
         <Sidebar />
         <div className="flex flex-1 flex-col overflow-hidden">
           {/* Mobile header */}
-          <header className="flex h-14 items-center gap-4 border-b bg-card px-4">
-            <SidebarTrigger />
-            <h1 className="font-semibold text-sm">DPM Calendar</h1>
+          <header className="flex h-14 items-center justify-between border-b bg-card px-4">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+              <h1 className="font-semibold text-sm">DPM Calendar</h1>
+            </div>
+            <SyncStatus showDetails={false} />
           </header>
 
           {/* Main content - add bottom padding for mobile nav */}

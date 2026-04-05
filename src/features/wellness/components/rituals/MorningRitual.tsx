@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
-import { EnergyCheck } from "@/components/dashboard";
+import { EnergyCheck } from "@/features/home/components";
 import { cn } from "@/shared/lib/utils";
 
 interface Task {

@@ -2,12 +2,13 @@
 
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle } from "lucide-react";
+import { Calendar, Link2, Cog, RefreshCw, Unlink, CheckCircle2, XCircle, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/infrastructure/trpc/client";
 import { Button } from "@/shared/components/ui/Button";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { SyncConflictList } from "@/features/sync";
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
@@ -262,6 +263,17 @@ export default function SettingsPage() {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Sync Conflicts */}
+          <div className="rounded-lg border bg-card">
+            <div className="flex items-center gap-3 border-b px-4 py-3">
+              <AlertTriangle className="h-5 w-5 text-muted-foreground" />
+              <h2 className="font-medium">Conflits de synchronisation</h2>
+            </div>
+            <div className="p-4">
+              <SyncConflictList />
             </div>
           </div>
 

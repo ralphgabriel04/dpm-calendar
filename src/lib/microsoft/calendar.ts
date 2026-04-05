@@ -55,24 +55,46 @@ export async function exchangeCodeForTokens(code: string): Promise<{
   refreshToken: string | null;
   expiryDate: number | null;
 }> {
-  const msalConfig = getMsalConfig();
-  const cca = new ConfidentialClientApplication(msalConfig);
+  // Use manual OAuth2 token endpoint instead of MSAL to get refresh_token
+  // MSAL's acquireTokenByCode doesn't return refresh_token directly
+  const clientId = process.env.MICROSOFT_CLIENT_ID;
+  const clientSecret = process.env.MICROSOFT_CLIENT_SECRET;
 
-  const result = await cca.acquireTokenByCode({
-    code,
-    scopes: SCOPES,
-    redirectUri: getRedirectUri(),
+  if (!clientId || !clientSecret) {
+    throw new Error("Missing Microsoft OAuth credentials");
+  }
+
+  const response = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      client_id: clientId,
+      client_secret: clientSecret,
+      code,
+      redirect_uri: getRedirectUri(),
+      grant_type: "authorization_code",
+      scope: SCOPES.join(" "),
+    }),
   });
 
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error_description || "Failed to exchange code for tokens");
+  }
+
   return {
-    accessToken: result?.accessToken || "",
-    refreshToken: null, // MSAL handles refresh internally
-    expiryDate: result?.expiresOn ? result.expiresOn.getTime() : null,
+    accessToken: data.access_token || "",
+    refreshToken: data.refresh_token || null, // Now we actually get the refresh token!
+    expiryDate: data.expires_in ? Date.now() + data.expires_in * 1000 : null,
   };
 }
 
 export async function refreshAccessToken(refreshToken: string): Promise<{
   accessToken: string;
+  refreshToken: string | null; // Microsoft rotates refresh tokens
   expiryDate: number | null;
 }> {
   // For Microsoft, we use the refresh token directly with the token endpoint
@@ -105,6 +127,7 @@ export async function refreshAccessToken(refreshToken: string): Promise<{
 
   return {
     accessToken: data.access_token,
+    refreshToken: data.refresh_token || null, // Microsoft may return a new refresh token
     expiryDate: data.expires_in ? Date.now() + data.expires_in * 1000 : null,
   };
 }

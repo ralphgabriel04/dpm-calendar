@@ -21,7 +21,19 @@
       "Bash(npx tsc:*)",
       "Bash(npx next build:*)",
       "Bash(find:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git rev-list:*)",
+      "Bash(while read commit)",
+      "Bash(do git ls-tree -r --name-only \"$commit\")",
+      "Bash(echo:*)",
+      "Bash(break)",
+      "Bash(npm run lint)",
+      "Bash(tree:*)",
+      "Bash(head:*)",
+      "Bash(npx madge:*)",
+      "Bash(npx ts-prune:*)",
+      "Bash(xargs:*)"
     ]
   }
 }

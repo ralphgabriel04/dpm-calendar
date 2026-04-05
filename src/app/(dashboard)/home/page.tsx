@@ -30,7 +30,7 @@ import {
   QuickActions,
   SmartTipsCard,
   MoodModal,
-} from "@/components/dashboard";
+} from "@/features/home/components";
 
 export default function HomePage() {
   const router = useRouter();
@@ -47,9 +47,8 @@ export default function HomePage() {
   };
 
   // Save mood note (could be saved to database later)
-  const handleSaveMoodNote = (note: string) => {
-    console.log("Mood note saved:", { energyLevel, note });
-    // TODO: Save to database via API
+  const handleSaveMoodNote = (_note: string) => {
+    // TODO: Save to database via API when mood tracking is implemented
   };
 
   // Load available minutes from localStorage

@@ -24,19 +24,10 @@ import {
 import { Calendar, Clock, MapPin, AlignLeft, Bell, Palette, Mic, MicOff, Loader2 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { RecurrenceSelector } from "./RecurrenceSelector";
+import type { EventFormData } from "@/features/calendar/types";
 
-export interface EventFormData {
-  title: string;
-  description?: string;
-  location?: string;
-  startAt: Date;
-  endAt: Date;
-  isAllDay: boolean;
-  calendarId: string;
-  color?: string;
-  reminderMinutes: number[];
-  rrule?: string;
-}
+// Re-export for backwards compatibility
+export type { EventFormData } from "@/features/calendar/types";
 
 interface EventFormProps {
   initialData?: Partial<EventFormData>;

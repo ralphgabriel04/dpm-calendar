@@ -8,21 +8,10 @@ import { Textarea } from "@/shared/components/ui/Textarea";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/shared/components/ui/Select";
 import { ColorPicker } from "@/shared/components/ui/ColorPicker";
 import { Switch } from "@/shared/components/ui/Switch";
+import type { HabitFormData } from "@/features/habits/types";
 
-export interface HabitFormData {
-  name: string;
-  description?: string;
-  color?: string;
-  icon?: string;
-  habitType: "FIXED" | "FLEXIBLE" | "CONDITIONAL";
-  frequency: "DAILY" | "WEEKLY" | "MONTHLY" | "CUSTOM";
-  targetCount: number;
-  duration?: number;
-  preferredTime?: string;
-  preferredDays?: number[];
-  isProtected: boolean;
-  goalId?: string;
-}
+// Re-export for backwards compatibility
+export type { HabitFormData } from "@/features/habits/types";
 
 interface HabitModalProps {
   open: boolean;
