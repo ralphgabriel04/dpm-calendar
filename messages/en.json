@@ -95,62 +95,63 @@
     "hero": {
       "title1": "Your time,",
       "title2": "deserves better",
-      "subtitle": "Calendar, tasks, habits, and goals all in one app. Sync with Google Calendar and Microsoft Outlook.",
+      "subtitle": "Calendar, tasks, habits, and goals all in one app.",
       "cta": "Start for free",
-      "seeFeatures": "See features"
+      "seeFeatures": "See features",
+      "earlyAccess": "Early Access"
     },
     "howItWorks": {
       "title1": "How it",
       "title2": "works",
-      "subtitle": "Three simple steps to transform your productivity",
+      "subtitle": "Three simple steps to organize your time",
       "step1": {
-        "title": "Connect your calendars",
-        "description": "Import your Google, Microsoft, or Apple events in one click. Everything syncs automatically."
+        "title": "Create your calendars",
+        "description": "Organize your events by calendar: work, personal, sport. External sync coming soon."
       },
       "step2": {
-        "title": "Plan intelligently",
-        "description": "Create tasks, set goals, and let AI suggest the best time to complete them."
+        "title": "Plan your tasks",
+        "description": "Create tasks, set goals, and use Focus mode to stay concentrated."
       },
       "step3": {
-        "title": "Achieve your goals",
-        "description": "Track your progress, analyze your productivity, and celebrate your achievements."
+        "title": "Track your progress",
+        "description": "View your completed tasks, track your habits, and celebrate your achievements."
       }
     },
     "features": {
       "timeTracking": {
-        "title": "Track how you use your time",
-        "description": "The time usage feature helps you analyze your schedule by showing how you spend your time and with whom.",
-        "feature1": "Detailed productivity reports",
-        "feature2": "Time by project and category",
-        "feature3": "Visual charts and trends"
+        "title": "Visualize your schedule",
+        "description": "Organize your events by category and visualize how you allocate your time.",
+        "feature1": "Color-coded calendars by category",
+        "feature2": "View by project",
+        "feature3": "Detailed reports (coming soon)"
       },
       "focusMode": {
-        "title": "Block distractions",
-        "description": "Focus mode lets you concentrate on one task at a time with built-in Pomodoro technique and notification blocking.",
-        "feature1": "Built-in Pomodoro technique",
-        "feature2": "Notification blocking",
+        "title": "Stay focused",
+        "description": "Focus mode helps you work on one task at a time with the built-in Pomodoro timer.",
+        "feature1": "Built-in Pomodoro timer",
+        "feature2": "Customizable focus sessions",
         "feature3": "Focus time tracking"
       },
       "multiCalendar": {
-        "title": "Stay organized with multiple calendars",
-        "description": "Manage multiple calendars in one place. Automatically sync your Google, Microsoft, and Apple calendars.",
-        "feature1": "Google Calendar sync",
-        "feature2": "Microsoft Outlook integration",
+        "title": "Organize your calendars",
+        "description": "Create and manage multiple calendars in one place: work, personal, sport...",
+        "feature1": "Google Calendar (coming soon)",
+        "feature2": "Microsoft Outlook (coming soon)",
         "feature3": "Personal and work calendars"
       },
       "customViews": {
         "title": "Customize your view",
-        "description": "Choose the view that works best for you: day, week, month, or agenda. Customize colors and display according to your preferences.",
-        "feature1": "Day, week, month, agenda views",
-        "feature2": "Intuitive drag & drop",
+        "description": "Choose the view that works best for you: day, week, or month. Click on a day to see details.",
+        "feature1": "Day, week, month views",
+        "feature2": "Intuitive navigation",
         "feature3": "Color customization"
       },
       "goals": {
-        "title": "Achieve your goals",
-        "description": "Set SMART goals and track your progress. Link your tasks to your goals to stay motivated and organized.",
-        "feature1": "SMART goals",
+        "title": "Set your goals",
+        "description": "Create goals and break them down into steps. Track your progress visually.",
+        "feature1": "Goals with milestones",
         "feature2": "Visual progress tracking",
-        "feature3": "Milestones and key steps"
+        "feature3": "Step-by-step organization"
       }
     },
     "mockups": {
@@ -218,34 +219,35 @@
       "students": {
         "title": "Students",
         "description": "Manage your classes, exams, and projects. Never miss a deadline again.",
-        "feature1": "Class reminders",
-        "feature2": "Exam tracking",
-        "feature3": "Study planning"
+        "feature1": "Event reminders",
+        "feature2": "Task tracking",
+        "feature3": "Focus mode for studying"
       },
       "entrepreneurs": {
         "title": "Entrepreneurs",
         "description": "Grow your business while staying in control of your schedule.",
-        "feature1": "Project management",
+        "feature1": "Project organization",
         "feature2": "Goal tracking",
-        "feature3": "Productivity analytics"
+        "feature3": "Focus mode"
       },
       "freelancers": {
         "title": "Freelancers",
         "description": "Juggle multiple clients and projects without losing track.",
         "feature1": "Multi-calendars",
-        "feature2": "Time tracking",
-        "feature3": "Easy invoicing"
+        "feature2": "Client organization",
+        "feature3": "Focus mode"
       },
       "teams": {
         "title": "Teams",
-        "description": "Collaborate effectively and sync everyone's calendars.",
-        "feature1": "Shared calendars",
-        "feature2": "Meeting scheduling",
-        "feature3": "Simplified coordination"
+        "description": "Collaborative features are under development.",
+        "feature1": "Shared calendars (coming soon)",
+        "feature2": "Meeting scheduling (coming soon)",
+        "feature3": "Invitations (coming soon)"
       }
     },
     "integrations": {
-      "title": "Sync your favorite calendars"
+      "title": "Integrations (coming soon)",
+      "comingSoon": "External sync under development"
     },
     "security": {
       "badge": "Enhanced security",
@@ -274,12 +276,12 @@
     "cta": {
       "title1": "Ready to take control of",
       "title2": "your time",
-      "subtitle": "Join thousands of users who have transformed their productivity.",
-      "button": "Start for free",
-      "noCreditCard": "Free forever - No credit card required"
+      "subtitle": "Try DPM Calendar and organize your productivity.",
+      "button": "Try it now",
+      "noCreditCard": "Free during Early Access \u2014 No credit card required"
     },
     "footer": {
-      "tagline": "Your intelligent productivity assistant.",
+      "tagline": "Organize your time effectively.",
       "product": "Product",
       "features": "Features",
       "pricing": "Pricing",
@@ -288,7 +290,6 @@
       "legal": "Legal",
       "privacy": "Privacy",
       "terms": "Terms",
-      "rgpdCompliant": "GDPR Compliant",
       "copyright": "\u00a9 {year} DPM Calendar. All rights reserved."
     }
   },
@@ -307,5 +308,336 @@
     "tipOfDay": "Tip of the day",
     "alreadyCompleted": "Great! You've already completed {count} task(s). Keep it up!",
     "startImportant": "Start with your most important task. Once done, the rest will be easier!"
+  },
+  "privacy": {
+    "badge": "Privacy Protection",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "effectiveDate": "April 5, 2026",
+    "intro": {
+      "p1": "DPM Inc. (\"we\", \"us\", or \"our\") operates DPM Calendar, a productivity application that helps you manage your calendar, tasks, habits, and goals. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our service.",
+      "p2": "Please read this privacy policy carefully. By using DPM Calendar, you agree to the collection and use of information in accordance with this policy."
+    },
+    "controller": {
+      "title": "1. Data Controller",
+      "company": "Company",
+      "address": "Address",
+      "addressValue": "Quebec, Canada",
+      "contact": "Contact",
+      "founder": "Founder"
+    },
+    "dataCollected": {
+      "title": "2. Information We Collect",
+      "intro": "We collect information that you provide directly to us and information that is automatically collected when you use our service.",
+      "account": {
+        "title": "Account Information",
+        "email": "Email address (from OAuth provider)",
+        "name": "Full name",
+        "avatar": "Profile picture (if provided by OAuth)",
+        "provider": "Authentication provider (Google, Microsoft, GitHub, or Apple)"
+      },
+      "app": {
+        "title": "Application Data",
+        "events": "Calendar events (title, date, time, description)",
+        "tasks": "Tasks (title, due date, priority, status)",
+        "habits": "Habits (name, frequency, completion history)",
+        "goals": "Goals (title, target date, milestones, progress)",
+        "energy": "Energy level entries",
+        "journal": "Journal entries",
+        "mood": "Mood tracking data"
+      },
+      "technical": {
+        "title": "Technical Information",
+        "ip": "IP address (for security and analytics)",
+        "browser": "Browser type and version",
+        "device": "Device type and operating system",
+        "usage": "Usage patterns and feature interactions"
+      }
+    },
+    "purpose": {
+      "title": "3. How We Use Your Information",
+      "service": "To provide, maintain, and improve the DPM Calendar service",
+      "sync": "To synchronize your data with connected calendar services",
+      "improve": "To analyze usage patterns and improve our features",
+      "support": "To respond to your comments, questions, and support requests",
+      "security": "To detect, prevent, and address technical issues and security threats",
+      "legal": "To comply with legal obligations"
+    },
+    "legalBasis": {
+      "title": "4. Legal Basis for Processing",
+      "consent": {
+        "title": "Consent",
+        "desc": "You have given consent to the processing of your personal data for one or more specific purposes"
+      },
+      "contract": {
+        "title": "Contract",
+        "desc": "Processing is necessary for the performance of a contract to which you are a party"
+      },
+      "legitimate": {
+        "title": "Legitimate interests",
+        "desc": "Processing is necessary for the purposes of legitimate interests pursued by us"
+      },
+      "legal": {
+        "title": "Legal obligation",
+        "desc": "Processing is necessary for compliance with a legal obligation"
+      }
+    },
+    "storage": {
+      "title": "5. Data Storage and Location",
+      "intro": "Your data is stored securely using industry-standard practices:",
+      "database": {
+        "title": "Database",
+        "desc": "Supabase (PostgreSQL) - a managed database service with encryption at rest"
+      },
+      "hosting": {
+        "title": "Application Hosting",
+        "desc": "Vercel - a global edge network with automatic SSL/TLS encryption"
+      },
+      "location": {
+        "title": "Data Location",
+        "desc": "Our primary data centers are located in the United States. By using our service, you consent to the transfer of your data to the US."
+      }
+    },
+    "retention": {
+      "title": "6. Data Retention",
+      "active": "Account data is retained as long as your account is active",
+      "deletion": "Upon account deletion, your data is removed within 30 days",
+      "backup": "Backup copies may be retained for up to 90 days for disaster recovery",
+      "legal": "Some data may be retained longer if required by law"
+    },
+    "sharing": {
+      "title": "7. Data Sharing",
+      "intro": "We share your data only with the following service providers who are necessary for the operation of our service:",
+      "supabase": "Database hosting and storage",
+      "vercel": "Application hosting and analytics",
+      "oauth": "Authentication providers (Google, Microsoft, GitHub, Apple) for sign-in only",
+      "noSale": "We do not sell, rent, or share your personal information with third parties for marketing purposes."
+    },
+    "cookies": {
+      "title": "8. Cookies and Tracking",
+      "intro": "We use cookies and similar technologies to enhance your experience:",
+      "essential": {
+        "title": "Essential cookies",
+        "desc": "Required for authentication and basic functionality"
+      },
+      "analytics": {
+        "title": "Analytics (Vercel Analytics)",
+        "desc": "Anonymous usage data to improve our service. You can opt out in your browser settings."
+      }
+    },
+    "rights": {
+      "title": "9. Your Rights",
+      "intro": "Depending on your location, you may have the following rights regarding your personal data:",
+      "access": {
+        "title": "Right of access",
+        "desc": "Request a copy of your personal data"
+      },
+      "rectification": {
+        "title": "Right of rectification",
+        "desc": "Request correction of inaccurate data"
+      },
+      "deletion": {
+        "title": "Right of deletion",
+        "desc": "Request deletion of your data (\"right to be forgotten\")"
+      },
+      "portability": {
+        "title": "Right of portability",
+        "desc": "Receive your data in a structured, machine-readable format"
+      },
+      "restriction": {
+        "title": "Right of restriction",
+        "desc": "Request restriction of processing in certain circumstances"
+      },
+      "objection": {
+        "title": "Right of objection",
+        "desc": "Object to processing based on legitimate interests"
+      },
+      "withdrawal": {
+        "title": "Right to withdraw consent",
+        "desc": "Withdraw your consent at any time"
+      },
+      "exercise": "To exercise any of these rights, please contact us at privacy@dpmcalendar.com. We will respond within 30 days."
+    },
+    "compliance": {
+      "title": "10. Regulatory Compliance",
+      "intro": "We are committed to complying with applicable data protection laws:",
+      "loi25": {
+        "title": "Law 25 (Quebec)",
+        "desc": "Quebec's Act respecting the protection of personal information in the private sector"
+      },
+      "pipeda": {
+        "title": "PIPEDA (Canada)",
+        "desc": "Personal Information Protection and Electronic Documents Act"
+      },
+      "gdpr": {
+        "title": "GDPR (European Union)",
+        "desc": "General Data Protection Regulation for EU users"
+      }
+    },
+    "security": {
+      "title": "11. Security Measures",
+      "intro": "We implement appropriate technical and organizational measures to protect your data:",
+      "tls": "All data in transit is encrypted using TLS 1.3",
+      "oauth": "OAuth 2.0 authentication - we never store your passwords",
+      "access": "Access controls and authentication for all systems",
+      "monitoring": "Regular security monitoring and vulnerability assessments"
+    },
+    "children": {
+      "title": "12. Children's Privacy",
+      "desc": "DPM Calendar is not intended for users under the age of 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child has provided us with personal information, please contact us."
+    },
+    "changes": {
+      "title": "13. Changes to This Policy",
+      "desc": "We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the \"Last updated\" date. You are advised to review this Privacy Policy periodically for any changes."
+    },
+    "contact": {
+      "title": "14. Contact Us",
+      "desc": "If you have any questions about this Privacy Policy or our data practices, please contact us:"
+    },
+    "seeAlso": {
+      "terms": "Terms of Service",
+      "home": "Back to Home"
+    }
+  },
+  "terms": {
+    "badge": "Legal Terms",
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated",
+    "effectiveDate": "April 5, 2026",
+    "intro": {
+      "p1": "Welcome to DPM Calendar! These Terms of Service (\"Terms\") govern your use of the DPM Calendar application and services operated by DPM Inc. (\"we\", \"us\", or \"our\").",
+      "p2": "By accessing or using DPM Calendar, you agree to be bound by these Terms. If you disagree with any part of these Terms, you may not access the service."
+    },
+    "definitions": {
+      "title": "1. Definitions",
+      "service": {
+        "term": "Service",
+        "desc": "The DPM Calendar web application and all related services"
+      },
+      "user": {
+        "term": "User",
+        "desc": "Any individual who accesses or uses the Service"
+      },
+      "account": {
+        "term": "Account",
+        "desc": "A registered user profile on the Service"
+      },
+      "content": {
+        "term": "Content",
+        "desc": "Any data, text, or information you create, upload, or store on the Service"
+      }
+    },
+    "serviceDesc": {
+      "title": "2. Service Description",
+      "intro": "DPM Calendar is a productivity application that provides:",
+      "calendar": "Calendar management and event scheduling",
+      "tasks": "Task management and to-do lists",
+      "habits": "Habit tracking and streaks",
+      "goals": "Goal setting and progress tracking",
+      "sync": "Synchronization with third-party calendar services",
+      "analytics": "Productivity analytics and insights"
+    },
+    "account": {
+      "title": "3. User Accounts",
+      "creation": {
+        "title": "Account Creation",
+        "desc": "To use DPM Calendar, you must create an account using one of our supported authentication providers (Google, Microsoft, GitHub, or Apple). By creating an account, you represent that you are at least 13 years old."
+      },
+      "responsibilities": {
+        "title": "Account Responsibilities",
+        "accurate": "Provide accurate and complete information",
+        "secure": "Maintain the security of your authentication credentials",
+        "notify": "Notify us immediately of any unauthorized access",
+        "activity": "Accept responsibility for all activities under your account"
+      },
+      "age": {
+        "title": "Age Requirement",
+        "desc": "You must be at least 13 years old to use DPM Calendar. If you are under 18, you must have permission from a parent or legal guardian."
+      }
+    },
+    "acceptableUse": {
+      "title": "4. Acceptable Use",
+      "intro": "You agree to use DPM Calendar only for lawful purposes and in accordance with these Terms.",
+      "prohibited": {
+        "title": "Prohibited Activities",
+        "illegal": "Use the Service for any illegal purpose or in violation of any laws",
+        "harmful": "Upload harmful content including viruses, malware, or malicious code",
+        "infringe": "Infringe on the intellectual property rights of others",
+        "interfere": "Interfere with or disrupt the Service or servers",
+        "reverse": "Attempt to reverse engineer, decompile, or hack the Service",
+        "automated": "Use automated means to access the Service without permission",
+        "impersonate": "Impersonate any person or entity",
+        "spam": "Send unsolicited communications or spam"
+      }
+    },
+    "userContent": {
+      "title": "5. User Content",
+      "ownership": "You retain ownership of all content you create or upload to DPM Calendar. Your events, tasks, habits, goals, and other data remain yours.",
+      "license": "By using the Service, you grant us a limited license to store, process, and display your content solely for the purpose of providing the Service to you.",
+      "responsibility": "You are solely responsible for your content and must ensure it does not violate any laws or third-party rights."
+    },
+    "ip": {
+      "title": "6. Intellectual Property",
+      "ownership": "DPM Calendar, including its original content, features, and functionality, is owned by DPM Inc. and is protected by international copyright, trademark, and other intellectual property laws.",
+      "license": "We grant you a limited, non-exclusive, non-transferable, revocable license to use the Service for your personal, non-commercial use.",
+      "restrictions": "You may not copy, modify, distribute, sell, or lease any part of our Service or its content, nor may you reverse engineer or attempt to extract the source code."
+    },
+    "thirdParty": {
+      "title": "7. Third-Party Services",
+      "intro": "DPM Calendar integrates with third-party services including:",
+      "terms": "Your use of these services is subject to their respective terms of service and privacy policies. We are not responsible for the content, privacy practices, or availability of third-party services."
+    },
+    "availability": {
+      "title": "8. Service Availability",
+      "asIs": "The Service is provided \"as is\" and \"as available\" without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement.",
+      "maintenance": "We may suspend or discontinue the Service at any time for maintenance, updates, or other reasons. We will make reasonable efforts to notify you in advance of any planned downtime."
+    },
+    "liability": {
+      "title": "9. Limitation of Liability",
+      "disclaimer": "To the maximum extent permitted by applicable law, DPM Inc. shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.",
+      "limitation": "Our total liability for any claims arising from or relating to the Service shall not exceed the amount you paid us, if any, in the twelve (12) months prior to the claim.",
+      "exclusions": "Some jurisdictions do not allow the exclusion of certain warranties or limitation of liability, so some of the above limitations may not apply to you."
+    },
+    "indemnification": {
+      "title": "10. Indemnification",
+      "desc": "You agree to defend, indemnify, and hold harmless DPM Inc. and its officers, directors, employees, and agents from and against any claims, damages, obligations, losses, liabilities, costs, or debt arising from your use of the Service or violation of these Terms."
+    },
+    "termination": {
+      "title": "11. Termination",
+      "byUser": {
+        "title": "Termination by You",
+        "desc": "You may terminate your account at any time by deleting your account through the settings page or by contacting us. Upon termination, your right to use the Service will immediately cease."
+      },
+      "byUs": {
+        "title": "Termination by Us",
+        "desc": "We may terminate or suspend your account immediately, without prior notice or liability, for any reason, including without limitation if you breach these Terms."
+      },
+      "effects": {
+        "title": "Effects of Termination",
+        "desc": "Upon termination, your data will be deleted in accordance with our Privacy Policy. Some provisions of these Terms shall survive termination, including ownership provisions, warranty disclaimers, and limitations of liability."
+      }
+    },
+    "changes": {
+      "title": "12. Changes to Terms",
+      "desc": "We reserve the right to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice before any new terms take effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms."
+    },
+    "law": {
+      "title": "13. Governing Law",
+      "jurisdiction": "These Terms shall be governed by and construed in accordance with the laws of the Province of Quebec and the federal laws of Canada applicable therein, without regard to its conflict of law provisions.",
+      "disputes": "Any dispute arising from or relating to these Terms or the Service shall be resolved exclusively in the courts of Quebec, Canada. You consent to the personal jurisdiction of such courts."
+    },
+    "severability": {
+      "title": "14. Severability",
+      "desc": "If any provision of these Terms is held to be unenforceable or invalid, such provision will be changed and interpreted to accomplish the objectives of such provision to the greatest extent possible under applicable law, and the remaining provisions will continue in full force and effect."
+    },
+    "contact": {
+      "title": "15. Contact Us",
+      "desc": "If you have any questions about these Terms, please contact us:",
+      "address": "Quebec, Canada"
+    },
+    "seeAlso": {
+      "privacy": "Privacy Policy",
+      "home": "Back to Home"
+    }
   }
 }

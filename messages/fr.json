@@ -94,63 +94,64 @@
     },
     "hero": {
       "title1": "Votre temps,",
-      "title2": "m\u00e9rite mieux",
-      "subtitle": "Calendrier, t\u00e2ches, habitudes et objectifs r\u00e9unis dans une seule application. Synchronisez avec Google Calendar et Microsoft Outlook.",
+      "title2": "mérite mieux",
+      "subtitle": "Calendrier, tâches, habitudes et objectifs réunis dans une seule application.",
       "cta": "Commencer gratuitement",
-      "seeFeatures": "Voir les fonctionnalit\u00e9s"
+      "seeFeatures": "Voir les fonctionnalités",
+      "earlyAccess": "Accès anticipé"
     },
     "howItWorks": {
-      "title1": "Comment \u00e7a",
+      "title1": "Comment ça",
       "title2": "fonctionne",
-      "subtitle": "Trois \u00e9tapes simples pour transformer votre productivit\u00e9",
+      "subtitle": "Trois étapes simples pour organiser votre temps",
       "step1": {
-        "title": "Connectez vos calendriers",
-        "description": "Importez vos \u00e9v\u00e9nements Google, Microsoft ou Apple en un clic. Tout est synchronis\u00e9 automatiquement."
+        "title": "Créez vos calendriers",
+        "description": "Organisez vos événements par calendrier : travail, personnel, sport. Synchronisation externe bientôt disponible."
       },
       "step2": {
-        "title": "Planifiez intelligemment",
-        "description": "Cr\u00e9ez des t\u00e2ches, d\u00e9finissez des objectifs et laissez l'IA vous sugg\u00e9rer le meilleur moment pour les r\u00e9aliser."
+        "title": "Planifiez vos tâches",
+        "description": "Créez des tâches, définissez des objectifs et utilisez le mode Focus pour rester concentré."
       },
       "step3": {
-        "title": "Atteignez vos objectifs",
-        "description": "Suivez vos progr\u00e8s, analysez votre productivit\u00e9 et c\u00e9l\u00e9brez vos accomplissements."
+        "title": "Suivez vos progrès",
+        "description": "Visualisez vos tâches complétées, suivez vos habitudes et célébrez vos accomplissements."
       }
     },
     "features": {
       "timeTracking": {
-        "title": "Suivez comment vous utilisez votre temps",
-        "description": "La fonctionnalit\u00e9 d'utilisation du temps vous aide \u00e0 analyser votre emploi du temps en vous indiquant comment vous occupez votre temps et avec qui.",
-        "feature1": "Rapports de productivit\u00e9 d\u00e9taill\u00e9s",
-        "feature2": "Temps par projet et cat\u00e9gorie",
-        "feature3": "Graphiques et tendances visuels"
+        "title": "Visualisez votre emploi du temps",
+        "description": "Organisez vos événements par catégorie et visualisez comment vous répartissez votre temps.",
+        "feature1": "Calendriers colorés par catégorie",
+        "feature2": "Vue par projet",
+        "feature3": "Rapports détaillés (bientôt)"
       },
       "focusMode": {
-        "title": "Bloquez les distractions",
-        "description": "Le mode Focus vous permet de vous concentrer sur une seule t\u00e2che \u00e0 la fois avec la technique Pomodoro int\u00e9gr\u00e9e et le blocage des notifications.",
-        "feature1": "Technique Pomodoro int\u00e9gr\u00e9e",
-        "feature2": "Blocage des notifications",
+        "title": "Restez concentré",
+        "description": "Le mode Focus vous aide à travailler sur une tâche à la fois grâce au timer Pomodoro intégré.",
+        "feature1": "Timer Pomodoro intégré",
+        "feature2": "Sessions de focus personnalisables",
         "feature3": "Suivi du temps de concentration"
       },
       "multiCalendar": {
-        "title": "Restez organis\u00e9 avec plusieurs agendas",
-        "description": "G\u00e9rez plusieurs calendriers en un seul endroit. Synchronisez automatiquement vos agendas Google, Microsoft et Apple.",
-        "feature1": "Synchronisation Google Calendar",
-        "feature2": "Int\u00e9gration Microsoft Outlook",
+        "title": "Organisez vos calendriers",
+        "description": "Créez et gérez plusieurs calendriers en un seul endroit : travail, personnel, sport...",
+        "feature1": "Google Calendar (bientôt)",
+        "feature2": "Microsoft Outlook (bientôt)",
         "feature3": "Calendriers personnels et professionnels"
       },
       "customViews": {
         "title": "Personnalisez votre vue",
-        "description": "Choisissez la vue qui vous convient le mieux : jour, semaine, mois ou agenda. Personnalisez les couleurs et l'affichage selon vos pr\u00e9f\u00e9rences.",
-        "feature1": "Vues jour, semaine, mois, agenda",
-        "feature2": "Drag & drop intuitif",
+        "description": "Choisissez la vue qui vous convient le mieux : jour, semaine ou mois. Cliquez sur un jour pour voir les détails.",
+        "feature1": "Vues jour, semaine, mois",
+        "feature2": "Navigation intuitive",
         "feature3": "Personnalisation des couleurs"
       },
       "goals": {
-        "title": "Atteignez vos objectifs",
-        "description": "D\u00e9finissez des objectifs SMART et suivez votre progression. Liez vos t\u00e2ches \u00e0 vos objectifs pour rester motiv\u00e9 et organis\u00e9.",
-        "feature1": "Objectifs SMART",
+        "title": "Définissez vos objectifs",
+        "description": "Créez des objectifs et décomposez-les en étapes. Suivez votre progression visuellement.",
+        "feature1": "Objectifs avec jalons",
         "feature2": "Suivi de progression visuel",
-        "feature3": "Jalons et \u00e9tapes cl\u00e9s"
+        "feature3": "Organisation par étapes"
       }
     },
     "mockups": {
@@ -212,84 +213,79 @@
       }
     },
     "personas": {
-      "title1": "Con\u00e7u pour",
+      "title1": "Conçu pour",
       "title2": "vous",
-      "subtitle": "Que vous soyez \u00e9tudiant, entrepreneur ou freelance, DPM Calendar s'adapte \u00e0 votre mode de vie.",
+      "subtitle": "Que vous soyez étudiant, entrepreneur ou freelance, DPM Calendar s'adapte à votre mode de vie.",
       "students": {
-        "title": "\u00c9tudiants",
-        "description": "G\u00e9rez vos cours, examens et projets. Ne manquez plus jamais une deadline.",
-        "feature1": "Rappels de cours",
-        "feature2": "Suivi des examens",
-        "feature3": "Planification des r\u00e9visions"
+        "title": "Étudiants",
+        "description": "Gérez vos cours, examens et projets. Ne manquez plus jamais une deadline.",
+        "feature1": "Rappels d'événements",
+        "feature2": "Suivi des tâches",
+        "feature3": "Mode Focus pour les révisions"
       },
       "entrepreneurs": {
         "title": "Entrepreneurs",
-        "description": "D\u00e9veloppez votre business en gardant le contr\u00f4le de votre emploi du temps.",
-        "feature1": "Gestion de projets",
+        "description": "Développez votre business en gardant le contrôle de votre emploi du temps.",
+        "feature1": "Organisation par projets",
         "feature2": "Suivi des objectifs",
-        "feature3": "Analytics de productivit\u00e9"
+        "feature3": "Mode Focus"
       },
       "freelancers": {
         "title": "Freelances",
         "description": "Jonglez avec plusieurs clients et projets sans perdre le fil.",
         "feature1": "Multi-calendriers",
-        "feature2": "Time tracking",
-        "feature3": "Facturation facilit\u00e9e"
+        "feature2": "Organisation par client",
+        "feature3": "Mode Focus"
       },
       "teams": {
-        "title": "\u00c9quipes",
-        "description": "Collaborez efficacement et synchronisez les agendas de toute l'\u00e9quipe.",
-        "feature1": "Calendriers partag\u00e9s",
-        "feature2": "Planification de r\u00e9unions",
-        "feature3": "Coordination simplifi\u00e9e"
+        "title": "Équipes",
+        "description": "Fonctionnalités collaboratives en cours de développement.",
+        "feature1": "Calendriers partagés (bientôt)",
+        "feature2": "Planification de réunions (bientôt)",
+        "feature3": "Invitations (bientôt)"
       }
     },
     "integrations": {
-      "title": "Synchronisez vos calendriers pr\u00e9f\u00e9r\u00e9s"
+      "title": "Intégrations (bientôt)",
+      "comingSoon": "Synchronisation externe en cours de développement"
     },
     "security": {
-      "badge": "S\u00e9curit\u00e9 renforc\u00e9e",
-      "title1": "Vos donn\u00e9es sont",
-      "title2": "prot\u00e9g\u00e9es",
-      "subtitle": "Nous prenons la s\u00e9curit\u00e9 de vos donn\u00e9es tr\u00e8s au s\u00e9rieux. Votre vie priv\u00e9e est notre priorit\u00e9.",
+      "badge": "Connexion sécurisée",
+      "title1": "Vos données sont",
+      "title2": "protégées",
+      "subtitle": "Nous utilisons des standards modernes pour sécuriser vos données.",
       "encryption": {
-        "title": "Chiffrement de bout en bout",
-        "description": "Toutes vos donn\u00e9es sont chiffr\u00e9es avec les derniers standards de s\u00e9curit\u00e9."
+        "title": "Transport chiffré (TLS 1.3)",
+        "description": "Toutes les connexions passent par HTTPS/TLS 1.3 via Vercel Edge Network."
       },
       "hosting": {
-        "title": "H\u00e9berg\u00e9 en Europe",
-        "description": "Vos donn\u00e9es restent en Europe, en conformit\u00e9 avec le RGPD."
+        "title": "Infrastructure moderne",
+        "description": "Hébergé sur Vercel (réseau mondial) avec base de données PostgreSQL gérée sur Supabase."
       },
       "auth": {
-        "title": "Authentification s\u00e9curis\u00e9e",
-        "description": "OAuth 2.0 avec Google et Microsoft, sans stockage de mots de passe."
+        "title": "Authentification OAuth 2.0",
+        "description": "Connexion via Google ou Microsoft — aucun mot de passe stocké par DPM Calendar."
       },
-      "certifications": "Certifications & Conformit\u00e9",
-      "rgpd": "RGPD",
-      "compliant": "Conforme",
-      "backup": "Backup",
-      "daily": "Quotidien",
-      "secure": "S\u00e9curis\u00e9"
+      "certifications": "Standards techniques"
     },
     "cta": {
-      "title1": "Pr\u00eat \u00e0 reprendre le contr\u00f4le de",
+      "title1": "Prêt à reprendre le contrôle de",
       "title2": "votre temps",
-      "subtitle": "Rejoignez des milliers d'utilisateurs qui ont transform\u00e9 leur productivit\u00e9.",
-      "button": "Commencer gratuitement",
-      "noCreditCard": "Gratuit pour toujours - Pas de carte de cr\u00e9dit requise"
+      "subtitle": "Essayez DPM Calendar et organisez votre productivité.",
+      "button": "Essayer maintenant",
+      "noCreditCard": "Gratuit en accès anticipé — Aucune carte requise"
     },
     "footer": {
-      "tagline": "Votre assistant de productivit\u00e9 intelligent.",
+      "tagline": "Organisez votre temps efficacement.",
       "product": "Produit",
-      "features": "Fonctionnalit\u00e9s",
+      "features": "Fonctionnalités",
       "pricing": "Tarifs",
       "resources": "Ressources",
       "support": "Support",
-      "legal": "L\u00e9gal",
-      "privacy": "Confidentialit\u00e9",
+      "legal": "Légal",
+      "privacy": "Confidentialité",
       "terms": "CGU",
-      "rgpdCompliant": "Conforme RGPD",
-      "copyright": "\u00a9 {year} DPM Calendar. Tous droits r\u00e9serv\u00e9s."
+      "copyright": "© {year} DPM Calendar. Tous droits réservés."
     }
   },
   "home": {
@@ -306,6 +302,337 @@
     "manage": "G\u00e9rer",
     "tipOfDay": "Conseil du jour",
     "alreadyCompleted": "Super! Tu as d\u00e9j\u00e0 compl\u00e9t\u00e9 {count} t\u00e2che(s). Continue comme \u00e7a!",
-    "startImportant": "Commence par ta t\u00e2che la plus importante. Une fois termin\u00e9e, le reste sera plus facile!"
+    "startImportant": "Commence par ta tâche la plus importante. Une fois terminée, le reste sera plus facile!"
+  },
+  "privacy": {
+    "badge": "Protection des données",
+    "title": "Politique de confidentialité",
+    "lastUpdated": "Dernière mise à jour",
+    "effectiveDate": "5 avril 2026",
+    "intro": {
+      "p1": "DPM Inc. (« nous », « notre » ou « nos ») exploite DPM Calendar, une application de productivité qui vous aide à gérer votre calendrier, vos tâches, vos habitudes et vos objectifs. Cette politique de confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre service.",
+      "p2": "Veuillez lire attentivement cette politique de confidentialité. En utilisant DPM Calendar, vous acceptez la collecte et l'utilisation des informations conformément à cette politique."
+    },
+    "controller": {
+      "title": "1. Responsable du traitement",
+      "company": "Entreprise",
+      "address": "Adresse",
+      "addressValue": "Québec, Canada",
+      "contact": "Contact",
+      "founder": "Fondateur"
+    },
+    "dataCollected": {
+      "title": "2. Informations collectées",
+      "intro": "Nous collectons les informations que vous nous fournissez directement et les informations collectées automatiquement lorsque vous utilisez notre service.",
+      "account": {
+        "title": "Informations de compte",
+        "email": "Adresse courriel (via le fournisseur OAuth)",
+        "name": "Nom complet",
+        "avatar": "Photo de profil (si fournie par OAuth)",
+        "provider": "Fournisseur d'authentification (Google, Microsoft, GitHub ou Apple)"
+      },
+      "app": {
+        "title": "Données de l'application",
+        "events": "Événements du calendrier (titre, date, heure, description)",
+        "tasks": "Tâches (titre, date d'échéance, priorité, statut)",
+        "habits": "Habitudes (nom, fréquence, historique de complétion)",
+        "goals": "Objectifs (titre, date cible, jalons, progression)",
+        "energy": "Entrées de niveau d'énergie",
+        "journal": "Entrées de journal",
+        "mood": "Données de suivi d'humeur"
+      },
+      "technical": {
+        "title": "Informations techniques",
+        "ip": "Adresse IP (pour la sécurité et les analyses)",
+        "browser": "Type et version du navigateur",
+        "device": "Type d'appareil et système d'exploitation",
+        "usage": "Habitudes d'utilisation et interactions avec les fonctionnalités"
+      }
+    },
+    "purpose": {
+      "title": "3. Utilisation de vos informations",
+      "service": "Pour fournir, maintenir et améliorer le service DPM Calendar",
+      "sync": "Pour synchroniser vos données avec les services de calendrier connectés",
+      "improve": "Pour analyser les habitudes d'utilisation et améliorer nos fonctionnalités",
+      "support": "Pour répondre à vos commentaires, questions et demandes d'assistance",
+      "security": "Pour détecter, prévenir et résoudre les problèmes techniques et les menaces de sécurité",
+      "legal": "Pour respecter les obligations légales"
+    },
+    "legalBasis": {
+      "title": "4. Base juridique du traitement",
+      "consent": {
+        "title": "Consentement",
+        "desc": "Vous avez donné votre consentement au traitement de vos données personnelles pour une ou plusieurs finalités spécifiques"
+      },
+      "contract": {
+        "title": "Contrat",
+        "desc": "Le traitement est nécessaire à l'exécution d'un contrat auquel vous êtes partie"
+      },
+      "legitimate": {
+        "title": "Intérêts légitimes",
+        "desc": "Le traitement est nécessaire aux fins des intérêts légitimes poursuivis par nous"
+      },
+      "legal": {
+        "title": "Obligation légale",
+        "desc": "Le traitement est nécessaire au respect d'une obligation légale"
+      }
+    },
+    "storage": {
+      "title": "5. Stockage et localisation des données",
+      "intro": "Vos données sont stockées de manière sécurisée selon les pratiques standard de l'industrie :",
+      "database": {
+        "title": "Base de données",
+        "desc": "Supabase (PostgreSQL) - un service de base de données géré avec chiffrement au repos"
+      },
+      "hosting": {
+        "title": "Hébergement de l'application",
+        "desc": "Vercel - un réseau mondial avec chiffrement SSL/TLS automatique"
+      },
+      "location": {
+        "title": "Localisation des données",
+        "desc": "Nos centres de données principaux sont situés aux États-Unis. En utilisant notre service, vous consentez au transfert de vos données vers les É.-U."
+      }
+    },
+    "retention": {
+      "title": "6. Conservation des données",
+      "active": "Les données de compte sont conservées tant que votre compte est actif",
+      "deletion": "Après la suppression du compte, vos données sont supprimées dans les 30 jours",
+      "backup": "Les copies de sauvegarde peuvent être conservées jusqu'à 90 jours pour la récupération après sinistre",
+      "legal": "Certaines données peuvent être conservées plus longtemps si la loi l'exige"
+    },
+    "sharing": {
+      "title": "7. Partage des données",
+      "intro": "Nous partageons vos données uniquement avec les fournisseurs de services suivants, nécessaires au fonctionnement de notre service :",
+      "supabase": "Hébergement et stockage de base de données",
+      "vercel": "Hébergement d'application et analyses",
+      "oauth": "Fournisseurs d'authentification (Google, Microsoft, GitHub, Apple) pour la connexion uniquement",
+      "noSale": "Nous ne vendons, ne louons ni ne partageons vos informations personnelles avec des tiers à des fins de marketing."
+    },
+    "cookies": {
+      "title": "8. Cookies et suivi",
+      "intro": "Nous utilisons des cookies et des technologies similaires pour améliorer votre expérience :",
+      "essential": {
+        "title": "Cookies essentiels",
+        "desc": "Nécessaires pour l'authentification et les fonctionnalités de base"
+      },
+      "analytics": {
+        "title": "Analyses (Vercel Analytics)",
+        "desc": "Données d'utilisation anonymes pour améliorer notre service. Vous pouvez désactiver cette option dans les paramètres de votre navigateur."
+      }
+    },
+    "rights": {
+      "title": "9. Vos droits",
+      "intro": "Selon votre localisation, vous pouvez avoir les droits suivants concernant vos données personnelles :",
+      "access": {
+        "title": "Droit d'accès",
+        "desc": "Demander une copie de vos données personnelles"
+      },
+      "rectification": {
+        "title": "Droit de rectification",
+        "desc": "Demander la correction de données inexactes"
+      },
+      "deletion": {
+        "title": "Droit à l'effacement",
+        "desc": "Demander la suppression de vos données (« droit à l'oubli »)"
+      },
+      "portability": {
+        "title": "Droit à la portabilité",
+        "desc": "Recevoir vos données dans un format structuré et lisible par machine"
+      },
+      "restriction": {
+        "title": "Droit à la limitation",
+        "desc": "Demander la limitation du traitement dans certaines circonstances"
+      },
+      "objection": {
+        "title": "Droit d'opposition",
+        "desc": "S'opposer au traitement fondé sur des intérêts légitimes"
+      },
+      "withdrawal": {
+        "title": "Droit de retrait du consentement",
+        "desc": "Retirer votre consentement à tout moment"
+      },
+      "exercise": "Pour exercer l'un de ces droits, veuillez nous contacter à privacy@dpmcalendar.com. Nous répondrons dans les 30 jours."
+    },
+    "compliance": {
+      "title": "10. Conformité réglementaire",
+      "intro": "Nous nous engageons à respecter les lois applicables en matière de protection des données :",
+      "loi25": {
+        "title": "Loi 25 (Québec)",
+        "desc": "Loi sur la protection des renseignements personnels dans le secteur privé du Québec"
+      },
+      "pipeda": {
+        "title": "LPRPDE (Canada)",
+        "desc": "Loi sur la protection des renseignements personnels et les documents électroniques"
+      },
+      "gdpr": {
+        "title": "RGPD (Union européenne)",
+        "desc": "Règlement général sur la protection des données pour les utilisateurs de l'UE"
+      }
+    },
+    "security": {
+      "title": "11. Mesures de sécurité",
+      "intro": "Nous mettons en place des mesures techniques et organisationnelles appropriées pour protéger vos données :",
+      "tls": "Toutes les données en transit sont chiffrées avec TLS 1.3",
+      "oauth": "Authentification OAuth 2.0 - nous ne stockons jamais vos mots de passe",
+      "access": "Contrôles d'accès et authentification pour tous les systèmes",
+      "monitoring": "Surveillance régulière de la sécurité et évaluations des vulnérabilités"
+    },
+    "children": {
+      "title": "12. Protection des enfants",
+      "desc": "DPM Calendar n'est pas destiné aux utilisateurs de moins de 13 ans. Nous ne collectons pas sciemment d'informations personnelles auprès d'enfants de moins de 13 ans. Si vous êtes parent ou tuteur et pensez que votre enfant nous a fourni des informations personnelles, veuillez nous contacter."
+    },
+    "changes": {
+      "title": "13. Modifications de cette politique",
+      "desc": "Nous pouvons mettre à jour cette politique de confidentialité de temps à autre. Nous vous informerons de tout changement en publiant la nouvelle politique de confidentialité sur cette page et en mettant à jour la date de « dernière mise à jour ». Nous vous conseillons de consulter cette politique de confidentialité périodiquement."
+    },
+    "contact": {
+      "title": "14. Nous contacter",
+      "desc": "Si vous avez des questions concernant cette politique de confidentialité ou nos pratiques en matière de données, veuillez nous contacter :"
+    },
+    "seeAlso": {
+      "terms": "Conditions d'utilisation",
+      "home": "Retour à l'accueil"
+    }
+  },
+  "terms": {
+    "badge": "Conditions légales",
+    "title": "Conditions d'utilisation",
+    "lastUpdated": "Dernière mise à jour",
+    "effectiveDate": "5 avril 2026",
+    "intro": {
+      "p1": "Bienvenue sur DPM Calendar ! Ces conditions d'utilisation (« Conditions ») régissent votre utilisation de l'application et des services DPM Calendar exploités par DPM Inc. (« nous », « notre » ou « nos »).",
+      "p2": "En accédant ou en utilisant DPM Calendar, vous acceptez d'être lié par ces Conditions. Si vous n'êtes pas d'accord avec une partie de ces Conditions, vous ne pouvez pas accéder au service."
+    },
+    "definitions": {
+      "title": "1. Définitions",
+      "service": {
+        "term": "Service",
+        "desc": "L'application web DPM Calendar et tous les services associés"
+      },
+      "user": {
+        "term": "Utilisateur",
+        "desc": "Toute personne qui accède ou utilise le Service"
+      },
+      "account": {
+        "term": "Compte",
+        "desc": "Un profil d'utilisateur inscrit sur le Service"
+      },
+      "content": {
+        "term": "Contenu",
+        "desc": "Toute donnée, texte ou information que vous créez, téléversez ou stockez sur le Service"
+      }
+    },
+    "serviceDesc": {
+      "title": "2. Description du service",
+      "intro": "DPM Calendar est une application de productivité qui offre :",
+      "calendar": "Gestion de calendrier et planification d'événements",
+      "tasks": "Gestion des tâches et listes de choses à faire",
+      "habits": "Suivi des habitudes et séries",
+      "goals": "Définition d'objectifs et suivi de progression",
+      "sync": "Synchronisation avec des services de calendrier tiers",
+      "analytics": "Analyses de productivité et perspectives"
+    },
+    "account": {
+      "title": "3. Comptes utilisateurs",
+      "creation": {
+        "title": "Création de compte",
+        "desc": "Pour utiliser DPM Calendar, vous devez créer un compte en utilisant l'un de nos fournisseurs d'authentification pris en charge (Google, Microsoft, GitHub ou Apple). En créant un compte, vous déclarez avoir au moins 13 ans."
+      },
+      "responsibilities": {
+        "title": "Responsabilités du compte",
+        "accurate": "Fournir des informations exactes et complètes",
+        "secure": "Maintenir la sécurité de vos identifiants d'authentification",
+        "notify": "Nous informer immédiatement de tout accès non autorisé",
+        "activity": "Accepter la responsabilité de toutes les activités sous votre compte"
+      },
+      "age": {
+        "title": "Exigence d'âge",
+        "desc": "Vous devez avoir au moins 13 ans pour utiliser DPM Calendar. Si vous avez moins de 18 ans, vous devez avoir la permission d'un parent ou d'un tuteur légal."
+      }
+    },
+    "acceptableUse": {
+      "title": "4. Utilisation acceptable",
+      "intro": "Vous acceptez d'utiliser DPM Calendar uniquement à des fins légales et conformément à ces Conditions.",
+      "prohibited": {
+        "title": "Activités interdites",
+        "illegal": "Utiliser le Service à des fins illégales ou en violation de toute loi",
+        "harmful": "Téléverser du contenu nuisible, y compris des virus, des logiciels malveillants ou du code malicieux",
+        "infringe": "Porter atteinte aux droits de propriété intellectuelle d'autrui",
+        "interfere": "Interférer avec ou perturber le Service ou les serveurs",
+        "reverse": "Tenter de décompiler, désassembler ou pirater le Service",
+        "automated": "Utiliser des moyens automatisés pour accéder au Service sans permission",
+        "impersonate": "Usurper l'identité d'une personne ou d'une entité",
+        "spam": "Envoyer des communications non sollicitées ou des pourriels"
+      }
+    },
+    "userContent": {
+      "title": "5. Contenu utilisateur",
+      "ownership": "Vous conservez la propriété de tout le contenu que vous créez ou téléversez sur DPM Calendar. Vos événements, tâches, habitudes, objectifs et autres données vous appartiennent.",
+      "license": "En utilisant le Service, vous nous accordez une licence limitée pour stocker, traiter et afficher votre contenu uniquement dans le but de vous fournir le Service.",
+      "responsibility": "Vous êtes seul responsable de votre contenu et devez vous assurer qu'il ne viole aucune loi ni les droits de tiers."
+    },
+    "ip": {
+      "title": "6. Propriété intellectuelle",
+      "ownership": "DPM Calendar, y compris son contenu original, ses fonctionnalités et ses fonctions, appartient à DPM Inc. et est protégé par les lois internationales sur le droit d'auteur, les marques de commerce et autres lois sur la propriété intellectuelle.",
+      "license": "Nous vous accordons une licence limitée, non exclusive, non transférable et révocable pour utiliser le Service à des fins personnelles et non commerciales.",
+      "restrictions": "Vous ne pouvez pas copier, modifier, distribuer, vendre ou louer une partie de notre Service ou de son contenu, ni tenter de faire de l'ingénierie inverse ou d'extraire le code source."
+    },
+    "thirdParty": {
+      "title": "7. Services tiers",
+      "intro": "DPM Calendar s'intègre avec des services tiers, notamment :",
+      "terms": "Votre utilisation de ces services est soumise à leurs conditions d'utilisation et politiques de confidentialité respectives. Nous ne sommes pas responsables du contenu, des pratiques de confidentialité ou de la disponibilité des services tiers."
+    },
+    "availability": {
+      "title": "8. Disponibilité du service",
+      "asIs": "Le Service est fourni « tel quel » et « selon disponibilité » sans garanties d'aucune sorte, expresses ou implicites, y compris, mais sans s'y limiter, les garanties de qualité marchande, d'adéquation à un usage particulier ou de non-contrefaçon.",
+      "maintenance": "Nous pouvons suspendre ou interrompre le Service à tout moment pour maintenance, mises à jour ou autres raisons. Nous ferons des efforts raisonnables pour vous informer à l'avance de toute interruption planifiée."
+    },
+    "liability": {
+      "title": "9. Limitation de responsabilité",
+      "disclaimer": "Dans la mesure maximale permise par la loi applicable, DPM Inc. ne sera pas responsable des dommages indirects, accessoires, spéciaux, consécutifs ou punitifs, y compris, sans limitation, la perte de profits, de données, d'utilisation, de clientèle ou d'autres pertes intangibles.",
+      "limitation": "Notre responsabilité totale pour toute réclamation découlant du Service ou liée à celui-ci ne dépassera pas le montant que vous nous avez payé, le cas échéant, au cours des douze (12) mois précédant la réclamation.",
+      "exclusions": "Certaines juridictions n'autorisent pas l'exclusion de certaines garanties ou la limitation de responsabilité, de sorte que certaines des limitations ci-dessus peuvent ne pas s'appliquer à vous."
+    },
+    "indemnification": {
+      "title": "10. Indemnisation",
+      "desc": "Vous acceptez de défendre, d'indemniser et de dégager de toute responsabilité DPM Inc. et ses dirigeants, administrateurs, employés et agents contre toute réclamation, dommage, obligation, perte, responsabilité, coût ou dette découlant de votre utilisation du Service ou de la violation de ces Conditions."
+    },
+    "termination": {
+      "title": "11. Résiliation",
+      "byUser": {
+        "title": "Résiliation par vous",
+        "desc": "Vous pouvez résilier votre compte à tout moment en supprimant votre compte via la page des paramètres ou en nous contactant. À la résiliation, votre droit d'utiliser le Service cessera immédiatement."
+      },
+      "byUs": {
+        "title": "Résiliation par nous",
+        "desc": "Nous pouvons résilier ou suspendre votre compte immédiatement, sans préavis ni responsabilité, pour quelque raison que ce soit, y compris, sans limitation, si vous violez ces Conditions."
+      },
+      "effects": {
+        "title": "Effets de la résiliation",
+        "desc": "À la résiliation, vos données seront supprimées conformément à notre politique de confidentialité. Certaines dispositions de ces Conditions survivront à la résiliation, y compris les dispositions relatives à la propriété, les exclusions de garantie et les limitations de responsabilité."
+      }
+    },
+    "changes": {
+      "title": "12. Modifications des conditions",
+      "desc": "Nous nous réservons le droit de modifier ou de remplacer ces Conditions à tout moment. Si une révision est importante, nous fournirons un préavis d'au moins 30 jours avant l'entrée en vigueur des nouvelles conditions. En continuant à accéder ou à utiliser notre Service après l'entrée en vigueur de ces révisions, vous acceptez d'être lié par les conditions révisées."
+    },
+    "law": {
+      "title": "13. Droit applicable",
+      "jurisdiction": "Ces Conditions seront régies et interprétées conformément aux lois de la province de Québec et aux lois fédérales du Canada qui s'y appliquent, sans égard aux dispositions relatives aux conflits de lois.",
+      "disputes": "Tout litige découlant de ces Conditions ou du Service ou lié à ceux-ci sera résolu exclusivement par les tribunaux du Québec, Canada. Vous consentez à la compétence personnelle de ces tribunaux."
+    },
+    "severability": {
+      "title": "14. Divisibilité",
+      "desc": "Si une disposition de ces Conditions est jugée inapplicable ou invalide, cette disposition sera modifiée et interprétée pour atteindre les objectifs de cette disposition dans la mesure maximale permise par la loi applicable, et les autres dispositions resteront en vigueur."
+    },
+    "contact": {
+      "title": "15. Nous contacter",
+      "desc": "Si vous avez des questions concernant ces Conditions, veuillez nous contacter :",
+      "address": "Québec, Canada"
+    },
+    "seeAlso": {
+      "privacy": "Politique de confidentialité",
+      "home": "Retour à l'accueil"
+    }
   }
 }

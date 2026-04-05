@@ -291,17 +291,17 @@ function MultiCalendarMockup() {
           </div>
         ))}
         <div className="border-t border-border pt-3 mt-3">
-          <p className="text-xs text-muted-foreground mb-2">{t("connected")}</p>
+          <p className="text-xs text-muted-foreground mb-2">External sync</p>
           {[
-            { name: "Google Calendar", icon: "🔗" },
-            { name: "Microsoft Outlook", icon: "🔗" },
+            { name: "Google Calendar", icon: "📅" },
+            { name: "Microsoft Outlook", icon: "📅" },
           ].map((provider) => (
-            <div key={provider.name} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50">
+            <div key={provider.name} className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50 opacity-60">
               <div className="flex items-center gap-3">
                 <span>{provider.icon}</span>
                 <span className="text-sm">{provider.name}</span>
               </div>
-              <span className="text-xs text-green-500">{t("synced")}</span>
+              <span className="text-xs text-muted-foreground italic">Coming soon</span>
             </div>
           ))}
         </div>
@@ -786,6 +786,11 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Text */}
             <div>
+              {/* Early Access Badge */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-violet-500/10 px-4 py-1.5 text-sm font-medium text-violet-600 dark:text-violet-400 mb-6 border border-violet-500/20">
+                <Sparkles className="h-4 w-4" />
+                {t("hero.earlyAccess")}
+              </div>
               <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
                 {t("hero.title1")}{" "}
                 <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
@@ -1101,12 +1106,15 @@ export default function Home() {
       {/* Integrations */}
       <section className="py-16 lg:py-20 bg-muted/30">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl font-bold sm:text-3xl mb-8">
+          <h2 className="text-2xl font-bold sm:text-3xl mb-4">
             {t("integrations.title")}
           </h2>
-          <div className="flex flex-wrap items-center justify-center gap-6">
+          <p className="text-sm text-muted-foreground mb-8">
+            {t("integrations.comingSoon")}
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-6 opacity-60">
             {/* Google */}
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3 hover:border-primary/50 transition-colors">
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3">
               <svg className="h-6 w-6" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -1117,7 +1125,7 @@ export default function Home() {
             </div>
 
             {/* Microsoft */}
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3 hover:border-primary/50 transition-colors">
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3">
               <svg className="h-6 w-6" viewBox="0 0 24 24">
                 <path fill="#F25022" d="M1 1h10v10H1z" />
                 <path fill="#00A4EF" d="M1 13h10v10H1z" />
@@ -1128,7 +1136,7 @@ export default function Home() {
             </div>
 
             {/* Apple */}
-            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3 hover:border-primary/50 transition-colors">
+            <div className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-3">
               <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
               </svg>
@@ -1201,20 +1209,24 @@ export default function Home() {
             <div className="lg:pl-8">
               <div className="rounded-2xl border border-border bg-card p-8">
                 <h3 className="font-semibold text-lg mb-6 text-center">{t("security.certifications")}</h3>
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
-                    <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-3">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
                       <Lock className="h-6 w-6 text-blue-500" />
                     </div>
-                    <span className="font-semibold text-sm">TLS 1.3</span>
-                    <span className="text-xs text-muted-foreground">Vercel Edge</span>
+                    <div>
+                      <span className="font-semibold text-sm block">TLS 1.3</span>
+                      <span className="text-xs text-muted-foreground">Vercel Edge Network</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-center text-center p-4 rounded-xl bg-muted/50">
-                    <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center mb-3">
+                  <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
+                    <div className="h-12 w-12 rounded-full bg-orange-500/10 flex items-center justify-center flex-shrink-0">
                       <Shield className="h-6 w-6 text-orange-500" />
                     </div>
-                    <span className="font-semibold text-sm">OAuth 2.0</span>
-                    <span className="text-xs text-muted-foreground">Google / Microsoft</span>
+                    <div>
+                      <span className="font-semibold text-sm block">OAuth 2.0</span>
+                      <span className="text-xs text-muted-foreground">Google / Microsoft</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1303,20 +1315,14 @@ export default function Home() {
               <h4 className="font-semibold mb-3 text-sm">{t("footer.legal")}</h4>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li>
-                  <a
-                    href="mailto:support@dpmcalendar.com?subject=Privacy%20Policy%20Request"
-                    className="hover:text-foreground transition-colors"
-                  >
+                  <Link href="/privacy" className="hover:text-foreground transition-colors">
                     {t("footer.privacy")}
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a
-                    href="mailto:support@dpmcalendar.com?subject=Terms%20of%20Service%20Request"
-                    className="hover:text-foreground transition-colors"
-                  >
+                  <Link href="/terms" className="hover:text-foreground transition-colors">
                     {t("footer.terms")}
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
