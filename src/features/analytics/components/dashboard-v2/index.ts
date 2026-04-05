@@ -8,3 +8,4 @@ export { GoalProgressWidget } from "./GoalProgressWidget";
 export { UpcomingDeadlinesWidget } from "./UpcomingDeadlinesWidget";
 export { WorkloadBalanceWidget } from "./WorkloadBalanceWidget";
 export { ProductivityScoreWidget } from "./ProductivityScoreWidget";
+export { MeetingLoadWidget } from "./MeetingLoadWidget";
