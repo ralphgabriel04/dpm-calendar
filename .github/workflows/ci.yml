@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build, typecheck, test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    env:
+      # Dummy env vars so that `next build` and modules that read these don't crash.
+      # Real secrets are configured per-environment in Vercel / deployment.
+      DATABASE_URL: postgresql://user:pass@localhost:5432/dpm?schema=public
+      DIRECT_URL: postgresql://user:pass@localhost:5432/dpm?schema=public
+      NEXTAUTH_SECRET: ci-dummy-secret-ci-dummy-secret-ci-dummy
+      NEXTAUTH_URL: http://localhost:3000
+      ENCRYPTION_KEY: ci-encryption-key-at-least-32-chars-long-xxxxx
+      GOOGLE_CLIENT_ID: ci-dummy
+      GOOGLE_CLIENT_SECRET: ci-dummy
+      MICROSOFT_CLIENT_ID: ci-dummy
+      MICROSOFT_CLIENT_SECRET: ci-dummy
+      MICROSOFT_TENANT_ID: common
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prisma generate
+        run: npx prisma generate
+
+      - name: Prisma validate
+        run: npx prisma validate
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: Next.js build
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm test
