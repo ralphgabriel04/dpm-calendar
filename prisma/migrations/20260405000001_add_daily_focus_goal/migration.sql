@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "User" ADD COLUMN "dailyFocusGoalMins" INTEGER NOT NULL DEFAULT 120;

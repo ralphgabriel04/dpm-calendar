@@ -18,9 +18,6 @@ CREATE TABLE "FocusSession" (
 -- CreateIndex
 CREATE INDEX "FocusSession_userId_startedAt_idx" ON "FocusSession"("userId", "startedAt");
 
--- AlterTable
-ALTER TABLE "User" ADD COLUMN "dailyFocusGoalMins" INTEGER NOT NULL DEFAULT 120;
-
 -- AddForeignKey
 ALTER TABLE "FocusSession" ADD CONSTRAINT "FocusSession_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 

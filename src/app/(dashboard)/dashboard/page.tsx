@@ -14,7 +14,9 @@ import {
   UpcomingDeadlinesWidget,
   WorkloadBalanceWidget,
   ProductivityScoreWidget,
+  MeetingLoadWidget,
 } from "@/features/analytics/components/dashboard-v2";
+import { FocusProgressRing } from "@/features/focus/components";
 
 // Loading skeleton
 function DashboardSkeleton() {
@@ -138,6 +140,11 @@ export default function DashboardPage() {
           />
         )}
 
+        {/* Focus Progress */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <FocusProgressRing />
+        </div>
+
         {/* Middle row - Productivity Score, Time Distribution, Habits */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {productivityScore && (
@@ -165,8 +172,11 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Bottom row - Workload Balance */}
-        {workloadBalance && <WorkloadBalanceWidget data={workloadBalance} />}
+        {/* Bottom row - Workload Balance + Meeting Load */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {workloadBalance && <WorkloadBalanceWidget data={workloadBalance} />}
+          <MeetingLoadWidget />
+        </div>
       </div>
     </div>
   );
