@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import { useTheme } from "next-themes";
 import {
   ArrowRight,
   ArrowLeft,
@@ -70,6 +71,9 @@ interface QuickTask {
 export function OnboardingFlow() {
   const t = useTranslations("quickOnboarding");
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
+
+  const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/lightLogoFinal.png";
 
   // Step management
   const [currentStep, setCurrentStep] = useState<Step>("welcome");
@@ -252,7 +256,7 @@ export function OnboardingFlow() {
         <div className="max-w-2xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between mb-4">
             <Image
-              src="/lightLogoFinal.png"
+              src={logoSrc}
               alt="DPM Calendar"
               width={120}
               height={32}

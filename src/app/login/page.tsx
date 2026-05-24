@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useTheme } from "next-themes";
 import { Button } from "@/shared/components/ui/Button";
 import { Input } from "@/shared/components/ui/Input";
 import { Calendar, CheckSquare, Target, BarChart3, Github, Loader2, Building2 } from "lucide-react";
@@ -12,6 +13,9 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
+  const { resolvedTheme } = useTheme();
+
+  const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/logo.png";
 
   const handleOAuthSignIn = async (provider: string) => {
     setLoadingProvider(provider);
@@ -41,7 +45,7 @@ export default function LoginPage() {
           {/* Logo */}
           <Link href="/" className="mb-8 flex items-center gap-3 hover:opacity-80 transition-opacity">
             <Image
-              src="/logo.png"
+              src={logoSrc}
               alt="DPM Calendar"
               width={56}
               height={56}

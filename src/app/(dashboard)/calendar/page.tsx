@@ -200,7 +200,8 @@ export default function CalendarPage() {
   });
 
   // Get date range for fetching events
-  const viewRange = useMemo(() => getViewRange(), [currentDate, viewType, getViewRange]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const viewRange = useMemo(() => getViewRange(), [currentDate, viewType]);
 
   // Fetch events
   const { data: eventsData, refetch: refetchEvents } = trpc.event.list.useQuery({

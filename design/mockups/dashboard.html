@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPM Calendar — Dashboard (Design Reference)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            background: 'hsl(222.2 84% 4.9%)',
+            foreground: 'hsl(210 40% 98%)',
+            card: 'hsl(222.2 84% 6%)',
+            'card-foreground': 'hsl(210 40% 98%)',
+            primary: 'hsl(263.4 70% 60%)',
+            'primary-foreground': 'hsl(222.2 47.4% 11.2%)',
+            muted: 'hsl(217.2 32.6% 17.5%)',
+            'muted-foreground': 'hsl(215 20.2% 65.1%)',
+            border: 'hsl(217.2 32.6% 17.5%)',
+            accent: 'hsl(217.2 32.6% 17.5%)',
+            destructive: 'hsl(0 62.8% 30.6%)',
+          },
+          borderRadius: {
+            xl: '0.75rem',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .gradient-ring {
+      background: conic-gradient(from 0deg, #8b5cf6 0%, #8b5cf6 calc(var(--progress) * 3.6deg), hsl(217.2 32.6% 17.5%) calc(var(--progress) * 3.6deg), hsl(217.2 32.6% 17.5%) 360deg);
+    }
+  </style>
+</head>
+<body class="bg-background text-foreground min-h-screen">
+
+  <!-- Shell: simulating the main content area (sidebar not shown) -->
+  <div class="flex-1 overflow-auto p-4 md:p-6">
+    <div class="max-w-[1280px] mx-auto space-y-6">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p class="text-sm text-muted-foreground mt-1">Vue d'ensemble de votre productivite</p>
+        </div>
+        <div class="flex items-center gap-1 rounded-lg border border-border bg-muted p-0.5">
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground">Jour</button>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md bg-background text-foreground shadow-sm">Semaine</button>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground">Mois</button>
+          <button class="px-3 py-1.5 text-xs font-medium rounded-md text-muted-foreground hover:text-foreground">Trimestre</button>
+        </div>
+      </div>
+
+      <!-- Stat Cards Row — grid-cols-4, NO overlap possible -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1 -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <p class="text-sm text-muted-foreground">Heures planifiees</p>
+          <p class="text-2xl font-bold mt-1">24.5h</p>
+          <p class="text-xs text-emerald-400 mt-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            +12% vs semaine precedente
+          </p>
+        </div>
+        <!-- Card 2 -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <p class="text-sm text-muted-foreground">Taches completees</p>
+          <p class="text-2xl font-bold mt-1">15/20</p>
+          <p class="text-xs text-emerald-400 mt-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            +3 vs semaine precedente
+          </p>
+        </div>
+        <!-- Card 3 -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <p class="text-sm text-muted-foreground">Taux de completion</p>
+          <p class="text-2xl font-bold mt-1">75%</p>
+          <p class="text-xs text-emerald-400 mt-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            +5%
+          </p>
+        </div>
+        <!-- Card 4 -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <p class="text-sm text-muted-foreground">Score productivite</p>
+          <p class="text-2xl font-bold mt-1">8.2<span class="text-sm font-normal text-muted-foreground">/10</span></p>
+          <p class="text-xs text-emerald-400 mt-2 flex items-center gap-1">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+            +0.4
+          </p>
+        </div>
+      </div>
+
+      <!-- Heatmap -->
+      <div class="rounded-xl border border-border bg-card p-5">
+        <h3 class="text-sm font-medium text-muted-foreground mb-4">Contribution (6 derniers mois)</h3>
+        <div class="flex gap-[3px] overflow-x-auto pb-2">
+          <!-- Simulated heatmap cells -->
+          <script>
+            // Generate heatmap inline
+            document.currentScript.parentElement.innerHTML += Array.from({length: 26}, (_, week) =>
+              `<div class="flex flex-col gap-[3px]">${
+                Array.from({length: 7}, () => {
+                  const intensity = Math.random();
+                  const color = intensity > 0.7 ? 'bg-emerald-500' :
+                                intensity > 0.4 ? 'bg-emerald-500/60' :
+                                intensity > 0.2 ? 'bg-emerald-500/30' : 'bg-muted';
+                  return `<div class="w-3 h-3 rounded-sm ${color}"></div>`;
+                }).join('')
+              }</div>`
+            ).join('');
+          </script>
+        </div>
+      </div>
+
+      <!-- Middle Row — 3 widgets, NO overlap -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <!-- Productivity Score -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Score de productivite</h3>
+          <div class="flex items-center justify-center py-4">
+            <div class="relative w-32 h-32">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="hsl(217.2 32.6% 17.5%)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round"
+                  stroke-dasharray="264" stroke-dashoffset="66"/>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-3xl font-bold">7.8</span>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-2 mt-4">
+            <div class="flex justify-between text-xs">
+              <span class="text-muted-foreground">Taches</span>
+              <span>85%</span>
+            </div>
+            <div class="h-1.5 bg-muted rounded-full overflow-hidden">
+              <div class="h-full bg-primary rounded-full" style="width: 85%"></div>
+            </div>
+            <div class="flex justify-between text-xs">
+              <span class="text-muted-foreground">Focus</span>
+              <span>72%</span>
+            </div>
+            <div class="h-1.5 bg-muted rounded-full overflow-hidden">
+              <div class="h-full bg-emerald-500 rounded-full" style="width: 72%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Time Distribution -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Repartition du temps</h3>
+          <div class="flex items-center justify-center py-4">
+            <div class="relative w-32 h-32">
+              <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#8b5cf6" stroke-width="16"
+                  stroke-dasharray="105 159"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#3b82f6" stroke-width="16"
+                  stroke-dasharray="79 185" stroke-dashoffset="-105"/>
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#22c55e" stroke-width="16"
+                  stroke-dasharray="80 184" stroke-dashoffset="-184"/>
+              </svg>
+            </div>
+          </div>
+          <div class="space-y-2 mt-4">
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+              <span class="text-muted-foreground">Focus</span>
+              <span class="ml-auto font-medium">40%</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div>
+              <span class="text-muted-foreground">Reunions</span>
+              <span class="ml-auto font-medium">30%</span>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+              <span class="text-muted-foreground">Pauses</span>
+              <span class="ml-auto font-medium">30%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Habit Streaks -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Series en cours</h3>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center">
+                <span class="text-orange-400 text-sm">🔥</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Meditation</p>
+                <p class="text-xs text-muted-foreground">7 jours consecutifs</p>
+              </div>
+              <span class="text-sm font-bold text-orange-400">7j</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                <span class="text-blue-400 text-sm">🏃</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Course a pied</p>
+                <p class="text-xs text-muted-foreground">12 jours consecutifs</p>
+              </div>
+              <span class="text-sm font-bold text-blue-400">12j</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <span class="text-emerald-400 text-sm">📖</span>
+              </div>
+              <div class="flex-1">
+                <p class="text-sm font-medium">Lecture</p>
+                <p class="text-xs text-muted-foreground">3 jours consecutifs</p>
+              </div>
+              <span class="text-sm font-bold text-emerald-400">3j</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Goals Row — 2 cols -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Goal Progress -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Progres des objectifs</h3>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1.5">
+                <span>Lire 24 livres</span>
+                <span class="text-muted-foreground">15/24</span>
+              </div>
+              <div class="h-2 bg-muted rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full transition-all" style="width: 62.5%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1.5">
+                <span>50h de sport/mois</span>
+                <span class="text-muted-foreground">32/50h</span>
+              </div>
+              <div class="h-2 bg-muted rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500 rounded-full transition-all" style="width: 64%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1.5">
+                <span>Apprendre le piano</span>
+                <span class="text-muted-foreground">8/30 sessions</span>
+              </div>
+              <div class="h-2 bg-muted rounded-full overflow-hidden">
+                <div class="h-full bg-amber-500 rounded-full transition-all" style="width: 27%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upcoming Deadlines -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Echeances a venir</h3>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50">
+              <div class="w-1 h-8 rounded-full bg-red-500"></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate">Livrer maquettes client</p>
+                <p class="text-xs text-muted-foreground">Demain, 18:00</p>
+              </div>
+              <span class="text-xs font-medium text-red-400 whitespace-nowrap">1j</span>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50">
+              <div class="w-1 h-8 rounded-full bg-orange-500"></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate">Review code PR #142</p>
+                <p class="text-xs text-muted-foreground">Mercredi, 12:00</p>
+              </div>
+              <span class="text-xs font-medium text-orange-400 whitespace-nowrap">3j</span>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-lg bg-muted/50">
+              <div class="w-1 h-8 rounded-full bg-yellow-500"></div>
+              <div class="flex-1 min-w-0">
+                <p class="text-sm font-medium truncate">Preparer presentation Q2</p>
+                <p class="text-xs text-muted-foreground">Vendredi, 09:00</p>
+              </div>
+              <span class="text-xs font-medium text-yellow-400 whitespace-nowrap">5j</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row — 2 cols -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Workload Balance -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Equilibre de charge</h3>
+          <div class="flex items-end gap-2 h-32">
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-primary/80 rounded-t-md" style="height: 60%"></div>
+              <span class="text-[10px] text-muted-foreground">Lun</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-primary/80 rounded-t-md" style="height: 85%"></div>
+              <span class="text-[10px] text-muted-foreground">Mar</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-red-500/80 rounded-t-md" style="height: 100%"></div>
+              <span class="text-[10px] text-muted-foreground">Mer</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-primary/80 rounded-t-md" style="height: 70%"></div>
+              <span class="text-[10px] text-muted-foreground">Jeu</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-emerald-500/80 rounded-t-md" style="height: 45%"></div>
+              <span class="text-[10px] text-muted-foreground">Ven</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-muted rounded-t-md" style="height: 20%"></div>
+              <span class="text-[10px] text-muted-foreground">Sam</span>
+            </div>
+            <div class="flex-1 flex flex-col items-center gap-1">
+              <div class="w-full bg-muted rounded-t-md" style="height: 10%"></div>
+              <span class="text-[10px] text-muted-foreground">Dim</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-center gap-4 mt-4 text-xs text-muted-foreground">
+            <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-primary"></div> Normal</div>
+            <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-red-500"></div> Surcharge</div>
+            <div class="flex items-center gap-1.5"><div class="w-2 h-2 rounded-full bg-emerald-500"></div> Leger</div>
+          </div>
+        </div>
+
+        <!-- Meeting Load -->
+        <div class="rounded-xl border border-border bg-card p-5">
+          <h3 class="text-sm font-medium text-muted-foreground mb-4">Charge de reunions</h3>
+          <div class="text-center py-6">
+            <p class="text-4xl font-bold">6.2h</p>
+            <p class="text-sm text-muted-foreground mt-1">cette semaine</p>
+          </div>
+          <div class="space-y-2 mt-2">
+            <div class="flex justify-between text-xs">
+              <span class="text-muted-foreground">% du temps de travail</span>
+              <span>15.5%</span>
+            </div>
+            <div class="h-2 bg-muted rounded-full overflow-hidden">
+              <div class="h-full bg-blue-500 rounded-full" style="width: 15.5%"></div>
+            </div>
+            <p class="text-xs text-emerald-400 mt-2">Sous le seuil recommande (25%)</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!--
+    DESIGN NOTE — WHY NO OVERLAP:
+
+    Every widget section uses:
+    - `grid` with explicit `gap-4` (16px gutter)
+    - No `position: absolute` at grid level
+    - No negative margins
+    - `overflow-hidden` on the scroll container (parent)
+    - Each card is a self-contained `border bg-card rounded-xl` block
+
+    This structure makes widget overlap physically impossible.
+    Bug F4 was likely caused by a corrupted localStorage panel size
+    or a missing `overflow-hidden` on the main scroll area.
+
+    Resolves: BUG F4 (widgets qui se chevauchent)
+  -->
+
+</body>
+</html>

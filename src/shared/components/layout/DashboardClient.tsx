@@ -5,7 +5,7 @@ import { useIsMobile } from "@/shared/hooks";
 import { ResizableLayout } from "./ResizableLayout";
 import { Sidebar, SidebarTrigger } from "./Sidebar";
 import { MobileNav } from "./MobileNav";
-import { RightSidebarMenu } from "./RightSidebarMenu";
+import { LazyRightSidebar } from "./LazyRightSidebar";
 import { SyncStatus, useAutoSync } from "@/features/sync";
 
 interface DashboardClientProps {
@@ -70,7 +70,7 @@ export function DashboardClient({ children }: DashboardClientProps) {
             <main className="flex-1 overflow-auto">{children}</main>
           </div>
         }
-        rightPanel={<RightSidebarMenu />}
+        rightPanel={<LazyRightSidebar />}
       />
     </div>
   );

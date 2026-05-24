@@ -22,7 +22,7 @@ export function ResizableHandle({
         direction === "horizontal"
           ? "w-1 cursor-col-resize hover:bg-primary/20 active:bg-primary/40"
           : "h-1 cursor-row-resize hover:bg-primary/20 active:bg-primary/40",
-        disabled && "cursor-default !hover:bg-transparent pointer-events-none",
+        disabled && "cursor-default pointer-events-none",
         className
       )}
     >

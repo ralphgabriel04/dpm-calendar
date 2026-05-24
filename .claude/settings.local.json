@@ -33,7 +33,10 @@
       "Bash(head:*)",
       "Bash(npx madge:*)",
       "Bash(npx ts-prune:*)",
-      "Bash(xargs:*)"
+      "Bash(xargs:*)",
+      "Bash(gh pr create:*)",
+      "Bash(wc:*)",
+      "Bash(npx vitest:*)"
     ]
   }
 }
