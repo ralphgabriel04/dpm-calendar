@@ -16,7 +16,7 @@ export function FooterSection() {
 
   return (
     <footer className="border-t border-border py-14">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1180px] px-6">
         <div className="grid grid-cols-2 gap-10 text-[13px] md:grid-cols-4">
           {/* Logo + tagline + social */}
           <div className="col-span-2 md:col-span-1">
@@ -54,6 +54,11 @@ export function FooterSection() {
               <li>
                 <a href="#features" className="transition-colors hover:text-foreground">
                   {t("footer.features")}
+                </a>
+              </li>
+              <li>
+                <a href="#modules" className="transition-colors hover:text-foreground">
+                  {t("nav.modules")}
                 </a>
               </li>
               <li>
