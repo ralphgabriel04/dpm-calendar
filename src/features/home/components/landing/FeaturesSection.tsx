@@ -3,6 +3,7 @@
 import { CheckSquare, Flame, GripVertical } from "lucide-react";
 import { SectionHead, FeatureRow, LpGroup, DemoShell } from "./_shared";
 import { CalendarProDemo } from "./demos/CalendarProDemo";
+import { MatrixDnD } from "./demos/MatrixDnD";
 
 /* Compact daily-planning timeline mockup. */
 function DailyTimelineDemo() {
@@ -150,6 +151,23 @@ export function FeaturesSection() {
         >
           <DemoShell hint="Vue tableau">
             <KanbanMiniDemo />
+          </DemoShell>
+        </FeatureRow>
+
+        <FeatureRow
+          n="04"
+          reverse
+          tag="Matrice d'Eisenhower"
+          title="Priorise par impact, pas par urgence ressentie"
+          desc="Glisse chaque tâche dans le bon quadrant — faire, planifier, déléguer ou abandonner. Tu vois d'un coup d'œil où mettre ton énergie."
+          bullets={[
+            "Glisser-déposer entre les 4 quadrants",
+            "Couleurs par niveau d'urgence / importance",
+            "Connecté à tes tâches et ton calendrier",
+          ]}
+        >
+          <DemoShell hint="Glisse une tâche entre les quadrants">
+            <MatrixDnD />
           </DemoShell>
         </FeatureRow>
       </div>
