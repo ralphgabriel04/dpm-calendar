@@ -71,6 +71,36 @@ export const modulesCopy = {
     tasks: ["Écrire le deck T2", "Refactor module auth", "Relire 2 PR"],
     focusToast: "Retour au focus ↑",
     breakToast: "C'est la pause ☕",
+    queue: "File de session",
+    hyperfocus: "Hyperfocus",
+    breakLabel: "Pause",
+    skip: "Passer la pause",
+    lockedNote: "Verrouillé — mettez en pause pour changer",
+    demoBadge: "Vitesse démo",
+    min: "min",
+    label: "Focus",
+    start: "Démarrer",
+    pause: "Pause",
+    reset: "Reset",
+    session: "Session",
+  },
+
+  music: {
+    label: "Musique de focus",
+    connect: "Connecter",
+    friendly: "Propice au focus",
+    nowPlaying: "En lecture",
+    muteBreak: "Couper en pause",
+    mutedNow: "Coupé pendant la pause",
+    activeNow: "actif",
+    track: "Nappe ambiante",
+    services: ["Spotify", "Apple Music", "YouTube Music"],
+    playlists: [
+      { n: "Deep Work", c: 64, score: 92, ha: 217, hb: 190 },
+      { n: "Lofi Chill", c: 120, score: 85, ha: 263, hb: 305 },
+      { n: "Piano & pluie", c: 72, score: 78, ha: 228, hb: 262 },
+      { n: "Titres likés", c: 248, score: 44, ha: 330, hb: 280 },
+    ],
   },
 
   tasksPro: {
@@ -154,6 +184,26 @@ export const modulesCopy = {
     ],
     ai: "Bonne récupération → placez votre tâche la plus exigeante ce matin. DPM propose un créneau optimal à ",
     aiTime: "09:00",
+    seeSlot: "Voir le créneau",
+    sleepStats: [
+      ["Durée moyenne", "7 h 18", "rec. 7–9 h"],
+      ["Régularité ±", "24 min", "régulier"],
+      ["Qualité", "Bonne", "73 %"],
+    ],
+    sleepNote: "7 dernières nuits · durée + qualité",
+    sync: {
+      label: "Synchronisez vos données santé",
+      now: "Synchroniser",
+      just: "synchronisé à l'instant",
+      auto: "Sync auto depuis votre téléphone — Apple Santé ou Android",
+    },
+    sources: [
+      { n: "Apple Santé", c: "0 0% 82%", on: true },
+      { n: "Google Fit", c: "142 70% 48%", on: false },
+      { n: "Samsung Health", c: "217 85% 55%", on: false },
+      { n: "Apple Watch", c: "0 0% 82%", on: true },
+      { n: "Oura Ring", c: "263 70% 60%", on: false },
+    ],
   },
 
   energy: {
@@ -234,6 +284,12 @@ export const modulesCopy = {
     ],
     members: "Partagé avec",
     invite: "Inviter",
+    union: "union",
+    scoped: "éléments cadrés",
+    levels: ["Aucun", "Vue", "Édition"],
+    permsFor: "Accès de",
+    tapHint: "Touchez une personne, puis réglez son accès par module",
+    counts: { all: 24, pro: 9, perso: 11, etudes: 5 } as Record<string, number>,
   },
 
   customize: {
