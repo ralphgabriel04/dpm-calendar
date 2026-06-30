@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { Check } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 /* ============================================================
@@ -178,6 +179,71 @@ export function DemoShell({
           {hint}
         </div>
       )}
+    </div>
+  );
+}
+
+/** LpGroup — a cluster label with a hairline rule (separates feature groups). */
+export function LpGroup({ label }: { label: ReactNode }) {
+  return (
+    <Reveal className="flex items-center gap-4 pt-6">
+      <Eyebrow>{label}</Eyebrow>
+      <span className="h-px flex-1 bg-border" />
+    </Reveal>
+  );
+}
+
+/** FeatureRow — numbered editorial feature row: copy + bullets on one side, a
+    live demo on the other, alternating sides per `reverse`. */
+export function FeatureRow({
+  n,
+  tag,
+  title,
+  desc,
+  bullets = [],
+  reverse = false,
+  children,
+}: {
+  n: string;
+  tag: ReactNode;
+  title: ReactNode;
+  desc: ReactNode;
+  bullets?: ReactNode[];
+  reverse?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+      <Reveal className={cn("min-w-0", reverse && "lg:order-2")}>
+        <Eyebrow n={n}>{tag}</Eyebrow>
+        <h3
+          className="mt-5 text-[clamp(24px,3vw,34px)] font-bold leading-[1.12] tracking-tight"
+          style={{ textWrap: "balance" }}
+        >
+          {title}
+        </h3>
+        <p
+          className="mt-4 text-[15px] leading-relaxed text-muted-foreground"
+          style={{ textWrap: "pretty" }}
+        >
+          {desc}
+        </p>
+        {bullets.length > 0 && (
+          <ul className="mt-6 space-y-2.5">
+            {bullets.map((b, i) => (
+              <li key={i} className="flex items-start gap-3 text-[14px]">
+                <span className="mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-primary/[0.14]">
+                  <Check className="h-3 w-3 text-primary" strokeWidth={3} />
+                </span>
+                <span className="text-foreground/90">{b}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Reveal>
+      <Reveal scale delay={120} className={cn("min-w-0", reverse && "lg:order-1")}>
+        {children}
+      </Reveal>
     </div>
   );
 }
