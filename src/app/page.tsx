@@ -54,6 +54,16 @@ const SecuritySection = dynamic(
   { loading: () => <SectionSkeleton /> }
 );
 
+const PricingSection = dynamic(
+  () => import("@/features/home/components/landing/PricingSection").then((mod) => ({ default: mod.PricingSection })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const FaqSection = dynamic(
+  () => import("@/features/home/components/landing/FaqSection").then((mod) => ({ default: mod.FaqSection })),
+  { loading: () => <SectionSkeleton /> }
+);
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -65,6 +75,8 @@ export default function Home() {
       <ResourcesSection />
       <ReviewsSection />
       <SecuritySection />
+      <PricingSection />
+      <FaqSection />
       <CTASection />
       <FooterSection />
     </div>
