@@ -522,3 +522,18 @@
   }
   .lp-glow, .lp-pulse, .lp-float, .lp-float-slow, .lp-marquee { animation: none !important; }
 }
+
+/* --- Landing module demo helpers (ported from DPM Elevate styles.css) --- */
+.dotted-grid {
+  background-image: radial-gradient(circle, hsl(var(--muted-foreground) / 0.18) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.lp-evt { box-shadow: 0 2px 6px -2px rgb(0 0 0 / 0.35); }
+.lp-draggable { cursor: grab; touch-action: none; transition: border-color 160ms ease, transform 160ms ease; }
+.lp-draggable:active { cursor: grabbing; transform: scale(0.98); }
+.anim-scale-in { animation: lpAnimScaleIn 200ms cubic-bezier(0.33, 1, 0.68, 1); }
+@keyframes lpAnimScaleIn {
+  from { opacity: 0; transform: translate(-50%, 6px) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) { .anim-scale-in { animation: none !important; } }
