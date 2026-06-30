@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import { ArrowRight } from "lucide-react";
 import { ThemeToggle } from "@/shared/components/theme";
 import { LanguageToggle } from "@/shared/components/language";
 import { cn } from "@/shared/lib/utils";
+import { Logo } from "./Logo";
 
 export function Navigation() {
   const t = useTranslations("landing");
-  const { resolvedTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
-
-  const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/lightLogoFinal.png";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -40,14 +36,7 @@ export function Navigation() {
             scrolled ? "h-16" : "h-20"
           )}
         >
-          <Image
-            src={logoSrc}
-            alt="DPM Calendar"
-            width={500}
-            height={125}
-            className={cn("w-auto transition-all duration-300", scrolled ? "h-10" : "h-12")}
-            priority
-          />
+          <Logo size={scrolled ? 30 : 34} />
 
           <div className="hidden items-center gap-7 text-[13.5px] text-muted-foreground lg:flex">
             <a href="#modules" className="transition-colors hover:text-foreground">

@@ -1,16 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
 import { Twitter, Linkedin, Github } from "lucide-react";
+import { Logo } from "./Logo";
 
 export function FooterSection() {
   const t = useTranslations("landing");
-  const { resolvedTheme } = useTheme();
-
-  const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/lightLogoFinal.png";
 
   const colHead = "mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground";
 
@@ -20,13 +16,7 @@ export function FooterSection() {
         <div className="grid grid-cols-2 gap-10 text-[13px] md:grid-cols-4">
           {/* Logo + tagline + social */}
           <div className="col-span-2 md:col-span-1">
-            <Image
-              src={logoSrc}
-              alt="DPM Calendar"
-              width={200}
-              height={50}
-              className="mb-4 h-10 w-auto"
-            />
+            <Logo size={32} className="mb-4" />
             <p className="text-[12.5px] leading-relaxed text-muted-foreground">{t("footer.tagline")}</p>
             <div className="mt-4 flex items-center gap-2">
               {[
