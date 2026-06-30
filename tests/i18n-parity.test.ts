@@ -18,8 +18,12 @@ describe("i18n message parity", () => {
   it("fr and en have identical key structures", () => {
     const frKeys = new Set(keyPaths(fr as Record<string, unknown>));
     const enKeys = new Set(keyPaths(en as Record<string, unknown>));
-    const frOnly = [...frKeys].filter((k) => !enKeys.has(k)).sort();
-    const enOnly = [...enKeys].filter((k) => !frKeys.has(k)).sort();
+    const frOnly = Array.from(frKeys)
+      .filter((k) => !enKeys.has(k))
+      .sort();
+    const enOnly = Array.from(enKeys)
+      .filter((k) => !frKeys.has(k))
+      .sort();
     expect({ frOnly, enOnly }).toEqual({ frOnly: [], enOnly: [] });
   });
 });
