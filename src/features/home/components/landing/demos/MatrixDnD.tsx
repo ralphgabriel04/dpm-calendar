@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { GripVertical } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 

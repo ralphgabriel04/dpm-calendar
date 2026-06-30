@@ -9,7 +9,7 @@ export function CTASection() {
   const t = useTranslations("landing");
 
   return (
-    <section className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+    <section className="relative mx-auto max-w-[1180px] px-6 py-20">
       <Reveal scale>
         <div className="lp-stage relative overflow-hidden rounded-[28px] border border-border px-6 py-16 text-center sm:py-20">
           <div

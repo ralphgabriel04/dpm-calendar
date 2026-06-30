@@ -49,7 +49,7 @@ export function CalendarProDemo() {
   const [inbox, setInbox] = useState<Task[]>(
     COPY.tasks.map((label, i) => ({ id: "t" + i, label }))
   );
-  const [drag, setDrag] = useState<{ id: string; label: string; x: number; y: number } | null>(null);
+  const [, setDrag] = useState<{ id: string; label: string; x: number; y: number } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const nextId = useRef(10);
