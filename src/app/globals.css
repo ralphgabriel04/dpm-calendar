@@ -412,3 +412,113 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   LANDING — editorial dark aesthetic treatments (lp- namespace)
+   Ported from the DPM Elevate design prototype. Purely visual;
+   nothing here touches product/app UI.
+============================================================ */
+
+/* Ambient mesh glow blobs behind the page */
+.lp-glow {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 0;
+  animation: lp-drift 18s ease-in-out infinite;
+}
+@keyframes lp-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(20px, -24px, 0) scale(1.08); }
+}
+
+/* Gradient display text (hero "deserves better") */
+.lp-gradient-text {
+  background: linear-gradient(
+    100deg,
+    hsl(263 70% 62%),
+    hsl(290 75% 64%),
+    hsl(330 80% 64%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Stage: tinted product surface with a subtle gradient + ring */
+.lp-stage {
+  background:
+    radial-gradient(120% 130% at 50% -10%, hsl(var(--primary) / 0.10), transparent 60%),
+    hsl(var(--card));
+}
+.lp-ring {
+  box-shadow:
+    0 0 0 1px hsl(var(--border)),
+    0 18px 40px -16px hsl(var(--primary) / 0.18);
+}
+.lp-card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.lp-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: 0 16px 36px -18px hsl(var(--primary) / 0.35);
+}
+
+/* Dotgrid texture for demo shells */
+.lp-dotgrid {
+  background-image: radial-gradient(hsl(var(--muted-foreground) / 0.18) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Live pulse dot */
+.lp-pulse { animation: lp-pulse 2s ease-in-out infinite; }
+@keyframes lp-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.82); }
+}
+
+/* Floating module chips */
+.lp-float { animation: lp-float 6s ease-in-out infinite; }
+.lp-float-slow { animation: lp-float 8s ease-in-out infinite; animation-delay: -2s; }
+@keyframes lp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Brand marquee */
+.lp-marquee {
+  display: flex;
+  width: max-content;
+  animation: lp-marquee 32s linear infinite;
+}
+@keyframes lp-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Scroll reveal — fade + lift in when .is-visible is added */
+.lp-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--lp-delay, 0ms),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1) var(--lp-delay, 0ms);
+  will-change: opacity, transform;
+}
+.lp-reveal-scale {
+  transform: translateY(22px) scale(0.97);
+}
+.lp-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-reveal, .lp-reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .lp-glow, .lp-pulse, .lp-float, .lp-float-slow, .lp-marquee { animation: none !important; }
+}

@@ -90,7 +90,11 @@
   "landing": {
     "nav": {
       "login": "Se connecter",
-      "tryIt": "Essayer"
+      "tryIt": "Essayer",
+      "modules": "Modules",
+      "how": "Comment ça marche",
+      "pricing": "Tarifs",
+      "faq": "FAQ"
     },
     "hero": {
       "title1": "Votre temps,",
@@ -98,7 +102,12 @@
       "subtitle": "Calendrier, tâches, habitudes et objectifs réunis dans une seule application.",
       "cta": "Commencer gratuitement",
       "seeFeatures": "Voir les fonctionnalités",
-      "earlyAccess": "Accès anticipé"
+      "earlyAccess": "Accès anticipé",
+      "badge": "Accès anticipé · T2 2026",
+      "ctaSecondary": "Voir les fonctionnalités",
+      "trust": "Sans carte bancaire · Essai 14 jours · Annulable à tout moment",
+      "live": "Aperçu en direct",
+      "integrates": "Se synchronise avec"
     },
     "howItWorks": {
       "title1": "Comment ça",
@@ -291,6 +300,94 @@
       "privacy": "Confidentialité",
       "terms": "CGU",
       "copyright": "© {year} DPM Calendar. Tous droits réservés."
+    },
+    "stats": {
+      "label": "Pourquoi ils basculent",
+      "stat1Value": "11h",
+      "stat1Title": "économisées / semaine",
+      "stat1Desc": "Moins d’organisation, plus d’action.",
+      "stat2Value": "9",
+      "stat2Title": "modules, un seul endroit",
+      "stat2Desc": "De l’agenda aux objectifs, sans second onglet.",
+      "stat3Value": "92%",
+      "stat3Title": "gardent leur série",
+      "stat3Desc": "Des habitudes qui tiennent après la 2ᵉ semaine."
+    },
+    "method": {
+      "label": "La méthode"
+    },
+    "modulesHead": {
+      "label": "Chaque module",
+      "title": "Pensé pour les vies bien remplies.",
+      "subtitle": "Agenda, tâches, focus, habitudes et objectifs — un espace cohérent qui s’adapte à votre façon de travailler."
+    },
+    "reviews": {
+      "label": "Adoré par les gens occupés",
+      "title": "De vrais utilisateurs, de vraies routines.",
+      "subtitle": "Des avis du terrain — avec l’astuce que chacun jure d’utiliser.",
+      "review1Name": "Sofia R.",
+      "review1Role": "Fondatrice de startup",
+      "review1Text": "Le moteur de règles à lui seul m’a rendu mes matins — les marges entre réunions sont automatiques.",
+      "review2Name": "Marcus L.",
+      "review2Role": "Étudiant ingénieur",
+      "review2Text": "Le rituel de planification est la seule chose qui a survécu aux examens. Deux minutes, réglé.",
+      "review3Name": "Alex P.",
+      "review3Role": "Freelance",
+      "review3Text": "Les Espaces séparent clients et vie perso sans deux apps. Partager un créneau conclut plus vite.",
+      "review4Name": "Priya K.",
+      "review4Role": "Team lead",
+      "review4Text": "Santé et chronotype ont changé ma façon de placer le deep work — mes 1-1 ne mangent plus mon focus."
+    },
+    "pricing": {
+      "label": "Tarifs",
+      "title": "Une tarification simple et honnête.",
+      "subtitle": "Commencez gratuitement. Évoluez quand vous en avez besoin. Annulable en un clic.",
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "save": "Économisez 20 %",
+      "popular": "Le plus populaire",
+      "perMonth": "/mois",
+      "forever": "pour toujours",
+      "billedYearly": "facturé annuellement",
+      "free": "Gratuit",
+      "freeTagline": "Pour s’organiser",
+      "pro": "Pro",
+      "proTagline": "Pour les planificateurs sérieux",
+      "team": "Équipe",
+      "teamTagline": "Pour les petites équipes",
+      "ctaFree": "Commencer",
+      "ctaPro": "Passer Pro",
+      "ctaTeam": "Créer une équipe",
+      "freeF1": "Agenda, tâches et habitudes",
+      "freeF2": "Jusqu’à 3 espaces",
+      "freeF3": "Rituel de planification",
+      "proF1": "Tout du plan Gratuit",
+      "proF2": "Espaces illimités",
+      "proF3": "Focus, énergie et objectifs",
+      "proF4": "Suggestions IA contextuelles",
+      "teamF1": "Tout du plan Pro",
+      "teamF2": "Espaces partagés et rôles",
+      "teamF3": "Permissions granulaires",
+      "teamF4": "Support prioritaire"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Vos questions, nos réponses.",
+      "subtitle": "Tout ce qu’il faut savoir avant de commencer.",
+      "q1": "Y a-t-il un plan gratuit ?",
+      "a1": "Oui — un plan gratuit à vie avec l’agenda, les tâches et les habitudes. Aucune carte requise pour commencer.",
+      "q2": "Quels agendas se synchronisent ?",
+      "a2": "Google, Outlook et Apple se synchronisent en temps réel. Connectez-en autant que vous voulez, avec couleurs par espace.",
+      "q3": "Puis-je annuler à tout moment ?",
+      "a3": "Bien sûr. Changez de plan en un clic — sans engagement, sans questions, et vous gardez vos données.",
+      "q4": "Mes données sont-elles privées ?",
+      "a4": "Toujours. Les données sensibles sont chiffrées, les statistiques restent privées, et vous pouvez tout exporter ou supprimer en un clic.",
+      "q5": "Ça marche sur mobile ?",
+      "a5": "Oui. DPM Calendar est entièrement responsive et se synchronise sur tous vos appareils en temps réel."
+    },
+    "finalCta": {
+      "reassure": "Plan gratuit à vie · Sans carte bancaire",
+      "secondary": "Se connecter"
     }
   },
   "home": {

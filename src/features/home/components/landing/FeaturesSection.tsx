@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Clock, Target, Layers, Eye, BarChart3, ChevronDown, Check } from "lucide-react";
 import dynamic from "next/dynamic";
 import { colorStyles } from "./constants";
+import { SectionHead, Reveal, DemoShell } from "./_shared";
 
 // Skeleton for mockup loading
 function MockupSkeleton() {
@@ -48,6 +49,7 @@ const GoalsMockup = dynamic(
 
 export function FeaturesSection() {
   const tFeatures = useTranslations("landing.features");
+  const tHead = useTranslations("landing.modulesHead");
   const [activeFeature, setActiveFeature] = useState<string>("time-tracking");
 
   const featureData = [
@@ -119,9 +121,15 @@ export function FeaturesSection() {
   ];
 
   return (
-    <section id="features" className="py-16 lg:py-24">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
+    <section id="modules" className="scroll-mt-24 py-16 lg:py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" id="features">
+        <SectionHead
+          n="02"
+          label={tHead("label")}
+          title={tHead("title")}
+          sub={tHead("subtitle")}
+        />
+        <div className="mt-14 grid gap-8 lg:grid-cols-2 lg:gap-16">
           {/* Left: Accordion */}
           <div className="space-y-0">
             {featureData.map((feature) => {
@@ -191,16 +199,15 @@ export function FeaturesSection() {
           </div>
 
           {/* Right: Mockup (Desktop) */}
-          <div className="hidden lg:flex items-start justify-center sticky top-24">
+          <div className="sticky top-24 hidden items-start justify-center lg:flex">
             {featureData.map((feature) => {
               if (feature.id !== activeFeature) return null;
               return (
-                <div
-                  key={feature.id}
-                  className="w-full max-w-sm animate-in fade-in duration-300"
-                >
-                  <feature.MockupComponent />
-                </div>
+                <Reveal key={feature.id} scale className="w-full max-w-sm">
+                  <DemoShell>
+                    <feature.MockupComponent />
+                  </DemoShell>
+                </Reveal>
               );
             })}
           </div>

@@ -90,7 +90,11 @@
   "landing": {
     "nav": {
       "login": "Sign in",
-      "tryIt": "Try it"
+      "tryIt": "Try it",
+      "modules": "Modules",
+      "how": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ"
     },
     "hero": {
       "title1": "Your time,",
@@ -98,7 +102,12 @@
       "subtitle": "Calendar, tasks, habits, and goals all in one app.",
       "cta": "Start for free",
       "seeFeatures": "See features",
-      "earlyAccess": "Early Access"
+      "earlyAccess": "Early Access",
+      "badge": "Early access · Q2 2026",
+      "ctaSecondary": "See features",
+      "trust": "No credit card · 14-day trial · Cancel anytime",
+      "live": "Live preview",
+      "integrates": "Syncs with"
     },
     "howItWorks": {
       "title1": "How it",
@@ -291,6 +300,94 @@
       "privacy": "Privacy",
       "terms": "Terms",
       "copyright": "© {year} DPM Calendar. All rights reserved."
+    },
+    "stats": {
+      "label": "Why people switch",
+      "stat1Value": "11h",
+      "stat1Title": "saved per week",
+      "stat1Desc": "Less time arranging, more time doing.",
+      "stat2Value": "9",
+      "stat2Title": "modules, one place",
+      "stat2Desc": "Calendar to goals, never a second tab.",
+      "stat3Value": "92%",
+      "stat3Title": "keep their streak",
+      "stat3Desc": "Habits that actually hold past week two."
+    },
+    "method": {
+      "label": "The method"
+    },
+    "modulesHead": {
+      "label": "Every module",
+      "title": "Built for full lives.",
+      "subtitle": "Calendar, tasks, focus, habits and goals — one holistic workspace that adapts to how you actually work."
+    },
+    "reviews": {
+      "label": "Loved by busy people",
+      "title": "Real users, real routines.",
+      "subtitle": "Reviews from the field — plus the one tip each of them swears by.",
+      "review1Name": "Sofia R.",
+      "review1Role": "Startup founder",
+      "review1Text": "The Rules engine alone gave me back my mornings — buffers between meetings are automatic now.",
+      "review2Name": "Marcus L.",
+      "review2Role": "Engineering student",
+      "review2Text": "The daily planning ritual is the only thing that survived exam season. Two minutes, sorted.",
+      "review3Name": "Alex P.",
+      "review3Role": "Freelancer",
+      "review3Text": "Spaces keep client work and personal life apart without two apps. Sharing a slot closes deals faster.",
+      "review4Name": "Priya K.",
+      "review4Role": "Team lead",
+      "review4Text": "Health and chronotype changed how I schedule deep work — my 1-1s no longer eat my focus hours."
+    },
+    "pricing": {
+      "label": "Pricing",
+      "title": "Simple, honest pricing.",
+      "subtitle": "Start free. Upgrade when you outgrow it. Cancel in one click.",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "save": "Save 20%",
+      "popular": "Most popular",
+      "perMonth": "/mo",
+      "forever": "forever",
+      "billedYearly": "billed yearly",
+      "free": "Free",
+      "freeTagline": "For getting organized",
+      "pro": "Pro",
+      "proTagline": "For serious planners",
+      "team": "Team",
+      "teamTagline": "For small teams",
+      "ctaFree": "Start free",
+      "ctaPro": "Go Pro",
+      "ctaTeam": "Start a team",
+      "freeF1": "Calendar, tasks and habits",
+      "freeF2": "Up to 3 spaces",
+      "freeF3": "Daily planning ritual",
+      "proF1": "Everything in Free",
+      "proF2": "Unlimited spaces",
+      "proF3": "Focus, energy and goals",
+      "proF4": "Contextual AI suggestions",
+      "teamF1": "Everything in Pro",
+      "teamF2": "Shared spaces and roles",
+      "teamF3": "Granular permissions",
+      "teamF4": "Priority support"
+    },
+    "faq": {
+      "label": "FAQ",
+      "title": "Questions, answered.",
+      "subtitle": "Everything you need to know before getting started.",
+      "q1": "Is there a free plan?",
+      "a1": "Yes — a free-forever plan with the core calendar, tasks and habits. No credit card required to start.",
+      "q2": "Which calendars sync?",
+      "a2": "Google, Outlook and Apple calendars sync in real time. Connect as many as you like and color-code by space.",
+      "q3": "Can I cancel anytime?",
+      "a3": "Of course. Upgrade or downgrade in one click — no lock-in, no questions, and you keep your data.",
+      "q4": "Is my data private?",
+      "a4": "Always. Sensitive data is encrypted, analytics stay private, and you can export or delete everything in one click.",
+      "q5": "Does it work on mobile?",
+      "a5": "Yes. DPM Calendar is fully responsive and syncs across every device in real time."
+    },
+    "finalCta": {
+      "reassure": "Free forever plan · No credit card required",
+      "secondary": "Sign in"
     }
   },
   "home": {
