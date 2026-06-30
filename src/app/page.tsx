@@ -34,13 +34,18 @@ const FeaturesSection = dynamic(
   { loading: () => <SectionSkeleton /> }
 );
 
-const PersonasSection = dynamic(
-  () => import("@/features/home/components/landing/PersonasSection").then((mod) => ({ default: mod.PersonasSection })),
+const AISpotlightSection = dynamic(
+  () => import("@/features/home/components/landing/AISpotlightSection").then((mod) => ({ default: mod.AISpotlightSection })),
   { loading: () => <SectionSkeleton /> }
 );
 
-const IntegrationsSection = dynamic(
-  () => import("@/features/home/components/landing/IntegrationsSection").then((mod) => ({ default: mod.IntegrationsSection })),
+const ResourcesSection = dynamic(
+  () => import("@/features/home/components/landing/ResourcesSection").then((mod) => ({ default: mod.ResourcesSection })),
+  { loading: () => <SectionSkeleton /> }
+);
+
+const ReviewsSection = dynamic(
+  () => import("@/features/home/components/landing/ReviewsSection").then((mod) => ({ default: mod.ReviewsSection })),
   { loading: () => <SectionSkeleton /> }
 );
 
@@ -56,8 +61,9 @@ export default function Home() {
       <HeroSection />
       <HowItWorksSection />
       <FeaturesSection />
-      <PersonasSection />
-      <IntegrationsSection />
+      <AISpotlightSection />
+      <ResourcesSection />
+      <ReviewsSection />
       <SecuritySection />
       <CTASection />
       <FooterSection />

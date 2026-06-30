@@ -585,3 +585,26 @@
 @media (prefers-reduced-motion: reduce) {
   .music-eq-bar { animation: none; }
 }
+
+/* --- AI / Resources helpers (ported from prototype styles.css) --- */
+.gradient-violet { background: linear-gradient(135deg, hsl(263 70% 58%), hsl(290 70% 55%)); }
+@keyframes lpSweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.lp-sweep {
+  background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.18), transparent);
+  animation: lpSweep 1.1s ease-in-out infinite;
+}
+.striped {
+  background-image: repeating-linear-gradient(
+    45deg,
+    hsl(var(--muted) / 0.5) 0,
+    hsl(var(--muted) / 0.5) 10px,
+    hsl(var(--muted) / 0.25) 10px,
+    hsl(var(--muted) / 0.25) 20px
+  );
+}
+@media (prefers-reduced-motion: reduce) {
+  .lp-sweep { animation: none; }
+}
