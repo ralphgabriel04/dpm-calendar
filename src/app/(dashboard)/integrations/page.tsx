@@ -51,6 +51,9 @@ export default function IntegrationsPage() {
   const [icsUrl, setIcsUrl] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Todoist token state (keyed by provider id so each card has its own input)
+  const [todoistToken, setTodoistToken] = useState("");
+
   const syncNow = trpc.integration.syncNow.useMutation({
     onSuccess: (data) => {
       invalidate();
@@ -92,6 +95,21 @@ export default function IntegrationsPage() {
     },
   });
 
+  const connectTodoist = trpc.integration.connectTodoist.useMutation({
+    onSuccess: (data) => {
+      setTodoistToken("");
+      invalidate();
+      toast.success("Todoist connecté", {
+        description: `${data.imported} tâche(s) importée(s)`,
+      });
+    },
+    onError: (error) => {
+      toast.error("Impossible de connecter Todoist", {
+        description: error.message,
+      });
+    },
+  });
+
   const disconnect = trpc.integration.disconnect.useMutation({
     onSuccess: () => {
       invalidate();
@@ -123,6 +141,13 @@ export default function IntegrationsPage() {
       // Reset so the same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const handleConnectTodoist = (e: React.FormEvent) => {
+    e.preventDefault();
+    const apiToken = todoistToken.trim();
+    if (!apiToken) return;
+    connectTodoist.mutate({ apiToken });
   };
 
   const handleDisconnect = (integrationId: string, label: string) => {
@@ -168,8 +193,19 @@ export default function IntegrationsPage() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {providers.map((provider) => {
                   const Icon = providerIcon(provider.provider);
+                  const connectVia = provider.connectVia;
                   const needsConfig =
-                    provider.requiresOAuth && !provider.configured;
+                    connectVia === "oauth" && !provider.configured;
+                  const subtitle =
+                    connectVia === "ics"
+                      ? "Fichier .ics ou abonnement par URL"
+                      : connectVia === "token"
+                        ? "Connexion par token API"
+                        : connectVia === "oauth"
+                          ? "Connexion via OAuth"
+                          : connectVia === "caldav"
+                            ? "Connexion CalDAV"
+                            : "Identifiants requis";
 
                   return (
                     <div
@@ -185,17 +221,13 @@ export default function IntegrationsPage() {
                             {provider.label}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {provider.provider === "ICS"
-                              ? "Fichier .ics ou abonnement par URL"
-                              : provider.requiresOAuth
-                                ? "Connexion via OAuth"
-                                : "Identifiants requis"}
+                            {subtitle}
                           </p>
                         </div>
                       </div>
 
                       {/* ICS: file + URL */}
-                      {provider.provider === "ICS" && (
+                      {connectVia === "ics" && (
                         <div className="space-y-4">
                           <form
                             onSubmit={handleSubscribe}
@@ -246,6 +278,78 @@ export default function IntegrationsPage() {
                         </div>
                       )}
 
+                      {/* Token providers (Todoist) */}
+                      {connectVia === "token" && (
+                        <form
+                          onSubmit={handleConnectTodoist}
+                          className="space-y-2"
+                        >
+                          <label className="text-xs font-medium text-muted-foreground">
+                            {provider.connected
+                              ? "Reconnecter avec un nouveau token"
+                              : "Token API Todoist"}
+                          </label>
+                          <div className="flex gap-2">
+                            <input
+                              type="password"
+                              value={todoistToken}
+                              onChange={(e) => setTodoistToken(e.target.value)}
+                              placeholder="Token API Todoist"
+                              aria-label="Token API Todoist"
+                              autoComplete="off"
+                              className="h-9 flex-1 rounded-md border bg-background px-3 text-sm"
+                            />
+                            <Button
+                              type="submit"
+                              size="sm"
+                              disabled={
+                                connectTodoist.isPending ||
+                                !todoistToken.trim()
+                              }
+                            >
+                              <Link2 className="mr-1.5 h-4 w-4" />
+                              {provider.connected
+                                ? "Reconnecter"
+                                : "Connecter"}
+                            </Button>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            Trouvez votre token dans Todoist → Paramètres →
+                            Intégrations →{" "}
+                            <a
+                              href="https://todoist.com/app/settings/integrations/developer"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline"
+                            >
+                              « Token API »
+                            </a>
+                            .
+                          </p>
+                        </form>
+                      )}
+
+                      {/* CalDAV (not yet wired) */}
+                      {connectVia === "caldav" && (
+                        <div className="space-y-2">
+                          <div className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1 text-xs font-medium text-muted-foreground">
+                            <Lock className="h-3.5 w-3.5" />
+                            Bientôt disponible
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            La connexion CalDAV sera bientôt activée.
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            disabled
+                            className="w-full"
+                          >
+                            Configuration requise
+                          </Button>
+                        </div>
+                      )}
+
                       {/* OAuth providers needing configuration */}
                       {needsConfig && (
                         <div className="space-y-2">
@@ -278,7 +382,7 @@ export default function IntegrationsPage() {
                       )}
 
                       {/* OAuth providers configured (flow not yet wired) */}
-                      {provider.requiresOAuth && provider.configured && (
+                      {connectVia === "oauth" && provider.configured && (
                         <Button
                           variant="outline"
                           size="sm"

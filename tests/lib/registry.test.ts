@@ -48,10 +48,14 @@ describe("registry", () => {
       expect(isProviderConfigured("CALDAV")).toBe(true);
     });
 
+    it("returns true for TODOIST regardless of env (token-based)", () => {
+      clearOAuthEnv();
+      expect(isProviderConfigured("TODOIST")).toBe(true);
+    });
+
     it("returns false for OAuth providers when env is unset", () => {
       clearOAuthEnv();
       expect(isProviderConfigured("NOTION")).toBe(false);
-      expect(isProviderConfigured("TODOIST")).toBe(false);
       expect(isProviderConfigured("TICKTICK")).toBe(false);
     });
 
@@ -60,13 +64,6 @@ describe("registry", () => {
       process.env.NOTION_CLIENT_ID = "id";
       process.env.NOTION_CLIENT_SECRET = "secret";
       expect(isProviderConfigured("NOTION")).toBe(true);
-    });
-
-    it("returns true for TODOIST when both credentials are set", () => {
-      clearOAuthEnv();
-      process.env.TODOIST_CLIENT_ID = "id";
-      process.env.TODOIST_CLIENT_SECRET = "secret";
-      expect(isProviderConfigured("TODOIST")).toBe(true);
     });
 
     it("returns true for TICKTICK when both credentials are set", () => {
@@ -111,17 +108,31 @@ describe("registry", () => {
 
       const registry = getProviderRegistry();
       const notion = registry.find((e) => e.provider === "NOTION");
-      const todoist = registry.find((e) => e.provider === "TODOIST");
+      const ticktick = registry.find((e) => e.provider === "TICKTICK");
 
       expect(notion?.configured).toBe(true);
-      expect(todoist?.configured).toBe(false);
+      expect(ticktick?.configured).toBe(false);
     });
 
-    it("always marks ICS and CALDAV as configured", () => {
+    it("always marks ICS, CALDAV and TODOIST as configured", () => {
       clearOAuthEnv();
       const registry = getProviderRegistry();
       expect(registry.find((e) => e.provider === "ICS")?.configured).toBe(true);
       expect(registry.find((e) => e.provider === "CALDAV")?.configured).toBe(true);
+      expect(registry.find((e) => e.provider === "TODOIST")?.configured).toBe(true);
+    });
+
+    it("exposes the correct connectVia for each provider", () => {
+      clearOAuthEnv();
+      const registry = getProviderRegistry();
+      const byProvider = Object.fromEntries(
+        registry.map((e) => [e.provider, e.connectVia])
+      );
+      expect(byProvider.ICS).toBe("ics");
+      expect(byProvider.CALDAV).toBe("caldav");
+      expect(byProvider.NOTION).toBe("oauth");
+      expect(byProvider.TODOIST).toBe("token");
+      expect(byProvider.TICKTICK).toBe("oauth");
     });
   });
 });
