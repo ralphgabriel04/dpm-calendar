@@ -1,15 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight, Check, Flame, Sparkles, Star, Users } from "lucide-react";
+import { ArrowRight, Check, Flame, Play, Sparkles, Star, Users } from "lucide-react";
 import { Reveal, BrowserChrome } from "./_shared";
 import { BrandMarquee } from "./BrandMarquee";
+import { VideoModal } from "./VideoModal";
 import { LiveCalendarDemo } from "./demos/LiveCalendarDemo";
 import { modulesCopy as c } from "./copy";
 
 export function HeroSection() {
   const t = useTranslations("landing");
+  const [videoOpen, setVideoOpen] = useState(false);
 
   return (
     <header className="relative overflow-hidden pt-28 sm:pt-32">
@@ -47,12 +50,13 @@ export function HeroSection() {
             {t("hero.cta")}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
-          <Link
-            href="#modules"
+          <button
+            onClick={() => setVideoOpen(true)}
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-all hover:bg-accent"
           >
-            {t("hero.ctaSecondary")}
-          </Link>
+            <Play className="h-4 w-4" />
+            {c.heroStage.demoCta}
+          </button>
         </Reveal>
 
         <Reveal delay={220}>
@@ -144,6 +148,8 @@ export function HeroSection() {
           <BrandMarquee />
         </div>
       </div>
+
+      <VideoModal open={videoOpen} onClose={() => setVideoOpen(false)} />
     </header>
   );
 }
