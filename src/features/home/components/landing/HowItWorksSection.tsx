@@ -3,29 +3,35 @@
 import { useTranslations } from "next-intl";
 import { Sunrise, Zap, BarChart3 } from "lucide-react";
 import { Reveal, Eyebrow, SectionHead } from "./_shared";
+import { useCountUp, useInViewOnce } from "./lpHooks";
+import { modulesCopy } from "./copy";
+
+function StatItem({ v, suffix, tt, d, seen, i }: { v: number; suffix: string; tt: string; d: string; seen: boolean; i: number }) {
+  const n = useCountUp(v, seen, 1300 + i * 150);
+  return (
+    <Reveal delay={i * 90} className="text-center sm:text-left">
+      <div className="text-[clamp(38px,5vw,56px)] font-bold leading-none tracking-tight">
+        {Math.round(n)}
+        <span className="text-primary">{suffix}</span>
+      </div>
+      <div className="mt-2 text-[14px] font-semibold">{tt}</div>
+      <div className="mt-1 text-[13px] leading-snug text-muted-foreground">{d}</div>
+    </Reveal>
+  );
+}
 
 function StatBand() {
-  const t = useTranslations("landing.stats");
-  const items = [
-    { v: t("stat1Value"), tt: t("stat1Title"), d: t("stat1Desc") },
-    { v: t("stat2Value"), tt: t("stat2Title"), d: t("stat2Desc") },
-    { v: t("stat3Value"), tt: t("stat3Title"), d: t("stat3Desc") },
-  ];
+  const s = modulesCopy.stats;
+  const [ref, seen] = useInViewOnce(0.4);
   return (
-    <section className="relative mx-auto max-w-7xl px-4 pt-16 sm:px-6 lg:px-8">
+    <section className="relative mx-auto max-w-[1180px] px-6 pt-16">
       <div className="rounded-[20px] border border-border bg-card px-7 py-10 sm:px-12">
         <Reveal>
-          <Eyebrow className="mb-8 justify-center">{t("label")}</Eyebrow>
+          <Eyebrow className="mb-8 justify-center">{s.label}</Eyebrow>
         </Reveal>
-        <div className="grid gap-8 sm:grid-cols-3 sm:gap-10">
-          {items.map((it, i) => (
-            <Reveal key={i} delay={i * 90} className="text-center sm:text-left">
-              <div className="text-[clamp(38px,5vw,56px)] font-bold leading-none tracking-tight">
-                {it.v}
-              </div>
-              <div className="mt-2 text-[14px] font-semibold">{it.tt}</div>
-              <div className="mt-1 text-[13px] leading-snug text-muted-foreground">{it.d}</div>
-            </Reveal>
+        <div ref={ref} className="grid gap-8 sm:grid-cols-3 sm:gap-10">
+          {s.items.map((it, i) => (
+            <StatItem key={i} v={it.v} suffix={it.suffix} tt={it.t} d={it.d} seen={seen} i={i} />
           ))}
         </div>
       </div>
