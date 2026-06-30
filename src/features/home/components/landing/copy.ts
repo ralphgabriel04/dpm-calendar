@@ -307,6 +307,142 @@ export const modulesCopy = {
     light: "Clair",
     dark: "Sombre",
   },
+
+  ai: {
+    tag: "IA contextuelle",
+    title: "Un planificateur qui réfléchit avec vous.",
+    desc: "DPM lit votre semaine, votre énergie et vos priorités, puis propose une action à accepter en un clic.",
+    suggestion: "Déplacer « Relire la PR » à 09:30 — votre pic d'énergie du matin.",
+    accept: "Accepter",
+    dismiss: "Plus tard",
+    thinking: "Réflexion…",
+    applied: "Appliqué ✓",
+  },
+
+  resources: {
+    tag: "Ressources & tutoriels",
+    title: "Jamais bloqué longtemps.",
+    desc: "Des tutoriels vidéo courts, des visites guidées et un centre d'aide cherchable — en français et en anglais. Un souci ? La solution en quelques secondes.",
+    bullets: [
+      "Tutoriels vidéo par module",
+      "Visites guidées interactives",
+      "Centre d'aide bilingue (FR / EN)",
+    ],
+    videos: [
+      { t: "Bien démarrer en 3 min", len: "3:12", tag: "Visite" },
+      { t: "Maîtriser le glisser-déposer", len: "4:48", tag: "Agenda" },
+      { t: "Construire une habitude qui tient", len: "2:30", tag: "Habitudes" },
+    ],
+    watch: "Regarder",
+  },
+
+  reviews: {
+    label: "Adoré par les gens occupés",
+    title: "De vrais utilisateurs, de vraies routines.",
+    sub: "Des avis du terrain — avec l'astuce que chacun jure d'utiliser.",
+    items: [
+      { name: "Sofia R.", role: "Fondatrice de startup", icon: "Briefcase", stars: 5, text: "Le moteur de règles à lui seul m'a rendu mes matins — les marges entre réunions sont automatiques.", tip: "Commencez par le modèle « Marge réunion »." },
+      { name: "Marcus L.", role: "Étudiant ingénieur", icon: "GraduationCap", stars: 5, text: "Le rituel de planification est la seule chose qui a survécu aux examens. Deux minutes, réglé.", tip: "Estimez honnêtement — l'agenda se remplit seul." },
+      { name: "Alex P.", role: "Freelance", icon: "Compass", stars: 5, text: "Les Espaces séparent clients et vie perso sans deux apps. Partager un créneau conclut plus vite.", tip: "Un Espace par client, partagé en lecture." },
+      { name: "Priya K.", role: "Team lead", icon: "Users", stars: 4, text: "Santé + chronotype ont changé ma façon de placer le deep work — mes 1-1 ne mangent plus mon focus.", tip: "Connectez votre montre pour la courbe d'énergie." },
+    ],
+  },
+
+  security: {
+    tag: "Sécurité & confidentialité",
+    title: "Vos données, votre temps.",
+    desc: "Chiffrement de bout en bout pour les données sensibles. Conforme RGPD, SOC2 en cours. Exportez ou supprimez tout en un clic, à tout moment.",
+    badges: ["Conforme RGPD", "SOC2 en cours", "Chiffrement AES-256"],
+    cards: [
+      { t: "Export en 1 clic", d: "JSON · ICS · CSV" },
+      { t: "Sans publicité", d: "Zéro tracking tiers" },
+      { t: "Suppression totale", d: "Effacé sous 24 h" },
+      { t: "Journal d'audit", d: "Chaque action tracée" },
+    ],
+  },
+
+  socialProof: {
+    label: "Adopté par les gens occupés, partout",
+    rating: "Note moyenne 4,9/5",
+    users: "12 000+ semaines planifiées",
+    ph: "Produit du jour n°1",
+  },
+
+  pricing: {
+    label: "Tarifs",
+    title: "Une tarification simple qui grandit avec vous.",
+    sub: "Commencez gratuitement, passez au niveau supérieur quand ça vaut le coup. Chaque offre inclut l'espace de travail complet.",
+    monthly: "Mensuel",
+    yearly: "Annuel",
+    save: "−20 %",
+    perMonth: "/mois",
+    billedYearly: "facturé annuellement",
+    forever: "gratuit à vie",
+    popular: "Le plus choisi",
+    cta: "Commencer gratuitement",
+    ctaPro: "Essai 14 jours",
+    ctaTeam: "Choisir Équipe",
+    perSeat: "par personne",
+    plans: [
+      {
+        id: "free",
+        name: "Gratuit",
+        priceM: 0,
+        priceY: 0,
+        tagline: "Pour s'organiser.",
+        features: ["1 agenda connecté", "Tâches, habitudes & objectifs", "Rituel de planification", "Statistiques 7 jours", "Mobile & web"],
+      },
+      {
+        id: "pro",
+        name: "Pro",
+        priceM: 12,
+        priceY: 9,
+        tagline: "Pour reprendre votre temps.",
+        features: ["Agendas illimités", "Planification par IA", "Focus & Pomodoro Pro", "Énergie & chronotype", "Statistiques illimitées", "Règles & automatisations"],
+      },
+      {
+        id: "team",
+        name: "Équipe",
+        priceM: 25,
+        priceY: 20,
+        tagline: "Pour planifier ensemble.",
+        features: ["Tout le plan Pro", "Espaces & agendas partagés", "Disponibilités d'équipe", "Rôles & permissions", "Support prioritaire", "Admin & journal d'audit"],
+      },
+    ],
+  },
+
+  faq: {
+    label: "FAQ",
+    title: "Vos questions, nos réponses.",
+    sub: "Tout ce qu'il faut savoir avant de commencer. Une autre question ? L'équipe répond dans l'app.",
+    items: [
+      { q: "Mes données sont-elles sécurisées et privées ?", a: "Oui. Les données sensibles sont chiffrées en AES-256, aucun tracking publicitaire tiers, et vos statistiques ne sont jamais partagées. Nous sommes conformes RGPD et SOC2 est en cours." },
+      { q: "Puis-je résilier à tout moment ?", a: "Toujours, en un clic depuis les réglages — sans email ni appel. Vous gardez l'accès jusqu'à la fin de la période payée, et le plan Gratuit reste gratuit à vie." },
+      { q: "Puis-je migrer depuis Google Agenda ou Notion ?", a: "Oui. La synchro bidirectionnelle connecte Google, Outlook et Apple en quelques secondes, et vous importez vos tâches depuis Notion, Todoist et CSV. Rien n'est verrouillé." },
+      { q: "Y a-t-il un essai gratuit ?", a: "Pro et Équipe incluent un essai de 14 jours sans carte bancaire. Si vous ne faites rien, vous basculez simplement sur le plan Gratuit — jamais de prélèvement surprise." },
+      { q: "Que deviennent mes données si je pars ?", a: "Exportez tout (JSON, ICS, CSV) en un clic, à tout moment. Demandez la suppression et votre compte et vos données sont effacés sous 24 h." },
+      { q: "Le français et l'anglais sont-ils pris en charge ?", a: "Entièrement. Toute l'app, le centre d'aide et les tutoriels sont bilingues — changez de langue quand vous voulez, tout suit instantanément." },
+      { q: "Quels appareils et intégrations sont pris en charge ?", a: "Web et mobile, plus les agendas Google, Outlook et Apple, Todoist, Slack, Notion et Zoom. De nouvelles intégrations arrivent régulièrement." },
+      { q: "Faut-il une carte bancaire pour commencer ?", a: "Non. Créez votre compte et utilisez le plan Gratuit sans carte. Ajoutez un moyen de paiement uniquement si vous décidez de passer à un plan supérieur." },
+    ],
+  },
+
+  finalCta: {
+    title: "Reprenez votre temps.",
+    sub: "Inscription en 30 secondes. Annulable en un clic.",
+    button: "Créer mon compte",
+    reassure: "Plan gratuit à vie · Sans carte bancaire",
+  },
+
+  footer: {
+    tagline: "Votre temps mérite mieux.",
+    rights: "© 2026 DPM Elevate. Tous droits réservés.",
+    cols: [
+      { t: "Produit", l: ["Fonctionnalités", "Modules", "Tarifs", "Roadmap"] },
+      { t: "Ressources", l: ["Centre d'aide", "Tutoriels", "Guides", "Nouveautés"] },
+      { t: "Légal", l: ["Conditions", "Confidentialité", "Cookies", "RGPD"] },
+    ],
+  },
 } as const;
 
 export type ModulesCopy = typeof modulesCopy;
