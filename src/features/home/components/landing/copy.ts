@@ -443,6 +443,34 @@ export const modulesCopy = {
       { t: "Légal", l: ["Conditions", "Confidentialité", "Cookies", "RGPD"] },
     ],
   },
+
+  // Hero live calendar demo
+  calendar: {
+    days: ["Lun", "Mar", "Mer", "Jeu", "Ven"],
+    views: { day: "Jour", week: "Semaine", month: "Mois" },
+    events: ["Point d'équipe", "Deep work", "Revue design", "Déjeuner", "Revue de sprint"],
+    today: "Aujourd'hui",
+    monthLabel: "Mai 2026",
+  },
+
+  tasks: {
+    done: "faites aujourd'hui",
+  },
+
+  // Stat band (count-up)
+  stats: {
+    label: "Pourquoi ils basculent",
+    items: [
+      { v: 11, suffix: "h", t: "économisées / semaine", d: "Moins d'organisation, plus d'action." },
+      { v: 9, suffix: "", t: "modules, un seul endroit", d: "De l'agenda aux objectifs, sans second onglet." },
+      { v: 92, suffix: "%", t: "gardent leur série", d: "Des habitudes qui tiennent après la 2ᵉ semaine." },
+    ],
+  },
+
+  heroStage: {
+    liveBadge: "Aperçu en direct — glissez, cliquez, complétez",
+    integrates: "Se synchronise avec",
+  },
 } as const;
 
 export type ModulesCopy = typeof modulesCopy;
