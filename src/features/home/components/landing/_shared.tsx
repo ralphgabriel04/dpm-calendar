@@ -208,7 +208,7 @@ export function FeatureRow({
   tag: ReactNode;
   title: ReactNode;
   desc: ReactNode;
-  bullets?: ReactNode[];
+  bullets?: readonly ReactNode[];
   reverse?: boolean;
   children: ReactNode;
 }) {
