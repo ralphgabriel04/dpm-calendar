@@ -656,3 +656,17 @@
   .lp-trail-halo { animation: none !important; }
   .lp-trail-head-g { display: none !important; }
 }
+
+/* --- Overlay & banner motion (video modal, cookie banner) --- */
+@keyframes lpFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes lpPop { from { opacity: 0; transform: scale(0.96) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes lpSlideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes lpVideoProgress { from { width: 8%; } to { width: 92%; } }
+.lp-fade-in { animation: lpFadeIn 0.2s ease both; }
+.lp-pop { animation: lpPop 0.28s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.lp-slide-up { animation: lpSlideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.lp-video-progress { animation: lpVideoProgress 90s linear forwards; }
+@media (prefers-reduced-motion: reduce) {
+  .lp-fade-in, .lp-pop, .lp-slide-up { animation-duration: 0.01ms; }
+  .lp-video-progress { animation: none; width: 8%; }
+}

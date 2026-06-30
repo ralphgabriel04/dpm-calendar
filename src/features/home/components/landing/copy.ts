@@ -470,6 +470,23 @@ export const modulesCopy = {
   heroStage: {
     liveBadge: "Aperçu en direct — glissez, cliquez, complétez",
     integrates: "Se synchronise avec",
+    demoCta: "Jouer avec la démo",
+  },
+
+  demo: {
+    title: "Découvrez DPM en 90 secondes",
+    sub: "Un aperçu rapide d'une vraie semaine planifiée — agenda, focus, habitudes et statistiques.",
+    duration: "1:30",
+    close: "Fermer",
+    caption: "Démonstration produit · sans audio nécessaire",
+  },
+
+  cookie: {
+    title: "Votre vie privée compte",
+    body: "Nous utilisons des cookies essentiels pour faire fonctionner l'app et des cookies de mesure optionnels pour l'améliorer. Vous choisissez ce que vous autorisez.",
+    accept: "Tout accepter",
+    essential: "Essentiels uniquement",
+    learn: "Politique cookies",
   },
 } as const;
 
