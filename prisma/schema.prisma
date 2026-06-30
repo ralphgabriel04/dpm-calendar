@@ -56,6 +56,7 @@ model User {
   ownedSpaces       Space[]         @relation("SpaceOwner")
   spaceMemberships  SpaceMember[]
   externalIntegrations ExternalIntegration[]
+  billingCustomer   BillingCustomer?
 
   // Focus timer daily goal (minutes)
   dailyFocusGoalMins Int @default(120)
@@ -216,6 +217,59 @@ model IntegrationSyncRun {
   integration ExternalIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
 
   @@index([integrationId])
+}
+
+// ============================================
+// BILLING (Stripe) — config-gated; free until STRIPE_SECRET_KEY is set
+// ============================================
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  UNPAID
+}
+
+model BillingCustomer {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  billingCustomerId    String
+  stripeSubscriptionId String             @unique
+  stripePriceId        String
+  plan                 Plan               @default(FREE)
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  customer BillingCustomer @relation(fields: [billingCustomerId], references: [id], onDelete: Cascade)
+
+  @@index([billingCustomerId])
+}
+
+// Idempotency ledger for Stripe webhook delivery (id = Stripe event id).
+model StripeWebhookEvent {
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
 }
 
 model Account {
