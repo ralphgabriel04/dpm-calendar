@@ -1,6 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import { SectionHead, FeatureRow, LpGroup, DemoShell } from "./_shared";
+import { FeatureTrail } from "./FeatureTrail";
 import { modulesCopy as t } from "./copy";
 import { CalendarProDemo } from "./demos/CalendarProDemo";
 import { KanbanDemo } from "./demos/KanbanDemo";
@@ -19,6 +21,7 @@ import { SpacesDemo } from "./demos/SpacesDemo";
 /* Modules — the playable product tour. Disposition mirrors the DPM Elevate
    prototype exactly: six grouped clusters, rows 01–13, alternating sides. */
 export function FeaturesSection() {
+  const tryRef = useRef<HTMLDivElement>(null);
   return (
     <section id="modules" className="relative scroll-mt-24 pt-12">
       <span id="features" className="absolute -top-24" aria-hidden />
@@ -26,7 +29,8 @@ export function FeaturesSection() {
         <SectionHead n="02" label={t.modules.label} title={t.modules.title} sub={t.modules.sub} />
       </div>
 
-      <div id="try" className="mx-auto mt-14 max-w-[1180px] space-y-20 px-6 pb-16 sm:space-y-24">
+      <div ref={tryRef} id="try" className="relative mx-auto mt-14 max-w-[1180px] space-y-20 px-6 pb-16 sm:space-y-24">
+        <FeatureTrail containerRef={tryRef} />
         {/* Calendar & sharing */}
         <LpGroup label={t.groups.calendar} />
         <FeatureRow n="01" tag={t.calendarPro.tag} title={t.calendarPro.title} desc={t.calendarPro.desc} bullets={t.calendarPro.bullets}>
