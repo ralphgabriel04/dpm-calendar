@@ -1,8 +1,8 @@
 "use client";
 
-import { CheckSquare, Flame, GripVertical } from "lucide-react";
 import { SectionHead, FeatureRow, LpGroup, DemoShell } from "./_shared";
 import { CalendarProDemo } from "./demos/CalendarProDemo";
+import { KanbanDemo } from "./demos/KanbanDemo";
 import { MatrixDnD } from "./demos/MatrixDnD";
 
 /* Compact daily-planning timeline mockup. */
@@ -44,42 +44,6 @@ function DailyTimelineDemo() {
             </div>
           </div>
         ))}
-      </div>
-    </div>
-  );
-}
-
-/* Compact Kanban mockup. */
-function KanbanMiniDemo() {
-  const cols = [
-    { name: "À faire", cards: ["Maquette login", "Revue PR #214"] },
-    { name: "En cours", cards: ["API paiement"] },
-    { name: "Fait", cards: ["Schéma DB", "Tests RLS"] },
-  ];
-  return (
-    <div className="rounded-[12px] border border-border bg-background p-4">
-      <div className="grid grid-cols-3 gap-2.5">
-        {cols.map((c, i) => (
-          <div key={i} className="min-w-0">
-            <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              <CheckSquare className="h-3 w-3" /> {c.name}
-            </div>
-            <div className="space-y-1.5">
-              {c.cards.map((card, j) => (
-                <div
-                  key={j}
-                  className="flex items-center gap-1.5 rounded-[7px] border border-border bg-card px-2 py-1.5 text-[10.5px] font-medium"
-                >
-                  <GripVertical className="h-2.5 w-2.5 flex-shrink-0 text-muted-foreground" />
-                  <span className="truncate">{card}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="mt-3 flex items-center gap-1.5 text-[10px] text-muted-foreground">
-        <Flame className="h-3 w-3 text-amber-500" /> 3 tâches terminées aujourd&apos;hui
       </div>
     </div>
   );
@@ -149,8 +113,8 @@ export function FeaturesSection() {
             "Une tâche → un bloc dans ton calendrier",
           ]}
         >
-          <DemoShell hint="Vue tableau">
-            <KanbanMiniDemo />
+          <DemoShell hint="Démo interactive — glisse une carte entre les colonnes">
+            <KanbanDemo />
           </DemoShell>
         </FeatureRow>
 
