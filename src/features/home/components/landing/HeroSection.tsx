@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import { ArrowRight, Check, Flame, Play, Sparkles, Star, Users } from "lucide-react";
 import { Reveal, BrowserChrome } from "./_shared";
 import { BrandMarquee } from "./BrandMarquee";
@@ -11,7 +10,6 @@ import { LiveCalendarDemo } from "./demos/LiveCalendarDemo";
 import { modulesCopy as c } from "./copy";
 
 export function HeroSection() {
-  const t = useTranslations("landing");
   const [videoOpen, setVideoOpen] = useState(false);
 
   return (
@@ -24,21 +22,21 @@ export function HeroSection() {
         <Reveal className="flex justify-center">
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
             <Sparkles className="h-3.5 w-3.5" />
-            {t("hero.badge")}
+            {c.hero.badge}
           </span>
         </Reveal>
 
         <Reveal delay={60}>
           <h1 className="mt-6 text-[clamp(40px,7vw,80px)] font-bold leading-[1.03] tracking-[-0.02em]" style={{ textWrap: "balance" }}>
-            {t("hero.title1")}
+            {c.hero.titleA}
             <br />
-            <span className="lp-gradient-text font-serif font-normal italic">{t("hero.title2")}</span>
+            <span className="lp-gradient-text font-serif font-normal italic">{c.hero.titleB}</span>
           </h1>
         </Reveal>
 
         <Reveal delay={120}>
           <p className="mx-auto mt-6 max-w-2xl text-[16.5px] leading-relaxed text-muted-foreground sm:text-[18px]" style={{ textWrap: "pretty" }}>
-            {t("hero.subtitle")}
+            {c.hero.sub}
           </p>
         </Reveal>
 
@@ -47,7 +45,7 @@ export function HeroSection() {
             href="/login"
             className="group inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90"
           >
-            {t("hero.cta")}
+            {c.hero.ctaPrimary}
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
           </Link>
           <button
@@ -60,7 +58,7 @@ export function HeroSection() {
         </Reveal>
 
         <Reveal delay={220}>
-          <p className="mt-4 text-[12px] text-muted-foreground">{t("hero.trust")}</p>
+          <p className="mt-4 text-[12px] text-muted-foreground">{c.hero.trust}</p>
         </Reveal>
 
         {/* social proof — rating · users · Product Hunt */}
@@ -143,7 +141,7 @@ export function HeroSection() {
         {/* integrations marquee */}
         <div className="mt-16">
           <Reveal>
-            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{t("hero.integrates")}</p>
+            <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{c.heroStage.integrates}</p>
           </Reveal>
           <BrandMarquee />
         </div>
