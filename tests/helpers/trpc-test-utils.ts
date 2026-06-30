@@ -90,6 +90,14 @@ export function createMockDb() {
       update: vi.fn(),
       delete: vi.fn(),
     },
+    note: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
   };
 }
 
