@@ -1,4 +1,4 @@
-import { RRule, RRuleSet, rrulestr } from "rrule";
+import { RRule, rrulestr } from "rrule";
 import { addMinutes, differenceInMinutes } from "date-fns";
 
 export interface RecurringEvent {
@@ -41,7 +41,29 @@ export function parseRRule(rruleString: string, dtstart: Date): RRule {
   }
 
   try {
-    return rrulestr(fullRRule);
+    const rule = rrulestr(fullRRule);
+
+    // Normalize a DATE-only UNTIL (e.g. "UNTIL=20240630") to local end-of-day.
+    // The rrule library parses a bare date as UTC midnight, which silently drops
+    // the final day's occurrences for users west of UTC (e.g. "daily until Jun 30"
+    // loses the Jun 30 event when its local time crosses into the next UTC day).
+    // Interpreting it as local 23:59:59 keeps behavior consistent with
+    // parseRRuleDate() below and matches user intent ("recur through this date").
+    const untilMatch = rruleString.match(/UNTIL=(\d{8})(?!T)/);
+    if (untilMatch && rule instanceof RRule) {
+      const d = untilMatch[1];
+      const localEndOfDay = new Date(
+        parseInt(d.slice(0, 4), 10),
+        parseInt(d.slice(4, 6), 10) - 1,
+        parseInt(d.slice(6, 8), 10),
+        23,
+        59,
+        59
+      );
+      return new RRule({ ...rule.origOptions, until: localEndOfDay });
+    }
+
+    return rule;
   } catch {
     // Fallback: create a basic rule
     const options = parseRRuleOptions(rruleString);

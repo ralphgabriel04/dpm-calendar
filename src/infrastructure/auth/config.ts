@@ -8,6 +8,12 @@ import Credentials from "next-auth/providers/credentials";
 import type { OIDCConfig } from "next-auth/providers";
 import { db } from "@/infrastructure/db/client";
 
+// Back-compat: accept the legacy NextAuth v4 env names when the v5 names are
+// unset, so deploys still carrying NEXTAUTH_SECRET / NEXTAUTH_URL keep working.
+// The canonical names are AUTH_SECRET / AUTH_URL (see .env.example, SECURITY.md).
+process.env.AUTH_SECRET ??= process.env.NEXTAUTH_SECRET;
+process.env.AUTH_URL ??= process.env.NEXTAUTH_URL;
+
 // Check if OAuth providers are configured
 const hasGoogleOAuth = process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET;
 const hasMicrosoftOAuth = process.env.MICROSOFT_CLIENT_ID && process.env.MICROSOFT_CLIENT_SECRET;

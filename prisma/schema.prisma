@@ -52,9 +52,224 @@ model User {
   dailyStats        DailyStats[]
   focusSessions     FocusSession[]
   experiments       Experiment[]
+  notes             Note[]
+  ownedSpaces       Space[]         @relation("SpaceOwner")
+  spaceMemberships  SpaceMember[]
+  externalIntegrations ExternalIntegration[]
+  billingCustomer   BillingCustomer?
 
   // Focus timer daily goal (minutes)
   dailyFocusGoalMins Int @default(120)
+}
+
+// ============================================
+// SPACES: multi-user collaboration
+// ============================================
+
+enum SpaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+// A shared workspace. Every user also has one auto-created personal space.
+model Space {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  ownerId    String
+  isPersonal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  owner   User          @relation("SpaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members SpaceMember[]
+  invites SpaceInvite[]
+
+  @@index([ownerId])
+}
+
+model SpaceMember {
+  id        String    @id @default(cuid())
+  spaceId   String
+  userId    String
+  role      SpaceRole @default(MEMBER)
+  createdAt DateTime  @default(now())
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([spaceId, userId])
+  @@index([userId])
+}
+
+model SpaceInvite {
+  id          String       @id @default(cuid())
+  spaceId     String
+  email       String
+  role        SpaceRole    @default(MEMBER)
+  token       String       @unique @default(cuid())
+  invitedById String
+  status      InviteStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+  acceptedAt  DateTime?
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@index([spaceId])
+  @@index([email])
+}
+
+// Standalone markdown notes, optionally linked to a task or event.
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String   @default("")
+  content   String   @db.Text
+  tags      String[] @default([])
+  taskId    String?
+  eventId   String?
+  isPinned  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task  Task?  @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([taskId])
+  @@index([eventId])
+}
+
+// ============================================
+// EXTERNAL INTEGRATIONS (ICS, CalDAV, Notion, Todoist, TickTick)
+// ============================================
+
+// A connected external source. OAuth tokens / passwords are stored encrypted
+// (src/lib/crypto.ts) and NEVER exposed to the client.
+model ExternalIntegration {
+  id              String        @id @default(cuid())
+  userId          String
+  provider        Provider
+  label           String?
+  accessToken     String?       @db.Text
+  refreshToken    String?       @db.Text
+  expiresAt       DateTime?
+  sourceUrl       String? // ICS subscribe URL / CalDAV base
+  username        String? // CalDAV / iCloud Apple ID
+  password        String?       @db.Text // encrypted app-specific password
+  config          Json? // provider-specific (Notion db id, mappings, etc.)
+  syncDirection   SyncDirection @default(PULL)
+  refreshInterval Int           @default(60) // minutes
+  isActive        Boolean       @default(true)
+  lastSyncAt      DateTime?
+  lastError       String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items    ExternalItem[]
+  syncRuns IntegrationSyncRun[]
+
+  @@unique([userId, provider, sourceUrl])
+  @@index([userId])
+}
+
+// Maps an external object to a local one, for dedup + incremental sync.
+model ExternalItem {
+  id            String   @id @default(cuid())
+  integrationId String
+  externalId    String
+  externalEtag  String?
+  kind          String // "event" | "task"
+  localEventId  String?
+  localTaskId   String?
+  hash          String? // content hash for change detection
+  updatedAt     DateTime @updatedAt
+
+  integration ExternalIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@unique([integrationId, externalId])
+  @@index([integrationId])
+}
+
+model IntegrationSyncRun {
+  id             String        @id @default(cuid())
+  integrationId  String
+  direction      SyncDirection
+  status         SyncLogStatus
+  itemsProcessed Int           @default(0)
+  itemsFailed    Int           @default(0)
+  errorMessage   String?
+  startedAt      DateTime      @default(now())
+  completedAt    DateTime?
+
+  integration ExternalIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId])
+}
+
+// ============================================
+// BILLING (Stripe) — config-gated; free until STRIPE_SECRET_KEY is set
+// ============================================
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  TRIALING
+  PAST_DUE
+  CANCELED
+  INCOMPLETE
+  UNPAID
+}
+
+model BillingCustomer {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  stripeCustomerId String   @unique
+  createdAt        DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  billingCustomerId    String
+  stripeSubscriptionId String             @unique
+  stripePriceId        String
+  plan                 Plan               @default(FREE)
+  status               SubscriptionStatus @default(ACTIVE)
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  customer BillingCustomer @relation(fields: [billingCustomerId], references: [id], onDelete: Cascade)
+
+  @@index([billingCustomerId])
+}
+
+// Idempotency ledger for Stripe webhook delivery (id = Stripe event id).
+model StripeWebhookEvent {
+  id          String   @id
+  type        String
+  processedAt DateTime @default(now())
 }
 
 model Account {
@@ -182,6 +397,11 @@ enum Provider {
   GOOGLE
   MICROSOFT
   LOCAL
+  ICS
+  CALDAV
+  NOTION
+  TODOIST
+  TICKTICK
 }
 
 // ============================================
@@ -288,6 +508,7 @@ model Event {
   tasks       Task[]         @relation("EventTasks")
   attendees   Attendee[]
   comments    EventComment[]
+  notes       Note[]
 
   @@unique([calendarId, externalId])
   @@index([userId])
@@ -393,6 +614,7 @@ model Task {
   checklistItems ChecklistItem[]
   timeBlocks     TimeBlock[]
   focusSessions  FocusSession[]
+  linkedNotes    Note[]
 
   @@index([userId])
   @@index([parentTaskId])

@@ -30,6 +30,10 @@ const PROTECTED_PREFIXES = [
   "/daily-planning",
   "/settings",
   "/onboarding",
+  "/notes",
+  "/spaces",
+  "/integrations",
+  "/billing",
 ];
 
 export function middleware(request: NextRequest) {

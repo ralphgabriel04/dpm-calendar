@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
-  BarChart3,
   TrendingUp,
   Clock,
   Target,
@@ -53,45 +52,102 @@ export default function AnalyticsPage() {
     endDate: dateRange.end,
   });
 
+  // Previous period of equal length — used for real trend deltas
+  const prevRange = useMemo(() => {
+    const lengthMs = dateRange.end.getTime() - dateRange.start.getTime();
+    return {
+      start: new Date(dateRange.start.getTime() - lengthMs),
+      end: dateRange.start,
+    };
+  }, [dateRange]);
+
+  const { data: prevStats } = trpc.recap.getDailyStats.useQuery({
+    startDate: prevRange.start,
+    endDate: prevRange.end,
+  });
+
+  // Current week (Mon–Sun) for the weekly activity chart
+  const weekRange = useMemo(() => {
+    const now = new Date();
+    return {
+      start: startOfWeek(now, { weekStartsOn: 1 }),
+      end: endOfWeek(now, { weekStartsOn: 1 }),
+    };
+  }, []);
+
+  const { data: weekStats } = trpc.recap.getDailyStats.useQuery({
+    startDate: weekRange.start,
+    endDate: weekRange.end,
+  });
+
   const { data: habits } = trpc.habit.getTodayStatus.useQuery();
 
   const { data: goals } = trpc.goal.list.useQuery({
     status: "ACTIVE",
   });
 
-  // Calculate stats
-  const stats = useMemo(() => {
-    if (!dailyStats || dailyStats.length === 0) {
+  // Calculate stats + real period-over-period trends
+  const { stats, trends } = useMemo(() => {
+    type Row = NonNullable<typeof dailyStats>[number];
+    const aggregate = (rows: Row[] | undefined) => {
+      if (!rows || rows.length === 0) {
+        return {
+          avgFocusTime: 0,
+          avgMeetingTime: 0,
+          tasksCompleted: 0,
+          habitsCompleted: 0,
+          avgBalanceScore: 0,
+        };
+      }
+      const totalDays = rows.length;
       return {
-        avgFocusTime: 0,
-        avgMeetingTime: 0,
-        tasksCompleted: 0,
-        habitsCompleted: 0,
-        avgBalanceScore: 0,
+        avgFocusTime: Math.round(
+          rows.reduce((sum, d) => sum + (d.focusTimeMins ?? 0), 0) / totalDays
+        ),
+        avgMeetingTime: Math.round(
+          rows.reduce((sum, d) => sum + (d.meetingTimeMins ?? 0), 0) / totalDays
+        ),
+        tasksCompleted: rows.reduce((sum, d) => sum + (d.tasksCompleted ?? 0), 0),
+        habitsCompleted: rows.reduce((sum, d) => sum + (d.habitsCompleted ?? 0), 0),
+        avgBalanceScore: Math.round(
+          rows.reduce((sum, d) => sum + (d.balanceScore ?? 0), 0) / totalDays
+        ),
       };
-    }
-
-    const totalDays = dailyStats.length;
-    return {
-      avgFocusTime: Math.round(
-        dailyStats.reduce((sum, d) => sum + (d.focusTimeMins ?? 0), 0) / totalDays
-      ),
-      avgMeetingTime: Math.round(
-        dailyStats.reduce((sum, d) => sum + (d.meetingTimeMins ?? 0), 0) / totalDays
-      ),
-      tasksCompleted: dailyStats.reduce((sum, d) => sum + (d.tasksCompleted ?? 0), 0),
-      habitsCompleted: dailyStats.reduce((sum, d) => sum + (d.habitsCompleted ?? 0), 0),
-      avgBalanceScore: Math.round(
-        dailyStats.reduce((sum, d) => sum + (d.balanceScore ?? 0), 0) / totalDays
-      ),
     };
-  }, [dailyStats]);
 
-  // Mock chart data for visualization
-  const weekDays = eachDayOfInterval({
-    start: startOfWeek(new Date(), { weekStartsOn: 1 }),
-    end: endOfWeek(new Date(), { weekStartsOn: 1 }),
-  });
+    const cur = aggregate(dailyStats);
+    const prev = aggregate(prevStats);
+    // % change vs previous period; undefined when there is no baseline to compare
+    const delta = (c: number, p: number): number | undefined =>
+      p === 0 ? (c === 0 ? undefined : 100) : Math.round(((c - p) / p) * 100);
+
+    return {
+      stats: cur,
+      trends: {
+        focus: delta(cur.avgFocusTime, prev.avgFocusTime),
+        meeting: delta(cur.avgMeetingTime, prev.avgMeetingTime),
+        tasks: delta(cur.tasksCompleted, prev.tasksCompleted),
+        habits: delta(cur.habitsCompleted, prev.habitsCompleted),
+        balance: delta(cur.avgBalanceScore, prev.avgBalanceScore),
+      },
+    };
+  }, [dailyStats, prevStats]);
+
+  // Weekly activity: real focus vs meeting minutes per day of the current week
+  const weekData = useMemo(() => {
+    const byDate = new Map(
+      (weekStats ?? []).map((d) => [format(new Date(d.date), "yyyy-MM-dd"), d])
+    );
+    const days = eachDayOfInterval({ start: weekRange.start, end: weekRange.end });
+    const rows = days.map((day) => {
+      const d = byDate.get(format(day, "yyyy-MM-dd"));
+      const focus = d?.focusTimeMins ?? 0;
+      const meeting = d?.meetingTimeMins ?? 0;
+      return { day, focus, meeting, total: focus + meeting };
+    });
+    const maxTotal = Math.max(1, ...rows.map((r) => r.total));
+    return { rows, maxTotal };
+  }, [weekStats, weekRange]);
 
   return (
     <div className="flex h-full flex-col">
@@ -123,35 +179,35 @@ export default function AnalyticsPage() {
             icon={Clock}
             label="Temps de focus moyen"
             value={`${Math.floor(stats.avgFocusTime / 60)}h ${stats.avgFocusTime % 60}m`}
-            trend={5}
+            trend={trends.focus}
             color="blue"
           />
           <StatCard
             icon={Calendar}
             label="Temps de réunion moyen"
             value={`${Math.floor(stats.avgMeetingTime / 60)}h ${stats.avgMeetingTime % 60}m`}
-            trend={-3}
+            trend={trends.meeting}
             color="purple"
           />
           <StatCard
             icon={CheckCircle2}
             label="Tâches complétées"
             value={stats.tasksCompleted.toString()}
-            trend={12}
+            trend={trends.tasks}
             color="green"
           />
           <StatCard
             icon={Flame}
             label="Habitudes complétées"
             value={stats.habitsCompleted.toString()}
-            trend={8}
+            trend={trends.habits}
             color="orange"
           />
           <StatCard
             icon={TrendingUp}
             label="Score d'équilibre"
             value={`${stats.avgBalanceScore}%`}
-            trend={2}
+            trend={trends.balance}
             color="indigo"
           />
         </div>
@@ -162,18 +218,22 @@ export default function AnalyticsPage() {
           <div className="rounded-lg border bg-card p-4">
             <h3 className="font-medium mb-4">Activité de la semaine</h3>
             <div className="flex items-end justify-between h-48 gap-2">
-              {weekDays.map((day, index) => {
-                const height = Math.random() * 80 + 20; // Mock data
+              {weekData.rows.map(({ day, focus, meeting, total }, index) => {
+                // Outer bar height = total time relative to the busiest day;
+                // inner (filled) portion = share of that day spent in focus.
+                const outer = total > 0 ? (total / weekData.maxTotal) * 100 : 0;
+                const focusPortion = total > 0 ? (focus / total) * 100 : 0;
                 return (
                   <div key={index} className="flex-1 flex flex-col items-center gap-2">
                     <div className="w-full flex flex-col items-center gap-1">
                       <div
                         className="w-full bg-primary/20 rounded-t transition-all"
-                        style={{ height: `${height}%` }}
+                        style={{ height: `${outer}%` }}
+                        title={`Focus ${focus} min · Réunions ${meeting} min`}
                       >
                         <div
                           className="w-full bg-primary rounded-t"
-                          style={{ height: `${height * 0.7}%` }}
+                          style={{ height: `${focusPortion}%` }}
                         />
                       </div>
                     </div>
@@ -236,28 +296,7 @@ export default function AnalyticsPage() {
           <h3 className="font-medium mb-4">Suivi des habitudes</h3>
           <div className="space-y-3">
             {habits?.slice(0, 5).map((habit) => (
-              <div key={habit.id} className="flex items-center gap-4">
-                <span className="text-sm w-32 truncate">{habit.name}</span>
-                <div className="flex gap-1 flex-1">
-                  {Array.from({ length: 7 }).map((_, i) => {
-                    const completed = Math.random() > 0.3; // Mock data
-                    return (
-                      <div
-                        key={i}
-                        className={cn(
-                          "h-6 flex-1 rounded",
-                          completed ? "bg-green-500" : "bg-muted"
-                        )}
-                        title={format(subDays(new Date(), 6 - i), "EEEE d", { locale: fr })}
-                      />
-                    );
-                  })}
-                </div>
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <Flame className="h-4 w-4 text-orange-500" />
-                  <span>{habit.currentStreak}</span>
-                </div>
-              </div>
+              <HabitHeatmapRow key={habit.id} habit={habit} />
             ))}
             {(!habits || habits.length === 0) && (
               <p className="text-sm text-muted-foreground text-center py-4">
@@ -322,6 +361,54 @@ export default function AnalyticsPage() {
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function HabitHeatmapRow({
+  habit,
+}: {
+  habit: { id: string; name: string; currentStreak: number };
+}) {
+  const range = useMemo(() => {
+    const end = new Date();
+    return { start: subDays(end, 6), end };
+  }, []);
+
+  const { data: heatmap } = trpc.habit.getHeatmap.useQuery({
+    habitId: habit.id,
+    startDate: range.start,
+    endDate: range.end,
+  });
+
+  // Fall back to an empty (not random) 7-day row while loading.
+  const days =
+    heatmap ??
+    Array.from({ length: 7 }).map((_, i) => ({
+      date: format(subDays(new Date(), 6 - i), "yyyy-MM-dd"),
+      completed: false,
+      count: 0,
+    }));
+
+  return (
+    <div className="flex items-center gap-4">
+      <span className="text-sm w-32 truncate">{habit.name}</span>
+      <div className="flex gap-1 flex-1">
+        {days.map((d, i) => (
+          <div
+            key={i}
+            className={cn(
+              "h-6 flex-1 rounded",
+              d.completed ? "bg-green-500" : "bg-muted"
+            )}
+            title={format(new Date(`${d.date}T00:00:00`), "EEEE d", { locale: fr })}
+          />
+        ))}
+      </div>
+      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+        <Flame className="h-4 w-4 text-orange-500" />
+        <span>{habit.currentStreak}</span>
       </div>
     </div>
   );

@@ -24,6 +24,10 @@ import { antiProcrastinationRouter } from "@/features/focus/server/antiProcrasti
 import { focusSessionRouter } from "@/features/focus/server/focusSession.router";
 import { workloadRouter } from "@/features/analytics/server/workload.router";
 import { meetingLoadRouter } from "@/features/analytics/server/meetingLoad.router";
+import { notesRouter } from "@/features/notes/server/notes.router";
+import { spacesRouter } from "@/features/spaces/server/space.router";
+import { integrationRouter } from "@/features/integrations/server/integration.router";
+import { billingRouter } from "@/features/billing/server/billing.router";
 
 /**
  * This is the primary router for your server.
@@ -75,6 +79,18 @@ export const appRouter = createTRPCRouter({
   focusSession: focusSessionRouter,
   workload: workloadRouter,
   meetingLoad: meetingLoadRouter,
+
+  // Notes
+  notes: notesRouter,
+
+  // Spaces (multi-user collaboration)
+  spaces: spacesRouter,
+
+  // External calendar integrations (ICS, OAuth providers)
+  integration: integrationRouter,
+
+  // Billing & subscriptions (Stripe)
+  billing: billingRouter,
 });
 
 // export type definition of API

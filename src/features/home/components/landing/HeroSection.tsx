@@ -41,7 +41,7 @@ export function HeroSection() {
               <Sparkles className="h-4 w-4" />
               {t("hero.earlyAccess")}
             </div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            <h1 className="font-serif text-5xl font-normal tracking-tight sm:text-6xl lg:text-7xl">
               {t("hero.title1")}{" "}
               <span className="bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 dark:from-violet-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
                 {t("hero.title2")}
