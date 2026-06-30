@@ -213,10 +213,11 @@ export function FeatureRow({
   children: ReactNode;
 }) {
   return (
-    <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14">
+    <div className="grid items-center gap-9 lg:grid-cols-2 lg:gap-14" data-trail-row data-trail-reverse={reverse ? "1" : "0"}>
       <Reveal className={cn("min-w-0", reverse && "lg:order-2")}>
         <Eyebrow n={n}>{tag}</Eyebrow>
         <h3
+          data-trail-title
           className="mt-5 text-[clamp(24px,3vw,34px)] font-bold leading-[1.12] tracking-tight"
           style={{ textWrap: "balance" }}
         >

@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import { Navigation } from "@/features/home/components/landing/Navigation";
 import { HeroSection } from "@/features/home/components/landing/HeroSection";
+import { ScrollControls } from "@/features/home/components/landing/ScrollControls";
 import { CTASection } from "@/features/home/components/landing/CTASection";
 import { FooterSection } from "@/features/home/components/landing/FooterSection";
 
@@ -67,6 +68,7 @@ const FaqSection = dynamic(
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <ScrollControls />
       <Navigation />
       <HeroSection />
       <HowItWorksSection />
