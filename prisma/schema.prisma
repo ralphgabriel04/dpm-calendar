@@ -55,6 +55,7 @@ model User {
   notes             Note[]
   ownedSpaces       Space[]         @relation("SpaceOwner")
   spaceMemberships  SpaceMember[]
+  externalIntegrations ExternalIntegration[]
 
   // Focus timer daily goal (minutes)
   dailyFocusGoalMins Int @default(120)
@@ -147,6 +148,74 @@ model Note {
   @@index([userId])
   @@index([taskId])
   @@index([eventId])
+}
+
+// ============================================
+// EXTERNAL INTEGRATIONS (ICS, CalDAV, Notion, Todoist, TickTick)
+// ============================================
+
+// A connected external source. OAuth tokens / passwords are stored encrypted
+// (src/lib/crypto.ts) and NEVER exposed to the client.
+model ExternalIntegration {
+  id              String        @id @default(cuid())
+  userId          String
+  provider        Provider
+  label           String?
+  accessToken     String?       @db.Text
+  refreshToken    String?       @db.Text
+  expiresAt       DateTime?
+  sourceUrl       String? // ICS subscribe URL / CalDAV base
+  username        String? // CalDAV / iCloud Apple ID
+  password        String?       @db.Text // encrypted app-specific password
+  config          Json? // provider-specific (Notion db id, mappings, etc.)
+  syncDirection   SyncDirection @default(PULL)
+  refreshInterval Int           @default(60) // minutes
+  isActive        Boolean       @default(true)
+  lastSyncAt      DateTime?
+  lastError       String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user     User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items    ExternalItem[]
+  syncRuns IntegrationSyncRun[]
+
+  @@unique([userId, provider, sourceUrl])
+  @@index([userId])
+}
+
+// Maps an external object to a local one, for dedup + incremental sync.
+model ExternalItem {
+  id            String   @id @default(cuid())
+  integrationId String
+  externalId    String
+  externalEtag  String?
+  kind          String // "event" | "task"
+  localEventId  String?
+  localTaskId   String?
+  hash          String? // content hash for change detection
+  updatedAt     DateTime @updatedAt
+
+  integration ExternalIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@unique([integrationId, externalId])
+  @@index([integrationId])
+}
+
+model IntegrationSyncRun {
+  id             String        @id @default(cuid())
+  integrationId  String
+  direction      SyncDirection
+  status         SyncLogStatus
+  itemsProcessed Int           @default(0)
+  itemsFailed    Int           @default(0)
+  errorMessage   String?
+  startedAt      DateTime      @default(now())
+  completedAt    DateTime?
+
+  integration ExternalIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId])
 }
 
 model Account {
@@ -274,6 +343,11 @@ enum Provider {
   GOOGLE
   MICROSOFT
   LOCAL
+  ICS
+  CALDAV
+  NOTION
+  TODOIST
+  TICKTICK
 }
 
 // ============================================

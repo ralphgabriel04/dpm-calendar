@@ -26,6 +26,7 @@ import { workloadRouter } from "@/features/analytics/server/workload.router";
 import { meetingLoadRouter } from "@/features/analytics/server/meetingLoad.router";
 import { notesRouter } from "@/features/notes/server/notes.router";
 import { spacesRouter } from "@/features/spaces/server/space.router";
+import { integrationRouter } from "@/features/integrations/server/integration.router";
 
 /**
  * This is the primary router for your server.
@@ -83,6 +84,9 @@ export const appRouter = createTRPCRouter({
 
   // Spaces (multi-user collaboration)
   spaces: spacesRouter,
+
+  // External calendar integrations (ICS, OAuth providers)
+  integration: integrationRouter,
 });
 
 // export type definition of API

@@ -32,6 +32,7 @@ const PROTECTED_PREFIXES = [
   "/onboarding",
   "/notes",
   "/spaces",
+  "/integrations",
 ];
 
 export function middleware(request: NextRequest) {
