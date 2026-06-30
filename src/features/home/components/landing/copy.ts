@@ -488,6 +488,26 @@ export const modulesCopy = {
     essential: "Essentiels uniquement",
     learn: "Politique cookies",
   },
+
+  hero: {
+    badge: "Accès anticipé · T2 2026",
+    titleA: "Votre temps",
+    titleB: "mérite mieux.",
+    sub: "Agenda, tâches, habitudes, objectifs, focus et bien-être — un seul espace cohérent. Glissez pour planifier, notez votre énergie, regardez les statistiques se construire. Essayez chaque module ici même, sans inscription.",
+    ctaPrimary: "Commencer gratuitement",
+    trust: "Sans carte bancaire · Essai 14 jours · Annulable à tout moment",
+    login: "Connexion",
+  },
+
+  how: {
+    label: "La méthode",
+    title: "Trois étapes, une routine sereine.",
+    steps: [
+      { n: "01", t: "Planifier", d: "Connectez vos agendas et déposez vos tâches sur la semaine. L'IA propose des créneaux selon votre énergie." },
+      { n: "02", t: "Exécuter", d: "Time-blocking, sessions de focus et rappels en douceur vous gardent dans le flux — l'app gère le reste." },
+      { n: "03", t: "Analyser", d: "Des stats claires montrent où votre temps est passé, pour une semaine suivante mieux pensée." },
+    ],
+  },
 } as const;
 
 export type ModulesCopy = typeof modulesCopy;
