@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import {
   Users,
   Plus,
@@ -18,21 +19,24 @@ import { Button } from "@/shared/components/ui/Button";
 
 type Role = "OWNER" | "ADMIN" | "MEMBER";
 
-const ROLE_LABELS: Record<string, string> = {
-  OWNER: "Propriétaire",
-  ADMIN: "Admin",
-  MEMBER: "Membre",
+const ROLE_KEYS: Record<string, string> = {
+  OWNER: "owner",
+  ADMIN: "admin",
+  MEMBER: "member",
 };
 
-function RoleBadge({ role }: { role: string }) {
+function RoleBadge({ label }: { label: string }) {
   return (
     <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-      {ROLE_LABELS[role] ?? role}
+      {label}
     </span>
   );
 }
 
 export default function SpacesPage() {
+  const t = useTranslations("spaces");
+  const roleLabel = (role: string) =>
+    ROLE_KEYS[role] ? t(`roles.${ROLE_KEYS[role]}` as never) : role;
   const utils = trpc.useUtils();
   const [name, setName] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -47,7 +51,7 @@ export default function SpacesPage() {
     onSuccess: () => {
       setName("");
       invalidateList();
-      toast.success("Espace créé");
+      toast.success(t("spaceCreated"));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -72,10 +76,10 @@ export default function SpacesPage() {
       utils.spaces.list.invalidate();
       if (res.emailSent) {
         setInviteUrl(null);
-        toast.success("Invitation envoyée");
+        toast.success(t("inviteSent"));
       } else {
         setInviteUrl(res.inviteUrl);
-        toast.info("Email non configuré — copiez le lien d'invitation");
+        toast.info(t("emailNotConfiguredToast"));
       }
     },
     onError: (e) => toast.error(e.message),
@@ -85,7 +89,7 @@ export default function SpacesPage() {
     onSuccess: () => {
       invalidateMembers();
       invalidateList();
-      toast.success("Membre retiré");
+      toast.success(t("memberRemoved"));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -93,7 +97,7 @@ export default function SpacesPage() {
   const updateRole = trpc.spaces.updateRole.useMutation({
     onSuccess: () => {
       invalidateMembers();
-      toast.success("Rôle mis à jour");
+      toast.success(t("roleUpdated"));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -102,7 +106,7 @@ export default function SpacesPage() {
     onSuccess: () => {
       setSelectedId(null);
       invalidateList();
-      toast.success("Vous avez quitté l'espace");
+      toast.success(t("leftSpace"));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -127,14 +131,14 @@ export default function SpacesPage() {
   const copyInviteUrl = async () => {
     if (!inviteUrl) return;
     await navigator.clipboard.writeText(inviteUrl);
-    toast.success("Lien copié");
+    toast.success(t("linkCopied"));
   };
 
   return (
     <div className="flex h-full flex-col">
       <header className="flex items-center gap-2 border-b bg-card px-4 py-3">
         <Users className="h-5 w-5 text-muted-foreground" />
-        <h1 className="text-lg font-semibold">Espaces</h1>
+        <h1 className="text-lg font-semibold">{t("title")}</h1>
       </header>
 
       <div className="flex-1 overflow-auto p-4">
@@ -145,27 +149,27 @@ export default function SpacesPage() {
               onSubmit={submitCreate}
               className="rounded-lg border bg-card p-4 space-y-3"
             >
-              <label className="text-sm font-medium">Créer un espace</label>
+              <label className="text-sm font-medium">{t("createLabel")}</label>
               <div className="flex gap-2">
                 <input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Nom de l'espace"
-                  aria-label="Nom de l'espace"
+                  placeholder={t("namePlaceholder")}
+                  aria-label={t("nameAria")}
                   className="h-9 flex-1 rounded-md border bg-background px-3 text-sm"
                 />
                 <Button type="submit" size="sm" disabled={createSpace.isPending}>
                   <Plus className="mr-1.5 h-4 w-4" />
-                  {createSpace.isPending ? "Création…" : "Créer"}
+                  {createSpace.isPending ? t("creating") : t("create")}
                 </Button>
               </div>
             </form>
 
             {isLoading ? (
-              <p className="text-sm text-muted-foreground">Chargement…</p>
+              <p className="text-sm text-muted-foreground">{t("loading")}</p>
             ) : !spaces || spaces.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Aucun espace pour le moment.
+                {t("empty")}
               </p>
             ) : (
               <div className="space-y-2">
@@ -186,15 +190,14 @@ export default function SpacesPage() {
                         {space.name}
                         {space.isPersonal && (
                           <span className="ml-2 text-xs text-muted-foreground">
-                            (personnel)
+                            {t("personal")}
                           </span>
                         )}
                       </h3>
-                      <RoleBadge role={space.role} />
+                      <RoleBadge label={roleLabel(space.role)} />
                     </div>
                     <p className="mt-1 text-xs text-muted-foreground">
-                      {space.memberCount}{" "}
-                      {space.memberCount > 1 ? "membres" : "membre"}
+                      {t("memberCount", { count: space.memberCount })}
                     </p>
                   </button>
                 ))}
@@ -206,7 +209,7 @@ export default function SpacesPage() {
           <div className="space-y-4">
             {!selectedSpace ? (
               <p className="py-8 text-center text-sm text-muted-foreground">
-                Sélectionnez un espace pour voir ses membres.
+                {t("selectPrompt")}
               </p>
             ) : (
               <>
@@ -225,16 +228,18 @@ export default function SpacesPage() {
                         className="text-destructive hover:text-destructive"
                       >
                         <LogOut className="mr-1.5 h-4 w-4" />
-                        Quitter
+                        {t("leave")}
                       </Button>
                     )}
                   </div>
                   <div className="p-4 space-y-2">
                     {!members ? (
-                      <p className="text-sm text-muted-foreground">Chargement…</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t("membersLoading")}
+                      </p>
                     ) : members.length === 0 ? (
                       <p className="text-sm text-muted-foreground">
-                        Aucun membre.
+                        {t("noMembers")}
                       </p>
                     ) : (
                       members.map((m) => (
@@ -262,14 +267,14 @@ export default function SpacesPage() {
                                   })
                                 }
                                 disabled={updateRole.isPending}
-                                aria-label="Rôle du membre"
+                                aria-label={t("memberRoleAria")}
                                 className="h-8 rounded-md border bg-background px-2 text-xs"
                               >
-                                <option value="ADMIN">Admin</option>
-                                <option value="MEMBER">Membre</option>
+                                <option value="ADMIN">{t("roles.admin")}</option>
+                                <option value="MEMBER">{t("roles.member")}</option>
                               </select>
                             ) : (
-                              <RoleBadge role={m.role} />
+                              <RoleBadge label={roleLabel(m.role)} />
                             )}
                             {canManage && m.role !== "OWNER" && (
                               <button
@@ -279,8 +284,8 @@ export default function SpacesPage() {
                                     userId: m.user.id,
                                   })
                                 }
-                                title="Retirer le membre"
-                                aria-label="Retirer le membre"
+                                title={t("removeMember")}
+                                aria-label={t("removeMember")}
                                 className="text-muted-foreground hover:text-destructive"
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -301,7 +306,7 @@ export default function SpacesPage() {
                     <div className="flex items-center gap-2">
                       <UserPlus className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm font-medium">
-                        Inviter un membre
+                        {t("inviteTitle")}
                       </span>
                     </div>
                     <div className="flex flex-col gap-2 sm:flex-row">
@@ -309,22 +314,22 @@ export default function SpacesPage() {
                         type="email"
                         value={inviteEmail}
                         onChange={(e) => setInviteEmail(e.target.value)}
-                        placeholder="email@exemple.com"
-                        aria-label="Email de l'invité"
+                        placeholder={t("inviteEmailPlaceholder")}
+                        aria-label={t("inviteEmailAria")}
                         className="h-9 flex-1 rounded-md border bg-background px-3 text-sm"
                       />
                       <select
                         value={inviteRole}
                         onChange={(e) => setInviteRole(e.target.value as Role)}
-                        aria-label="Rôle de l'invité"
+                        aria-label={t("inviteRoleAria")}
                         className="h-9 rounded-md border bg-background px-2 text-sm"
                       >
-                        <option value="MEMBER">Membre</option>
-                        <option value="ADMIN">Admin</option>
+                        <option value="MEMBER">{t("roles.member")}</option>
+                        <option value="ADMIN">{t("roles.admin")}</option>
                       </select>
                       <Button type="submit" size="sm" disabled={invite.isPending}>
                         <Mail className="mr-1.5 h-4 w-4" />
-                        {invite.isPending ? "Envoi…" : "Inviter"}
+                        {invite.isPending ? t("sending") : t("invite")}
                       </Button>
                     </div>
 
@@ -332,14 +337,13 @@ export default function SpacesPage() {
                       <div className="rounded-md border border-dashed bg-muted/40 p-3 space-y-2">
                         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
                           <ShieldCheck className="h-3.5 w-3.5" />
-                          L'envoi d'email n'est pas configuré. Partagez ce lien
-                          manuellement :
+                          {t("emailNotConfigured")}
                         </p>
                         <div className="flex items-center gap-2">
                           <input
                             readOnly
                             value={inviteUrl}
-                            aria-label="Lien d'invitation"
+                            aria-label={t("inviteUrlAria")}
                             className="h-8 flex-1 rounded-md border bg-background px-2 text-xs"
                           />
                           <Button
@@ -349,7 +353,7 @@ export default function SpacesPage() {
                             onClick={copyInviteUrl}
                           >
                             <Copy className="mr-1.5 h-4 w-4" />
-                            Copier le lien
+                            {t("copyLink")}
                           </Button>
                         </div>
                       </div>

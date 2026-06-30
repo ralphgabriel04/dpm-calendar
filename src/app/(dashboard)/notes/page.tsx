@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Pin, PinOff, Trash2, StickyNote } from "lucide-react";
 import { toast } from "sonner";
 import { trpc } from "@/infrastructure/trpc/client";
@@ -8,6 +9,7 @@ import { cn } from "@/shared/lib/utils";
 import { Button } from "@/shared/components/ui/Button";
 
 export default function NotesPage() {
+  const t = useTranslations("notes");
   const utils = trpc.useUtils();
   const [search, setSearch] = useState("");
   const [title, setTitle] = useState("");
@@ -24,7 +26,7 @@ export default function NotesPage() {
       setTitle("");
       setContent("");
       invalidate();
-      toast.success("Note créée");
+      toast.success(t("created"));
     },
     onError: (e) => toast.error(e.message),
   });
@@ -32,7 +34,7 @@ export default function NotesPage() {
   const deleteNote = trpc.notes.delete.useMutation({
     onSuccess: () => {
       invalidate();
-      toast.success("Note supprimée");
+      toast.success(t("deleted"));
     },
   });
 
@@ -47,14 +49,14 @@ export default function NotesPage() {
       <header className="flex items-center justify-between border-b bg-card px-4 py-3">
         <div className="flex items-center gap-2">
           <StickyNote className="h-5 w-5 text-muted-foreground" />
-          <h1 className="text-lg font-semibold">Notes</h1>
+          <h1 className="text-lg font-semibold">{t("title")}</h1>
         </div>
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher…"
-          aria-label="Rechercher des notes"
+          placeholder={t("searchPlaceholder")}
+          aria-label={t("searchAria")}
           className="h-9 w-48 rounded-md border bg-background px-3 text-sm"
         />
       </header>
@@ -68,31 +70,31 @@ export default function NotesPage() {
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Titre"
-            aria-label="Titre de la note"
+            placeholder={t("titlePlaceholder")}
+            aria-label={t("titleAria")}
             className="w-full rounded-md border bg-background px-3 py-2 text-sm font-medium"
           />
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder="Écrivez votre note (Markdown supporté)…"
-            aria-label="Contenu de la note"
+            placeholder={t("contentPlaceholder")}
+            aria-label={t("contentAria")}
             rows={3}
             className="w-full resize-y rounded-md border bg-background px-3 py-2 text-sm"
           />
           <div className="flex justify-end">
             <Button type="submit" size="sm" disabled={createNote.isPending}>
-              {createNote.isPending ? "Création…" : "Ajouter"}
+              {createNote.isPending ? t("creating") : t("add")}
             </Button>
           </div>
         </form>
 
         {/* List */}
         {isLoading ? (
-          <p className="text-sm text-muted-foreground">Chargement…</p>
+          <p className="text-sm text-muted-foreground">{t("loading")}</p>
         ) : !notes || notes.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">
-            Aucune note pour le moment.
+            {t("empty")}
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
@@ -106,13 +108,13 @@ export default function NotesPage() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <h3 className="font-medium truncate">
-                    {note.title || "Sans titre"}
+                    {note.title || t("untitled")}
                   </h3>
                   <div className="flex shrink-0 gap-1">
                     <button
                       onClick={() => togglePin.mutate({ id: note.id })}
-                      title={note.isPinned ? "Désépingler" : "Épingler"}
-                      aria-label={note.isPinned ? "Désépingler" : "Épingler"}
+                      title={note.isPinned ? t("unpin") : t("pin")}
+                      aria-label={note.isPinned ? t("unpin") : t("pin")}
                       className="text-muted-foreground hover:text-foreground"
                     >
                       {note.isPinned ? (
@@ -123,8 +125,8 @@ export default function NotesPage() {
                     </button>
                     <button
                       onClick={() => deleteNote.mutate({ id: note.id })}
-                      title="Supprimer"
-                      aria-label="Supprimer la note"
+                      title={t("deleteAria")}
+                      aria-label={t("deleteAria")}
                       className="text-muted-foreground hover:text-destructive"
                     >
                       <Trash2 className="h-4 w-4" />

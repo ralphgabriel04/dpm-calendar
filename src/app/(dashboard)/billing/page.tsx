@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
   CreditCard,
@@ -23,12 +24,10 @@ const REQUIRED_ENV_VARS = [
   "STRIPE_PRICE_TEAM",
 ];
 
-function formatPrice(price: number): string {
-  if (price === 0) return "Gratuit";
-  return `${price} €/mois`;
-}
-
 export default function BillingPage() {
+  const t = useTranslations("billing");
+  const formatPrice = (price: number): string =>
+    price === 0 ? t("free") : t("perMonth", { price });
   const searchParams = useSearchParams();
   const [redirecting, setRedirecting] = useState<Plan | "portal" | null>(null);
 
@@ -40,17 +39,18 @@ export default function BillingPage() {
   // Success / canceled toast based on URL params
   useEffect(() => {
     if (searchParams.get("success") === "1") {
-      toast.success("Abonnement activé", {
-        description: "Merci ! Votre paiement a été confirmé.",
+      toast.success(t("subscriptionActivated"), {
+        description: t("subscriptionActivatedDesc"),
       });
       window.history.replaceState({}, "", "/billing");
     }
     if (searchParams.get("canceled") === "1") {
-      toast.info("Paiement annulé", {
-        description: "Aucun montant n'a été débité.",
+      toast.info(t("paymentCanceled"), {
+        description: t("paymentCanceledDesc"),
       });
       window.history.replaceState({}, "", "/billing");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   const configured = status?.configured ?? false;
@@ -70,14 +70,14 @@ export default function BillingPage() {
       if (d.url) {
         window.location.href = d.url;
       } else {
-        toast.error("Impossible de démarrer le paiement", {
-          description: d.error ?? "Veuillez réessayer plus tard.",
+        toast.error(t("checkoutError"), {
+          description: d.error ?? t("retryLater"),
         });
         setRedirecting(null);
       }
     } catch {
-      toast.error("Erreur réseau", {
-        description: "Impossible de contacter le service de paiement.",
+      toast.error(t("networkError"), {
+        description: t("networkErrorDesc"),
       });
       setRedirecting(null);
     }
@@ -91,14 +91,14 @@ export default function BillingPage() {
       if (d.url) {
         window.location.href = d.url;
       } else {
-        toast.error("Impossible d'ouvrir le portail", {
-          description: d.error ?? "Veuillez réessayer plus tard.",
+        toast.error(t("portalError"), {
+          description: d.error ?? t("retryLater"),
         });
         setRedirecting(null);
       }
     } catch {
-      toast.error("Erreur réseau", {
-        description: "Impossible de contacter le service de paiement.",
+      toast.error(t("networkError"), {
+        description: t("networkErrorDesc"),
       });
       setRedirecting(null);
     }
@@ -112,13 +112,13 @@ export default function BillingPage() {
       {/* Header */}
       <header className="flex items-center gap-2 border-b bg-card px-4 py-3">
         <CreditCard className="h-5 w-5 text-muted-foreground" />
-        <h1 className="text-lg font-semibold">Abonnement</h1>
+        <h1 className="text-lg font-semibold">{t("title")}</h1>
       </header>
 
       <div className="flex-1 overflow-auto p-4">
         <div className="max-w-4xl space-y-6">
           {isLoading ? (
-            <p className="text-sm text-muted-foreground">Chargement…</p>
+            <p className="text-sm text-muted-foreground">{t("loading")}</p>
           ) : (
             <>
               {/* Not configured panel */}
@@ -127,19 +127,17 @@ export default function BillingPage() {
                   <div className="flex items-center gap-3 border-b border-amber-500/30 px-4 py-3">
                     <AlertTriangle className="h-5 w-5 text-amber-600" />
                     <h2 className="font-medium text-amber-700 dark:text-amber-400">
-                      Facturation non configurée
+                      {t("notConfiguredTitle")}
                     </h2>
                   </div>
                   <div className="space-y-3 p-4 text-sm">
                     <p className="text-muted-foreground">
-                      Les clés Stripe ne sont pas définies. L'application
-                      fonctionne entièrement avec le plan{" "}
-                      <strong>FREE</strong> — aucune action n'est requise pour
-                      l'utiliser.
+                      {t.rich("notConfiguredIntro", {
+                        strong: (chunks) => <strong>{chunks}</strong>,
+                      })}
                     </p>
                     <p className="text-muted-foreground">
-                      Pour activer les abonnements payants, définissez les
-                      variables d'environnement suivantes :
+                      {t("notConfiguredEnv")}
                     </p>
                     <ul className="ml-2 list-inside list-disc space-y-1 text-muted-foreground">
                       {REQUIRED_ENV_VARS.map((v) => (
@@ -151,7 +149,7 @@ export default function BillingPage() {
                       ))}
                     </ul>
                     <p className="text-muted-foreground">
-                      Consultez le guide de configuration :{" "}
+                      {t("notConfiguredGuide")}{" "}
                       <a
                         href="https://github.com/RalphGabriel/dpm-calendar/blob/main/docs/BILLING.md"
                         target="_blank"
@@ -171,11 +169,13 @@ export default function BillingPage() {
                 <div className="rounded-lg border bg-card">
                   <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
-                      <p className="font-medium">Abonnement {subscription.plan}</p>
+                      <p className="font-medium">
+                        {t("subscriptionPlan", { plan: subscription.plan })}
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        Statut : {subscription.status}
+                        {t("statusLabel", { status: subscription.status })}
                         {subscription.cancelAtPeriodEnd &&
-                          " — annulation programmée en fin de période"}
+                          t("cancelScheduled")}
                       </p>
                     </div>
                     <Button
@@ -187,8 +187,8 @@ export default function BillingPage() {
                     >
                       <Settings2 className="h-4 w-4" />
                       {redirecting === "portal"
-                        ? "Ouverture…"
-                        : "Gérer mon abonnement"}
+                        ? t("openingPortal")
+                        : t("managePlan")}
                     </Button>
                   </div>
                 </div>
@@ -212,7 +212,7 @@ export default function BillingPage() {
                         <h3 className="text-lg font-semibold">{p.name}</h3>
                         {isCurrent && (
                           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
-                            Plan actuel
+                            {t("currentPlan")}
                           </span>
                         )}
                       </div>
@@ -235,7 +235,7 @@ export default function BillingPage() {
                             disabled
                             className="w-full"
                           >
-                            Configuration requise
+                            {t("configRequired")}
                           </Button>
                         ) : isCurrent ? (
                           <Button
@@ -244,7 +244,7 @@ export default function BillingPage() {
                             disabled
                             className="w-full"
                           >
-                            Plan actuel
+                            {t("currentPlan")}
                           </Button>
                         ) : isUpgrade ? (
                           <Button
@@ -254,7 +254,7 @@ export default function BillingPage() {
                             className="w-full gap-2"
                           >
                             <Sparkles className="h-4 w-4" />
-                            {redirecting === p.plan ? "Redirection…" : "Améliorer"}
+                            {redirecting === p.plan ? t("redirecting") : t("upgrade")}
                           </Button>
                         ) : (
                           <Button
@@ -263,7 +263,7 @@ export default function BillingPage() {
                             disabled
                             className="w-full"
                           >
-                            Inclus
+                            {t("included")}
                           </Button>
                         )}
                       </div>

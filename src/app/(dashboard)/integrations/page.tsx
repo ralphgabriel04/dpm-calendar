@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import {
   RefreshCw,
@@ -43,15 +44,15 @@ const PROVIDER_LABELS: Record<string, string> = {
   caldav: "CalDAV",
 };
 
-const OAUTH_ERROR_MESSAGES: Record<string, string> = {
-  access_denied: "L'autorisation a été refusée.",
-  invalid_state: "La session d'autorisation a expiré. Veuillez réessayer.",
-  token_exchange_failed:
-    "Impossible de finaliser la connexion. Veuillez réessayer.",
-  not_configured: "Ce service n'est pas configuré par l'administrateur.",
-};
+const OAUTH_ERROR_KEYS = new Set([
+  "access_denied",
+  "invalid_state",
+  "token_exchange_failed",
+  "not_configured",
+]);
 
 export default function IntegrationsPage() {
+  const t = useTranslations("integrations");
   const searchParams = useSearchParams();
   const utils = trpc.useUtils();
 
@@ -71,13 +72,14 @@ export default function IntegrationsPage() {
     const error = searchParams.get("error");
     if (connected) {
       const label = PROVIDER_LABELS[connected] ?? connected;
-      toast.success(`${label} connecté`);
+      toast.success(t("providerConnected", { provider: label }));
       invalidate();
       window.history.replaceState({}, "", "/integrations");
     } else if (error) {
-      toast.error("Échec de la connexion", {
-        description:
-          OAUTH_ERROR_MESSAGES[error] ?? "Une erreur est survenue. Réessayez.",
+      toast.error(t("connectionFailed"), {
+        description: OAUTH_ERROR_KEYS.has(error)
+          ? t(`oauthErrors.${error}` as never)
+          : t("genericError"),
       });
       window.history.replaceState({}, "", "/integrations");
     }
@@ -94,13 +96,16 @@ export default function IntegrationsPage() {
   const syncNow = trpc.integration.syncNow.useMutation({
     onSuccess: (data) => {
       invalidate();
-      toast.success("Synchronisation terminée", {
-        description: `${data.imported} importé(s), ${data.updated} mis à jour`,
+      toast.success(t("syncDone"), {
+        description: t("syncDoneDesc", {
+          imported: data.imported,
+          updated: data.updated,
+        }),
       });
     },
     onError: (error) => {
       invalidate();
-      toast.error("Erreur de synchronisation", { description: error.message });
+      toast.error(t("syncError"), { description: error.message });
     },
   });
 
