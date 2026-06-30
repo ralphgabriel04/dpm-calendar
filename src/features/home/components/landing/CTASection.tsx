@@ -2,37 +2,50 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Check } from "lucide-react";
+import { Reveal } from "./_shared";
 
 export function CTASection() {
   const t = useTranslations("landing");
 
   return (
-    <section className="py-16 lg:py-24">
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 text-center">
-        <h2 className="text-3xl font-bold sm:text-4xl">
-          {t("cta.title1")}{" "}
-          <span className="bg-gradient-to-r from-violet-600 to-purple-600 dark:from-violet-400 dark:to-purple-400 bg-clip-text text-transparent">
-            {t("cta.title2")}
-          </span>
-          ?
-        </h2>
-        <p className="mt-4 text-lg text-muted-foreground">
-          {t("cta.subtitle")}
-        </p>
-        <div className="mt-8">
-          <Link
-            href="/login"
-            className="group inline-flex items-center gap-2 rounded-xl bg-violet-600 px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-violet-500/25 hover:bg-violet-500 transition-all"
-          >
-            {t("cta.button")}
-            <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Link>
+    <section className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <Reveal scale>
+        <div className="lp-stage relative overflow-hidden rounded-[28px] border border-border px-6 py-16 text-center sm:py-20">
+          <div
+            className="lp-glow"
+            style={{ width: 500, height: 500, top: -200, left: "50%", marginLeft: -250, background: "hsl(263 70% 55%)" }}
+          />
+          <div className="relative">
+            <h2
+              className="font-serif text-[clamp(32px,5vw,52px)] font-normal leading-[1.05] tracking-tight"
+              style={{ textWrap: "balance" }}
+            >
+              {t("cta.title1")} {t("cta.title2")}?
+            </h2>
+            <p className="mt-4 text-[15.5px] text-muted-foreground">{t("cta.subtitle")}</p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/login"
+                className="group inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90"
+              >
+                {t("cta.button")}
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-semibold transition-all hover:bg-accent"
+              >
+                {t("finalCta.secondary")}
+              </Link>
+            </div>
+            <div className="mt-5 flex items-center justify-center gap-2 text-[12.5px] text-muted-foreground">
+              <Check className="h-3.5 w-3.5 text-emerald-500" />
+              {t("finalCta.reassure")}
+            </div>
+          </div>
         </div>
-        <p className="mt-4 text-sm text-muted-foreground">
-          {t("cta.noCreditCard")}
-        </p>
-      </div>
+      </Reveal>
     </section>
   );
 }

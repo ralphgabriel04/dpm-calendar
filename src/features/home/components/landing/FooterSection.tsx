@@ -12,47 +12,72 @@ export function FooterSection() {
 
   const logoSrc = resolvedTheme === "dark" ? "/logo-dark.png" : "/lightLogoFinal.png";
 
+  const colHead = "mb-3 font-mono text-[11px] font-semibold uppercase tracking-[0.1em] text-muted-foreground";
+
   return (
-    <footer className="border-t border-border py-12">
+    <footer className="border-t border-border py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
-          {/* Logo */}
+        <div className="grid grid-cols-2 gap-10 text-[13px] md:grid-cols-4">
+          {/* Logo + tagline + social */}
           <div className="col-span-2 md:col-span-1">
             <Image
               src={logoSrc}
               alt="DPM Calendar"
               width={200}
               height={50}
-              className="h-12 w-auto mb-4"
+              className="mb-4 h-10 w-auto"
             />
-            <p className="text-sm text-muted-foreground">
-              {t("footer.tagline")}
-            </p>
+            <p className="text-[12.5px] leading-relaxed text-muted-foreground">{t("footer.tagline")}</p>
+            <div className="mt-4 flex items-center gap-2">
+              {[
+                { Icon: Twitter, href: "https://twitter.com/dpmcalendar" },
+                { Icon: Linkedin, href: "https://linkedin.com/company/dpmcalendar" },
+                { Icon: Github, href: "https://github.com/dpmcalendar" },
+              ].map(({ Icon, href }, i) => (
+                <a
+                  key={i}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-8 w-8 items-center justify-center rounded-[8px] border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+                >
+                  <Icon className="h-[15px] w-[15px]" />
+                </a>
+              ))}
+            </div>
           </div>
 
-          {/* Produit */}
+          {/* Product */}
           <div>
-            <h4 className="font-semibold mb-3 text-sm">{t("footer.product")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className={colHead}>{t("footer.product")}</div>
+            <ul className="space-y-2.5 text-muted-foreground">
               <li>
-                <a href="#features" className="hover:text-foreground transition-colors">
+                <a href="#features" className="transition-colors hover:text-foreground">
                   {t("footer.features")}
                 </a>
               </li>
               <li>
-                <Link href="/login" className="hover:text-foreground transition-colors">
+                <a href="#pricing" className="transition-colors hover:text-foreground">
                   {t("footer.pricing")}
-                </Link>
+                </a>
               </li>
             </ul>
           </div>
 
-          {/* Ressources */}
+          {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-3 text-sm">{t("footer.resources")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className={colHead}>{t("footer.resources")}</div>
+            <ul className="space-y-2.5 text-muted-foreground">
               <li>
-                <a href="mailto:support@dpmcalendar.com" className="hover:text-foreground transition-colors">
+                <a href="#faq" className="transition-colors hover:text-foreground">
+                  {t("nav.faq")}
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:support@dpmcalendar.com"
+                  className="transition-colors hover:text-foreground"
+                >
                   {t("footer.support")}
                 </a>
               </li>
@@ -61,15 +86,15 @@ export function FooterSection() {
 
           {/* Legal */}
           <div>
-            <h4 className="font-semibold mb-3 text-sm">{t("footer.legal")}</h4>
-            <ul className="space-y-2 text-sm text-muted-foreground">
+            <div className={colHead}>{t("footer.legal")}</div>
+            <ul className="space-y-2.5 text-muted-foreground">
               <li>
-                <Link href="/privacy" className="hover:text-foreground transition-colors">
+                <Link href="/privacy" className="transition-colors hover:text-foreground">
                   {t("footer.privacy")}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-foreground transition-colors">
+                <Link href="/terms" className="transition-colors hover:text-foreground">
                   {t("footer.terms")}
                 </Link>
               </li>
@@ -77,36 +102,16 @@ export function FooterSection() {
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-muted-foreground">
-            {t("footer.copyright", { year: new Date().getFullYear() })}
-          </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://twitter.com/dpmcalendar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-violet-600 transition-colors"
-            >
-              <Twitter className="h-5 w-5" />
-            </a>
-            <a
-              href="https://linkedin.com/company/dpmcalendar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-violet-600 transition-colors"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a
-              href="https://github.com/dpmcalendar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-violet-600 transition-colors"
-            >
-              <Github className="h-5 w-5" />
-            </a>
+        {/* bottom strip */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-border pt-6 text-[12px] text-muted-foreground sm:flex-row">
+          <span>{t("footer.copyright", { year: new Date().getFullYear() })}</span>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+            <Link href="/terms" className="transition-colors hover:text-foreground">
+              {t("footer.terms")}
+            </Link>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">
+              {t("footer.privacy")}
+            </Link>
           </div>
         </div>
       </div>
