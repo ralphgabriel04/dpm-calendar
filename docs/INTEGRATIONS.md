@@ -9,9 +9,9 @@ depuis la page **Centre de synchronisation** (`/integrations`).
 |-------------|------|------|
 | ICS (fichier + URL) | Pas d'OAuth | **Fonctionnel** |
 | CalDAV (Apple Calendar) | Identifiants utilisateur | Configuration requise (flux OAuth/CalDAV à finaliser) |
-| Notion | OAuth | Configuration requise (échafaudage du flux OAuth à finaliser) |
+| Notion | OAuth | Flux OAuth implémenté ; définir `NOTION_CLIENT_ID`/`SECRET` + enregistrer l'URL de callback pour activer |
 | Todoist | OAuth | Configuration requise (échafaudage du flux OAuth à finaliser) |
-| TickTick | OAuth | Configuration requise (échafaudage du flux OAuth à finaliser) |
+| TickTick | OAuth | Flux OAuth implémenté ; définir `TICKTICK_CLIENT_ID`/`SECRET` + enregistrer l'URL de callback pour activer |
 
 > Honnêteté technique : seul **ICS** importe réellement des événements
 > aujourd'hui. Les fournisseurs OAuth (Notion, Todoist, TickTick) et CalDAV
@@ -60,14 +60,18 @@ CalDAV n'utilise pas d'OAuth : l'utilisateur fournit ses propres identifiants.
 
 ## Notion (OAuth)
 
-**État : configuration requise (échafaudage du flux OAuth à finaliser).**
+**État : flux OAuth implémenté ; définissez `NOTION_CLIENT_ID` /
+`NOTION_CLIENT_SECRET` et enregistrez l'URL de callback ci-dessous pour
+activer.** Tant que ces deux variables sont absentes, la route d'autorisation
+renvoie une réponse « non configuré » claire (jamais un faux succès).
 
 1. Créez une intégration publique (OAuth) sur
    <https://www.notion.so/my-integrations>.
-2. **URL de redirection (callback)** à déclarer :
-   `https://YOUR_DOMAIN/api/auth/notion/callback`
-3. **Scopes / capacités** : lecture du contenu (« Read content ») suffisante
-   pour importer les bases/pages utilisées comme source d'événements.
+2. **URL de redirection (callback)** à déclarer (exacte) :
+   `${AUTH_URL}/api/integrations/oauth/notion/callback`
+3. **Scopes / capacités** : Notion n'utilise pas de scopes OAuth ; le flux passe
+   `owner=user` + `response_type=code`. Les capacités (lecture du contenu) se
+   configurent côté intégration Notion.
 4. **Variables d'environnement** à définir :
    - `NOTION_CLIENT_ID`
    - `NOTION_CLIENT_SECRET`
@@ -91,14 +95,16 @@ CalDAV n'utilise pas d'OAuth : l'utilisateur fournit ses propres identifiants.
 
 ## TickTick (OAuth)
 
-**État : configuration requise (échafaudage du flux OAuth à finaliser).**
+**État : flux OAuth implémenté ; définissez `TICKTICK_CLIENT_ID` /
+`TICKTICK_CLIENT_SECRET` et enregistrez l'URL de callback ci-dessous pour
+activer.** Tant que ces deux variables sont absentes, la route d'autorisation
+renvoie une réponse « non configuré » claire (jamais un faux succès).
 
 1. Créez une application sur
    <https://developer.ticktick.com/manage>.
-2. **URL de redirection (callback)** à déclarer :
-   `https://YOUR_DOMAIN/api/auth/ticktick/callback`
-3. **Scopes** : `tasks:read` (et `tasks:write` si l'écriture est ajoutée plus
-   tard).
+2. **URL de redirection (callback)** à déclarer (exacte) :
+   `${AUTH_URL}/api/integrations/oauth/ticktick/callback`
+3. **Scopes** : `tasks:read tasks:write`.
 4. **Variables d'environnement** à définir :
    - `TICKTICK_CLIENT_ID`
    - `TICKTICK_CLIENT_SECRET`

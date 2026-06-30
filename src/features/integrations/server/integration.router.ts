@@ -7,6 +7,14 @@ import {
   fetchTodoistTasks,
   todoistTaskToData,
 } from "@/lib/integrations/todoist";
+import {
+  fetchTickTickTasks,
+  tickTickTaskToData,
+} from "@/lib/integrations/ticktick";
+import {
+  fetchNotionPages,
+  notionPageToData,
+} from "@/lib/integrations/notion";
 import { encryptToken, decryptToken } from "@/lib/crypto";
 import {
   getProviderRegistry,
@@ -338,11 +346,175 @@ export const integrationRouter = createTRPCRouter({
         return { imported, updated };
       }
 
-      if (
-        integration.provider === "NOTION" ||
-        integration.provider === "TICKTICK" ||
-        integration.provider === "CALDAV"
-      ) {
+      // TickTick: re-pull tasks via the stored OAuth token and upsert.
+      if (integration.provider === "TICKTICK") {
+        if (!integration.accessToken) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "INTEGRATION_NOT_CONFIGURED",
+          });
+        }
+
+        const token = decryptToken(integration.accessToken);
+        let tasks;
+        try {
+          tasks = await fetchTickTickTasks(token);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "fetch failed";
+          await ctx.db.externalIntegration.update({
+            where: { id: integration.id },
+            data: { lastError: message },
+          });
+          await ctx.db.integrationSyncRun.create({
+            data: {
+              integrationId: integration.id,
+              direction: "PULL",
+              status: "FAILED",
+              itemsProcessed: 0,
+              errorMessage: message,
+            },
+          });
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: "TICKTICK_FETCH_FAILED",
+          });
+        }
+
+        let imported = 0;
+        let updated = 0;
+        for (const task of tasks) {
+          const existing = await ctx.db.externalItem.findFirst({
+            where: { integrationId: integration.id, externalId: task.id },
+          });
+          const taskData = tickTickTaskToData(task, uid);
+
+          if (existing?.localTaskId) {
+            await ctx.db.task.update({
+              where: { id: existing.localTaskId },
+              data: taskData,
+            });
+            await ctx.db.externalItem.update({
+              where: { id: existing.id },
+              data: { hash: task.title },
+            });
+            updated++;
+          } else {
+            const createdTask = await ctx.db.task.create({ data: taskData });
+            await ctx.db.externalItem.create({
+              data: {
+                integrationId: integration.id,
+                externalId: task.id,
+                kind: "task",
+                localTaskId: createdTask.id,
+                hash: task.title,
+              },
+            });
+            imported++;
+          }
+        }
+
+        await ctx.db.externalIntegration.update({
+          where: { id: integration.id },
+          data: { lastSyncAt: new Date(), lastError: null },
+        });
+        await ctx.db.integrationSyncRun.create({
+          data: {
+            integrationId: integration.id,
+            direction: "PULL",
+            status: "COMPLETED",
+            itemsProcessed: imported + updated,
+            completedAt: new Date(),
+          },
+        });
+
+        return { imported, updated };
+      }
+
+      // Notion: re-pull pages via the stored OAuth token and upsert as tasks.
+      if (integration.provider === "NOTION") {
+        if (!integration.accessToken) {
+          throw new TRPCError({
+            code: "PRECONDITION_FAILED",
+            message: "INTEGRATION_NOT_CONFIGURED",
+          });
+        }
+
+        const token = decryptToken(integration.accessToken);
+        let pages;
+        try {
+          pages = await fetchNotionPages(token);
+        } catch (err) {
+          const message = err instanceof Error ? err.message : "fetch failed";
+          await ctx.db.externalIntegration.update({
+            where: { id: integration.id },
+            data: { lastError: message },
+          });
+          await ctx.db.integrationSyncRun.create({
+            data: {
+              integrationId: integration.id,
+              direction: "PULL",
+              status: "FAILED",
+              itemsProcessed: 0,
+              errorMessage: message,
+            },
+          });
+          throw new TRPCError({
+            code: "BAD_GATEWAY",
+            message: "NOTION_FETCH_FAILED",
+          });
+        }
+
+        let imported = 0;
+        let updated = 0;
+        for (const page of pages) {
+          const existing = await ctx.db.externalItem.findFirst({
+            where: { integrationId: integration.id, externalId: page.id },
+          });
+          const taskData = notionPageToData(page, uid);
+
+          if (existing?.localTaskId) {
+            await ctx.db.task.update({
+              where: { id: existing.localTaskId },
+              data: taskData,
+            });
+            await ctx.db.externalItem.update({
+              where: { id: existing.id },
+              data: { hash: taskData.title },
+            });
+            updated++;
+          } else {
+            const createdTask = await ctx.db.task.create({ data: taskData });
+            await ctx.db.externalItem.create({
+              data: {
+                integrationId: integration.id,
+                externalId: page.id,
+                kind: "task",
+                localTaskId: createdTask.id,
+                hash: taskData.title,
+              },
+            });
+            imported++;
+          }
+        }
+
+        await ctx.db.externalIntegration.update({
+          where: { id: integration.id },
+          data: { lastSyncAt: new Date(), lastError: null },
+        });
+        await ctx.db.integrationSyncRun.create({
+          data: {
+            integrationId: integration.id,
+            direction: "PULL",
+            status: "COMPLETED",
+            itemsProcessed: imported + updated,
+            completedAt: new Date(),
+          },
+        });
+
+        return { imported, updated };
+      }
+
+      if (integration.provider === "CALDAV") {
         throw new TRPCError({
           code: "PRECONDITION_FAILED",
           message: "INTEGRATION_NOT_CONFIGURED",

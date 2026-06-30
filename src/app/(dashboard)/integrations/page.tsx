@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   RefreshCw,
   Unlink,
@@ -34,7 +35,24 @@ function providerIcon(provider: string) {
   return PROVIDER_ICONS[provider as Provider] ?? Plug;
 }
 
+const PROVIDER_LABELS: Record<string, string> = {
+  notion: "Notion",
+  ticktick: "TickTick",
+  todoist: "Todoist",
+  ics: "ICS",
+  caldav: "CalDAV",
+};
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  access_denied: "L'autorisation a été refusée.",
+  invalid_state: "La session d'autorisation a expiré. Veuillez réessayer.",
+  token_exchange_failed:
+    "Impossible de finaliser la connexion. Veuillez réessayer.",
+  not_configured: "Ce service n'est pas configuré par l'administrateur.",
+};
+
 export default function IntegrationsPage() {
+  const searchParams = useSearchParams();
   const utils = trpc.useUtils();
 
   const { data: providers, isLoading: providersLoading } =
@@ -46,6 +64,25 @@ export default function IntegrationsPage() {
     utils.integration.providers.invalidate();
     utils.integration.list.invalidate();
   };
+
+  // OAuth callback feedback: ?connected=<p> on success, ?error=<code> on failure.
+  useEffect(() => {
+    const connected = searchParams.get("connected");
+    const error = searchParams.get("error");
+    if (connected) {
+      const label = PROVIDER_LABELS[connected] ?? connected;
+      toast.success(`${label} connecté`);
+      invalidate();
+      window.history.replaceState({}, "", "/integrations");
+    } else if (error) {
+      toast.error("Échec de la connexion", {
+        description:
+          OAUTH_ERROR_MESSAGES[error] ?? "Une erreur est survenue. Réessayez.",
+      });
+      window.history.replaceState({}, "", "/integrations");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   // ICS subscribe-by-URL state
   const [icsUrl, setIcsUrl] = useState("");
@@ -161,10 +198,8 @@ export default function IntegrationsPage() {
     disconnect.mutate({ integrationId, deleteImported });
   };
 
-  const handleOAuthConnect = () => {
-    toast.info("Bientôt disponible", {
-      description: "La connexion à ce service sera bientôt activée.",
-    });
+  const handleOAuthConnect = (provider: string) => {
+    window.location.href = `/api/integrations/oauth/${provider.toLowerCase()}`;
   };
 
   return (
@@ -381,16 +416,18 @@ export default function IntegrationsPage() {
                         </div>
                       )}
 
-                      {/* OAuth providers configured (flow not yet wired) */}
+                      {/* OAuth providers configured: start the authorize flow */}
                       {connectVia === "oauth" && provider.configured && (
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={handleOAuthConnect}
+                          onClick={() =>
+                            handleOAuthConnect(provider.provider)
+                          }
                           className="w-full"
                         >
                           <Link2 className="mr-1.5 h-4 w-4" />
-                          Connecter
+                          {provider.connected ? "Reconnecter" : "Connecter"}
                         </Button>
                       )}
                     </div>

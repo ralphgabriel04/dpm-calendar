@@ -52,6 +52,30 @@ vi.mock("@/lib/integrations/todoist", async () => {
   };
 });
 
+// fetchTickTickTasks is mocked (no network); the mapping helpers are real.
+const fetchTickTickTasksMock = vi.fn();
+vi.mock("@/lib/integrations/ticktick", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/lib/integrations/ticktick")
+  >("@/lib/integrations/ticktick");
+  return {
+    ...actual,
+    fetchTickTickTasks: (...args: unknown[]) => fetchTickTickTasksMock(...args),
+  };
+});
+
+// fetchNotionPages is mocked (no network); the mapping helpers are real.
+const fetchNotionPagesMock = vi.fn();
+vi.mock("@/lib/integrations/notion", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/lib/integrations/notion")
+  >("@/lib/integrations/notion");
+  return {
+    ...actual,
+    fetchNotionPages: (...args: unknown[]) => fetchNotionPagesMock(...args),
+  };
+});
+
 // crypto is mocked so token (de)encryption is observable without ENCRYPTION_KEY.
 vi.mock("@/lib/crypto", () => ({
   encryptToken: (t: string) => `enc(${t})`,
@@ -124,6 +148,37 @@ const todoistFixture = [
     content: "Buy milk",
     priority: 1,
     due: null,
+  },
+];
+
+const tickTickFixture = [
+  {
+    id: "tt-1",
+    title: "Write report",
+    content: "Q3 numbers",
+    priority: 5,
+    tags: ["work"],
+    dueDate: "2026-07-01T00:00:00.000+0000",
+  },
+  {
+    id: "tt-2",
+    title: "Buy milk",
+    priority: 0,
+  },
+];
+
+const notionFixture = [
+  {
+    id: "np-1",
+    title: "Project kickoff",
+    url: "https://notion.so/np-1",
+    dueDate: "2026-07-01",
+  },
+  {
+    id: "np-2",
+    title: "Roadmap",
+    url: "https://notion.so/np-2",
+    dueDate: null,
   },
 ];
 
@@ -359,15 +414,151 @@ describe("integrationRouter", () => {
   });
 
   describe("syncNow", () => {
-    it("throws PRECONDITION_FAILED for a NOTION integration", async () => {
+    it("throws PRECONDITION_FAILED for a CALDAV integration", async () => {
       (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
         id: "int-1",
-        provider: "NOTION",
+        provider: "CALDAV",
         sourceUrl: null,
       });
       await expect(
         createCaller().syncNow({ integrationId: "int-1" })
       ).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
+    });
+
+    it("imports new and updates existing TickTick tasks", async () => {
+      (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
+        id: "int-1",
+        provider: "TICKTICK",
+        accessToken: "enc(tt-tok)",
+      });
+      fetchTickTickTasksMock.mockResolvedValue(tickTickFixture);
+      // tt-1 already exists, tt-2 is new.
+      (mockDb as any).externalItem.findFirst
+        .mockResolvedValueOnce({ id: "ei-1", localTaskId: "task-1" })
+        .mockResolvedValueOnce(null);
+      (mockDb as any).task.update.mockResolvedValue({ id: "task-1" });
+      (mockDb as any).externalItem.update.mockResolvedValue({ id: "ei-1" });
+      (mockDb as any).task.create.mockResolvedValue({ id: "task-2" });
+      (mockDb as any).externalItem.create.mockResolvedValue({ id: "ei-2" });
+
+      const result = await createCaller().syncNow({ integrationId: "int-1" });
+
+      expect(result).toEqual({ imported: 1, updated: 1 });
+      expect((mockDb as any).task.update).toHaveBeenCalledTimes(1);
+      expect((mockDb as any).task.create).toHaveBeenCalledTimes(1);
+      // Token was decrypted before the fetch.
+      expect(fetchTickTickTasksMock).toHaveBeenCalledWith("tt-tok");
+      // New task mapped with real helpers: priority 0 -> LOW.
+      expect((mockDb as any).task.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            title: "Buy milk",
+            priority: "LOW",
+            status: "TODO",
+            userId: "user-1",
+          }),
+        })
+      );
+      expect((mockDb as any).integrationSyncRun.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "COMPLETED" }),
+        })
+      );
+    });
+
+    it("records a FAILED run when the TickTick fetch fails", async () => {
+      (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
+        id: "int-1",
+        provider: "TICKTICK",
+        accessToken: "enc(bad)",
+      });
+      fetchTickTickTasksMock.mockRejectedValue(new Error("TICKTICK_401"));
+      await expect(
+        createCaller().syncNow({ integrationId: "int-1" })
+      ).rejects.toMatchObject({ code: "BAD_GATEWAY" });
+      expect((mockDb as any).integrationSyncRun.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "FAILED" }),
+        })
+      );
+    });
+
+    it("throws PRECONDITION_FAILED for a TickTick integration without a token", async () => {
+      (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
+        id: "int-1",
+        provider: "TICKTICK",
+        accessToken: null,
+      });
+      await expect(
+        createCaller().syncNow({ integrationId: "int-1" })
+      ).rejects.toMatchObject({ code: "PRECONDITION_FAILED" });
+    });
+
+    it("imports new and updates existing Notion pages as tasks", async () => {
+      (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
+        id: "int-1",
+        provider: "NOTION",
+        accessToken: "enc(no-tok)",
+      });
+      fetchNotionPagesMock.mockResolvedValue(notionFixture);
+      // np-1 already exists, np-2 is new.
+      (mockDb as any).externalItem.findFirst
+        .mockResolvedValueOnce({ id: "ei-1", localTaskId: "task-1" })
+        .mockResolvedValueOnce(null);
+      (mockDb as any).task.update.mockResolvedValue({ id: "task-1" });
+      (mockDb as any).externalItem.update.mockResolvedValue({ id: "ei-1" });
+      (mockDb as any).task.create.mockResolvedValue({ id: "task-2" });
+      (mockDb as any).externalItem.create.mockResolvedValue({ id: "ei-2" });
+
+      const result = await createCaller().syncNow({ integrationId: "int-1" });
+
+      expect(result).toEqual({ imported: 1, updated: 1 });
+      expect((mockDb as any).task.update).toHaveBeenCalledTimes(1);
+      expect((mockDb as any).task.create).toHaveBeenCalledTimes(1);
+      // Token was decrypted before the fetch.
+      expect(fetchNotionPagesMock).toHaveBeenCalledWith("no-tok");
+      // New task mapped with real helpers: title + url carried through.
+      expect((mockDb as any).task.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            title: "Roadmap",
+            url: "https://notion.so/np-2",
+            status: "TODO",
+            userId: "user-1",
+          }),
+        })
+      );
+      expect((mockDb as any).externalItem.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            externalId: "np-2",
+            kind: "task",
+            localTaskId: "task-2",
+          }),
+        })
+      );
+      expect((mockDb as any).integrationSyncRun.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "COMPLETED" }),
+        })
+      );
+    });
+
+    it("records a FAILED run when the Notion fetch fails", async () => {
+      (mockDb as any).externalIntegration.findFirst.mockResolvedValue({
+        id: "int-1",
+        provider: "NOTION",
+        accessToken: "enc(bad)",
+      });
+      fetchNotionPagesMock.mockRejectedValue(new Error("NOTION_401"));
+      await expect(
+        createCaller().syncNow({ integrationId: "int-1" })
+      ).rejects.toMatchObject({ code: "BAD_GATEWAY" });
+      expect((mockDb as any).integrationSyncRun.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ status: "FAILED" }),
+        })
+      );
     });
 
     it("imports new and updates existing Todoist tasks", async () => {
