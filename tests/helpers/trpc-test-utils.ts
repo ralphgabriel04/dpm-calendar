@@ -98,6 +98,31 @@ export function createMockDb() {
       update: vi.fn(),
       delete: vi.fn(),
     },
+    space: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
+    spaceMember: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+      count: vi.fn(),
+    },
+    spaceInvite: {
+      findMany: vi.fn(),
+      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
+    },
   };
 }
 
@@ -106,7 +131,7 @@ export type MockDb = ReturnType<typeof createMockDb>;
 // Create tRPC test instance
 export function createTestTRPC<TDb extends MockDb>() {
   type Context = {
-    session: { user: { id: string } } | null;
+    session: { user: { id: string; email?: string | null } } | null;
     db: TDb;
   };
 
@@ -135,9 +160,13 @@ export function createTestTRPC<TDb extends MockDb>() {
 }
 
 // Create a test context
-export function createTestContext(mockDb: MockDb, userId: string | null = "user-1") {
+export function createTestContext(
+  mockDb: MockDb,
+  userId: string | null = "user-1",
+  email: string | null = null
+) {
   return {
-    session: userId ? { user: { id: userId } } : null,
+    session: userId ? { user: { id: userId, email } } : null,
     db: mockDb,
   };
 }

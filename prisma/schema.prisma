@@ -53,9 +53,78 @@ model User {
   focusSessions     FocusSession[]
   experiments       Experiment[]
   notes             Note[]
+  ownedSpaces       Space[]         @relation("SpaceOwner")
+  spaceMemberships  SpaceMember[]
 
   // Focus timer daily goal (minutes)
   dailyFocusGoalMins Int @default(120)
+}
+
+// ============================================
+// SPACES: multi-user collaboration
+// ============================================
+
+enum SpaceRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  REVOKED
+}
+
+// A shared workspace. Every user also has one auto-created personal space.
+model Space {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  ownerId    String
+  isPersonal Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  owner   User          @relation("SpaceOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members SpaceMember[]
+  invites SpaceInvite[]
+
+  @@index([ownerId])
+}
+
+model SpaceMember {
+  id        String    @id @default(cuid())
+  spaceId   String
+  userId    String
+  role      SpaceRole @default(MEMBER)
+  createdAt DateTime  @default(now())
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([spaceId, userId])
+  @@index([userId])
+}
+
+model SpaceInvite {
+  id          String       @id @default(cuid())
+  spaceId     String
+  email       String
+  role        SpaceRole    @default(MEMBER)
+  token       String       @unique @default(cuid())
+  invitedById String
+  status      InviteStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime     @default(now())
+  acceptedAt  DateTime?
+
+  space Space @relation(fields: [spaceId], references: [id], onDelete: Cascade)
+
+  @@index([spaceId])
+  @@index([email])
 }
 
 // Standalone markdown notes, optionally linked to a task or event.
