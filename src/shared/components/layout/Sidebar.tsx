@@ -21,13 +21,12 @@ import {
   Home,
   LayoutDashboard,
   Sunrise,
-  Sunset,
-  Star,
-  CalendarDays,
-  ListChecks,
-  Sparkles,
+  CreditCard,
   Grid3X3,
   Calendar,
+  StickyNote,
+  Layers,
+  Plug,
 } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 import { useUIStore } from "@/stores/ui.store";
@@ -37,8 +36,13 @@ import { ThemeToggle } from "@/shared/components/theme";
 import { LanguageToggle } from "@/shared/components/language";
 
 // Types
+//
+// Each nav item carries EITHER an i18n `nameKey` (translated via the existing
+// `sidebar` namespace) OR a literal `label` (for routes that have no i18n key
+// yet — notes, spaces, integrations, billing). We never invent i18n keys here.
 interface NavItem {
-  nameKey: string;
+  nameKey?: string;
+  label?: string;
   href: string;
   icon: React.ElementType;
   badge?: string;
@@ -46,36 +50,30 @@ interface NavItem {
 
 interface NavSection {
   id: string;
-  titleKey: string;
+  // Section title is a literal (matches the prototype's uppercase group titles);
+  // some reuse an existing i18n key, others are literal where none exists.
+  titleKey?: string;
+  title?: string;
   items: NavItem[];
   defaultExpanded?: boolean;
 }
 
-// Main navigation (always visible)
+// Main navigation (always visible — no group header), maps to the prototype's NAV_MAIN.
 const mainNavigation: NavItem[] = [
   { nameKey: "home", href: "/home", icon: Home },
-  { nameKey: "today", href: "/planner", icon: LayoutDashboard },
   { nameKey: "calendar", href: "/calendar", icon: Calendar },
 ];
 
-// Grouped navigation sections
+// Grouped navigation sections — prototype-style groups.
+// Route → group mapping is the spec contract; every protected route is linked.
 const navSections: NavSection[] = [
   {
-    id: "daily-rituals",
+    id: "daily",
     titleKey: "sections.dailyRituals",
     defaultExpanded: true,
     items: [
       { nameKey: "dailyPlanning", href: "/daily-planning", icon: Sunrise },
-      { nameKey: "focus", href: "/planner?focus=true", icon: Target },
-    ],
-  },
-  {
-    id: "weekly-rituals",
-    titleKey: "sections.weeklyRituals",
-    defaultExpanded: false,
-    items: [
-      { nameKey: "weekReview", href: "/planner?view=week", icon: CalendarDays },
-      { nameKey: "weeklyGoals", href: "/goals", icon: Star },
+      { nameKey: "today", href: "/planner", icon: LayoutDashboard },
     ],
   },
   {
@@ -90,12 +88,19 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    id: "notes-spaces",
+    title: "NOTES & SPACES",
+    defaultExpanded: true,
+    items: [
+      { label: "Notes", href: "/notes", icon: StickyNote },
+      { label: "Spaces", href: "/spaces", icon: Layers },
+    ],
+  },
+  {
     id: "automation",
     titleKey: "sections.automation",
     defaultExpanded: false,
-    items: [
-      { nameKey: "rules", href: "/rules", icon: Shield },
-    ],
+    items: [{ nameKey: "rules", href: "/rules", icon: Shield }],
   },
   {
     id: "insights",
@@ -106,7 +111,97 @@ const navSections: NavSection[] = [
       { nameKey: "analytics", href: "/analytics", icon: BarChart3 },
     ],
   },
+  {
+    id: "connect",
+    title: "CONNECT",
+    defaultExpanded: true,
+    items: [{ label: "Integrations", href: "/integrations", icon: Plug }],
+  },
+  {
+    id: "account",
+    title: "ACCOUNT",
+    defaultExpanded: true,
+    items: [
+      { label: "Plan & Billing", href: "/billing", icon: CreditCard },
+      { nameKey: "settings", href: "/settings", icon: Settings },
+    ],
+  },
 ];
+
+// Resolve a nav item's display label from its i18n key or literal label.
+function itemLabel(item: NavItem, t: (key: string) => string): string {
+  return item.nameKey ? t(item.nameKey) : (item.label ?? "");
+}
+
+function sectionTitle(section: NavSection, t: (key: string) => string): string {
+  return section.titleKey ? t(section.titleKey) : (section.title ?? "");
+}
+
+// Active-state logic: a route's base path (sans query) prefix-matches the pathname.
+function isItemActive(href: string, pathname: string): boolean {
+  const base = href.split("?")[0];
+  return pathname === base || pathname.startsWith(`${base}/`);
+}
+
+// Single nav row — violet "pill" when active (matches prototype's solid accent).
+function NavRow({
+  item,
+  label,
+  active,
+  collapsed,
+  indent = false,
+}: {
+  item: NavItem;
+  label: string;
+  active: boolean;
+  collapsed: boolean;
+  indent?: boolean;
+}) {
+  const Icon = item.icon;
+
+  if (collapsed) {
+    return (
+      <Link
+        href={item.href}
+        title={label}
+        className={cn(
+          "flex h-10 items-center justify-center rounded-lg transition-colors duration-150",
+          active
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:bg-accent hover:text-foreground"
+        )}
+      >
+        <Icon className="h-[18px] w-[18px]" />
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={item.href}
+      className={cn(
+        "flex h-9 items-center gap-3 rounded-lg px-3 text-[13px] font-medium transition-colors duration-150",
+        indent && "ml-1",
+        active
+          ? "bg-primary text-primary-foreground shadow-sm"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      )}
+    >
+      <Icon className="h-[18px] w-[18px] flex-shrink-0" />
+      <span className="flex-1 truncate">{label}</span>
+      {item.badge && (
+        <span
+          className={cn(
+            "flex-shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-semibold",
+            active ? "bg-white/20 text-white" : "bg-muted text-muted-foreground"
+          )}
+        >
+          {item.badge}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 // Collapsible Section Component
 function CollapsibleSection({
@@ -124,41 +219,31 @@ function CollapsibleSection({
   sidebarCollapsed: boolean;
   t: (key: string) => string;
 }) {
-  // In collapsed mode, just show icons without section headers
+  // In collapsed (rail) mode, show icon-only rows without group headers.
   if (sidebarCollapsed) {
     return (
       <div className="space-y-1">
-        {section.items.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href.split("?")[0]);
-          const itemName = t(item.nameKey);
-          return (
-            <Link
-              key={item.nameKey}
-              href={item.href}
-              title={itemName}
-              className={cn(
-                "flex items-center justify-center rounded-md p-3 transition-all duration-200",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              <item.icon className="h-5 w-5" />
-            </Link>
-          );
-        })}
+        {section.items.map((item) => (
+          <NavRow
+            key={item.href}
+            item={item}
+            label={itemLabel(item, t)}
+            active={isItemActive(item.href, pathname)}
+            collapsed
+          />
+        ))}
       </div>
     );
   }
 
   return (
-    <div className="space-y-1">
-      {/* Section header */}
+    <div className="space-y-0.5">
+      {/* Section header — uppercase muted title + chevron */}
       <button
         onClick={onToggle}
-        className="flex items-center justify-between w-full px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider hover:text-foreground transition-colors"
+        className="flex w-full items-center justify-between px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground transition-colors hover:text-foreground"
       >
-        <span>{t(section.titleKey)}</span>
+        <span>{sectionTitle(section, t)}</span>
         <ChevronDown
           className={cn(
             "h-3 w-3 transition-transform duration-200",
@@ -170,34 +255,20 @@ function CollapsibleSection({
       {/* Section items */}
       <div
         className={cn(
-          "space-y-1 overflow-hidden transition-all duration-200",
+          "space-y-0.5 overflow-hidden transition-all duration-200",
           isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         )}
       >
-        {section.items.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(item.href.split("?")[0]);
-          const itemName = t(item.nameKey);
-          return (
-            <Link
-              key={item.nameKey}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ml-2",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-              )}
-            >
-              <item.icon className="h-4 w-4 flex-shrink-0" />
-              <span>{itemName}</span>
-              {item.badge && (
-                <span className="ml-auto text-xs bg-primary/20 text-primary px-1.5 py-0.5 rounded">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          );
-        })}
+        {section.items.map((item) => (
+          <NavRow
+            key={item.href}
+            item={item}
+            label={itemLabel(item, t)}
+            active={isItemActive(item.href, pathname)}
+            collapsed={false}
+            indent
+          />
+        ))}
       </div>
     </div>
   );
@@ -260,7 +331,7 @@ export function Sidebar() {
           !isMobile && "relative w-full h-full"
         )}
       >
-        {/* Header */}
+        {/* Header — brand/logo */}
         <div
           className={cn(
             "flex h-16 items-center border-b transition-all duration-300",
@@ -270,7 +341,7 @@ export function Sidebar() {
           <Link
             href="/"
             className={cn(
-              "flex items-center gap-2 transition-opacity duration-300",
+              "flex items-center gap-2.5 transition-opacity duration-300",
               sidebarCollapsed && "lg:hidden"
             )}
           >
@@ -282,7 +353,7 @@ export function Sidebar() {
               className="h-10 w-10 sm:h-12 sm:w-12"
               priority
             />
-            <span className="font-bold text-lg text-foreground">DPM Calendar</span>
+            <span className="text-lg font-bold text-foreground">DPM Calendar</span>
           </Link>
           {/* Collapsed logo */}
           {sidebarCollapsed && (
@@ -300,7 +371,7 @@ export function Sidebar() {
           {/* Mobile close button */}
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-md hover:bg-accent lg:hidden"
+            className="rounded-md p-2 hover:bg-accent lg:hidden"
           >
             <X className="h-5 w-5" />
           </button>
@@ -310,109 +381,55 @@ export function Sidebar() {
         <nav
           className={cn(
             "flex-1 overflow-y-auto transition-all duration-300",
-            sidebarCollapsed ? "lg:p-2" : "p-4"
+            sidebarCollapsed ? "lg:p-2" : "p-3"
           )}
         >
-          {/* Main navigation (always visible) */}
-          <div className="space-y-1 mb-4">
-            {mainNavigation.map((item) => {
-              const isActive = pathname.startsWith(item.href);
-              const itemName = t(item.nameKey);
-              return (
-                <Link
-                  key={item.nameKey}
-                  href={item.href}
-                  title={sidebarCollapsed ? itemName : undefined}
-                  className={cn(
-                    "flex items-center rounded-md text-sm font-medium transition-all duration-200",
-                    sidebarCollapsed
-                      ? "lg:justify-center lg:px-0 lg:py-3 gap-0 px-3 py-2 gap-3"
-                      : "gap-3 px-3 py-2",
-                    isActive
-                      ? "bg-primary text-primary-foreground"
-                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  )}
-                >
-                  <item.icon
-                    className={cn(
-                      "h-5 w-5 flex-shrink-0",
-                      sidebarCollapsed && "lg:h-5 lg:w-5"
-                    )}
-                  />
-                  <span
-                    className={cn(
-                      "transition-all duration-300",
-                      sidebarCollapsed && "lg:hidden"
-                    )}
-                  >
-                    {itemName}
-                  </span>
-                </Link>
-              );
-            })}
+          {/* Main navigation (always visible, no group header) */}
+          <div className="space-y-0.5">
+            {mainNavigation.map((item) => (
+              <NavRow
+                key={item.href}
+                item={item}
+                label={itemLabel(item, t)}
+                active={isItemActive(item.href, pathname)}
+                collapsed={sidebarCollapsed}
+              />
+            ))}
           </div>
 
-          {/* Divider */}
-          {!sidebarCollapsed && <div className="border-t my-4" />}
+          {/* Divider between main nav and grouped sections (expanded only) */}
+          {sidebarCollapsed ? (
+            <div className="mx-auto my-2 h-px w-7 bg-border lg:block" />
+          ) : (
+            <div className="my-3 border-t" />
+          )}
 
           {/* Collapsible sections */}
-          <div className="space-y-4">
-            {navSections.map((section) => (
-              <CollapsibleSection
-                key={section.id}
-                section={section}
-                isExpanded={expandedSections[section.id]}
-                onToggle={() => toggleSection(section.id)}
-                pathname={pathname}
-                sidebarCollapsed={sidebarCollapsed}
-                t={t}
-              />
+          <div className={cn(sidebarCollapsed ? "space-y-2" : "space-y-3")}>
+            {navSections.map((section, i) => (
+              <div key={section.id}>
+                <CollapsibleSection
+                  section={section}
+                  isExpanded={expandedSections[section.id]}
+                  onToggle={() => toggleSection(section.id)}
+                  pathname={pathname}
+                  sidebarCollapsed={sidebarCollapsed}
+                  t={t}
+                />
+                {/* Rail dividers between groups when collapsed */}
+                {sidebarCollapsed && i < navSections.length - 1 && (
+                  <div className="mx-auto mt-2 h-px w-7 bg-border" />
+                )}
+              </div>
             ))}
           </div>
         </nav>
 
-        {/* Settings link */}
-        <div
-          className={cn(
-            "border-t transition-all duration-300",
-            sidebarCollapsed ? "lg:p-2" : "px-4 py-2"
-          )}
-        >
-          <Link
-            href="/settings"
-            title={sidebarCollapsed ? t("settings") : undefined}
-            className={cn(
-              "flex items-center rounded-md text-sm font-medium transition-all duration-200",
-              sidebarCollapsed
-                ? "lg:justify-center lg:px-0 lg:py-3 gap-0 px-3 py-2 gap-3"
-                : "gap-3 px-3 py-2",
-              pathname.startsWith("/settings")
-                ? "bg-primary text-primary-foreground"
-                : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-            )}
-          >
-            <Settings
-              className={cn(
-                "h-5 w-5 flex-shrink-0",
-                sidebarCollapsed && "lg:h-5 lg:w-5"
-              )}
-            />
-            <span
-              className={cn(
-                "transition-all duration-300",
-                sidebarCollapsed && "lg:hidden"
-              )}
-            >
-              {t("settings")}
-            </span>
-          </Link>
-        </div>
-
         {/* Desktop collapse toggle */}
-        <div className="hidden lg:flex justify-end p-2 border-t">
+        <div className="hidden justify-end border-t p-2 lg:flex">
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-full hover:bg-accent transition-colors"
+            className="rounded-full p-2 transition-colors hover:bg-accent"
             title={sidebarCollapsed ? t("openMenu") : t("closeMenu")}
           >
             {sidebarCollapsed ? (
@@ -423,7 +440,7 @@ export function Sidebar() {
           </button>
         </div>
 
-        {/* Footer */}
+        {/* Footer — version + language + theme toggle */}
         <div
           className={cn(
             "border-t transition-all duration-300",
@@ -461,7 +478,7 @@ export function SidebarTrigger() {
   return (
     <button
       onClick={toggleSidebar}
-      className="p-2 rounded-md hover:bg-accent"
+      className="rounded-md p-2 hover:bg-accent"
     >
       <Menu className="h-5 w-5" />
     </button>
