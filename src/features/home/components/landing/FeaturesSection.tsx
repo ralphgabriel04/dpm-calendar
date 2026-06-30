@@ -11,7 +11,10 @@ import { EnergyDemo } from "./demos/EnergyDemo";
 import { StatsDemo } from "./demos/StatsDemo";
 import { RulesDemo } from "./demos/RulesDemo";
 import { ColorCustomizerDemo } from "./demos/ColorCustomizerDemo";
-import { DailyPlaceholder, FocusPlaceholder, HealthPlaceholder, SpacesPlaceholder } from "./demos/_pending";
+import { DailyPlanningDemo } from "./demos/DailyPlanningDemo";
+import { FocusProDemo } from "./demos/FocusProDemo";
+import { HealthSleepDemo } from "./demos/HealthSleepDemo";
+import { SpacesDemo } from "./demos/SpacesDemo";
 
 /* Modules — the playable product tour. Disposition mirrors the DPM Elevate
    prototype exactly: six grouped clusters, rows 01–13, alternating sides. */
@@ -36,12 +39,12 @@ export function FeaturesSection() {
         <LpGroup label={t.groups.rituals} />
         <FeatureRow n="02" reverse tag={t.daily.tag} title={t.daily.title} desc={t.daily.desc} bullets={t.daily.bullets}>
           <DemoShell hint={t.daily.hint}>
-            <DailyPlaceholder />
+            <DailyPlanningDemo />
           </DemoShell>
         </FeatureRow>
         <FeatureRow n="03" tag={t.focusPro.tag} title={t.focusPro.title} desc={t.focusPro.desc} bullets={t.focusPro.bullets}>
           <DemoShell hint={t.focusPro.hint}>
-            <FocusPlaceholder />
+            <FocusProDemo />
           </DemoShell>
         </FeatureRow>
 
@@ -72,7 +75,7 @@ export function FeaturesSection() {
         <LpGroup label={t.groups.wellbeing} />
         <FeatureRow n="08" reverse tag={t.health.tag} title={t.health.title} desc={t.health.desc} bullets={t.health.bullets}>
           <DemoShell>
-            <HealthPlaceholder />
+            <HealthSleepDemo />
           </DemoShell>
         </FeatureRow>
         <FeatureRow n="09" tag={t.energy.tag} title={t.energy.title} desc={t.energy.desc} bullets={t.energy.bullets}>
@@ -98,7 +101,7 @@ export function FeaturesSection() {
         <LpGroup label={t.groups.personalize} />
         <FeatureRow n="12" reverse tag={t.spaces.tag} title={t.spaces.title} desc={t.spaces.desc} bullets={t.spaces.bullets}>
           <DemoShell hint={t.spaces.hint}>
-            <SpacesPlaceholder />
+            <SpacesDemo />
           </DemoShell>
         </FeatureRow>
         <FeatureRow n="13" tag={t.customize.tag} title={t.customize.title} desc={t.customize.desc} bullets={t.customize.bullets}>

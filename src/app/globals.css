@@ -572,3 +572,16 @@
   .lp-check-pop, .lp-strike::after { animation: none !important; }
   .lp-strike::after { width: 100%; }
 }
+
+/* --- Focus music equalizer (ported from prototype styles.css) --- */
+@keyframes musicEq {
+  0%, 100% { transform: scaleY(0.35); }
+  50%      { transform: scaleY(1); }
+}
+.music-eq-bar {
+  transform-origin: bottom;
+  animation: musicEq 0.9s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .music-eq-bar { animation: none; }
+}
